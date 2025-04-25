@@ -1,5 +1,5 @@
+// Chuyển trạng thái hiển thị Điện thoại hoặc máy tính theo size
 window.isDesktopView = false; // Biến trạng thái để kiểm tra chế độ hiện tại
-
 window.forceDesktopView = function () {
     if (!window.isDesktopView) {
         // Kích hoạt chế độ Desktop
@@ -34,4 +34,30 @@ window.forceDesktopView = function () {
 
     // Đảo trạng thái
     window.isDesktopView = !window.isDesktopView;
+};
+// ==============================================================================================================
+
+//SwiperJS: effect Ds ảnh
+window.callSwiperJSEffect11 = async () => {
+    var swiper5 = new Swiper(".swiperJsEffect", {
+        slidesPerView: "auto",
+        loop: true,
+        centeredSliders: true,
+        speed: 2000,
+        allowTouchMove: false,
+        disableOnInteraction: false,
+        autoplay: {
+            delay: 3000,
+        },
+        grabCursor: false,
+        effect: "creative",
+        creativeEffect: {
+            prev: {
+                translate: ["120%", 0, -500],
+            },
+            next: {
+                translate: ["-120%", 0, -500],
+            },
+        },
+    });
 };

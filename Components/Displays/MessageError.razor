@@ -1,0 +1,16 @@
+﻿<!--Hiển thị nội dung trạng thái lỗi-->
+<MudItem Class="d-flex align-items-center justify-content-center w-100">
+    <MudItem>
+        <MudText Typo="Typo.h3">@Title</MudText>
+        <MudLink Href="@Link">@TitleLink</MudLink>
+    </MudItem>
+</MudItem>
+
+@code{
+    [Parameter]
+    public string? Title { get; set; }
+    [Parameter]
+    public string? Link { get; set; }
+    [Parameter]
+    public string? TitleLink { get; set; }
+}

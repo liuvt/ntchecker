@@ -1,0 +1,22 @@
+﻿<CascadingAuthenticationState>
+	<Router AppAssembly="@typeof(Program).Assembly">
+		<Found Context="routeData">
+			<AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(EmptyLayout.EmptyMainLayout)">
+				<NotAuthorized>
+					<PageTitle>Không có quyền truy cập!</PageTitle>
+					<MessageError Title="Xin lỗi, bạn không có quyền truy cập" Link="/" TitleLink="Đăng nhập ngay!" />
+				</NotAuthorized>
+				<Authorizing>
+					<MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+				</Authorizing>
+			</AuthorizeRouteView>
+			<FocusOnNavigate RouteData="@routeData" Selector="h1" />
+		</Found>
+		<NotFound>
+			<PageTitle>Trang không tồn tại!</PageTitle>
+			<LayoutView Layout="@typeof(EmptyLayout.EmptyMainLayout)">
+				<MessageError Title="Xin lỗi, trang này không tồn tại" Link="/" TitleLink="Quay lại trang chủ!" />
+			</LayoutView>
+		</NotFound>
+	</Router>
+</CascadingAuthenticationState>

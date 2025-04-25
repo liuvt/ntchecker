@@ -29,7 +29,7 @@ namespace ntchecker.Data
                     user = new AppUser
                     {
                         Id = id,
-                        UserName = email,
+                        UserName = email.Replace("@namthanggroup.com",""),
                         Email = email,
                         NormalizedUserName = email.ToUpper(),
                         NormalizedEmail = email.ToUpper(),

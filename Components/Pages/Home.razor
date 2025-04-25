@@ -1,2 +1,91 @@
 ﻿@page "/"
+<!--InteractiveServer để chuyển trạng thái interactive-->
+@rendermode InteractiveServer
+@inherits LoginBase
+
+<MudGrid Class="d-flex align-stretch pa-3">
+	<MudItem xs="12" sm="6" md="5" lg="4">
+		<MudPaper Elevation="3" Square="true" Height="100%">
+			<MudImage src="/imgs/logo-namthang.png" alt="Logo" Width="120" Class="pa-3" />
+			<MudText Class="text-center" Typo="Typo.h5" Color="Color.Primary">ĐĂNG NHẬP</MudText>
+			<MudItem Class="pa-3">
+				<MudText Color="Color.Primary"><i>Nếu bạn chưa có tài khoản, liên hệ phòng CNTT</i></MudText>
+			</MudItem>
+			<EditForm Model="@models" OnValidSubmit="(OnValidSubmit)" FormName="loginForm">
+				<DataAnnotationsValidator />
+				<MudCardContent>
+					<MudItem Class="mt-2">
+						<MudText>Tài khoản</MudText>
+						<MudTextField @bind-Value="models.Username"
+									  Placeholder="Your account"
+									  Variant="Variant.Outlined"
+									  Adornment="Adornment.End"
+									  AdornmentIcon="@Icons.Material.Filled.EmojiPeople"
+									  For="@(() => models.Username)" Disabled="@_processing" 
+									  autocomplete="username" />
+					</MudItem>
+					<MudItem Class="mt-2">
+						<MudText>Mật khẩu</MudText>
+						<MudTextField @bind-Value="models.Password"
+									  Placeholder="Password"
+									  Variant="Variant.Outlined"
+									  InputType="@PasswordInput"
+									  Adornment="Adornment.End"
+									  AdornmentIcon="@PasswordInputIcon"
+									  OnAdornmentClick="(() => ShowPasswordEvent())"
+									  AdornmentAriaLabel="Show Password"
+									  For="@(() => models.Password)" Disabled="@_processing"
+									  autocomplete="current-password">
+						</MudTextField>
+					</MudItem>
+				</MudCardContent>
+				<MudCardActions Class="d-flex justify-space-between pa-2">
+					<MudIconButton OnClick="@(() => ClearEditForm())" Color="Color.Error"
+								   Icon="@Icons.Material.Filled.Autorenew" Disabled="@_processing" />
+					<MudSpacer />
+					<MudItem xs="12" Class="text-end">
+						<MudButton EndIcon="@Icons.Material.Filled.Login"
+								   Color="Color.Tertiary"
+								   Style="text-transform:none"
+								   Variant="Variant.Outlined"
+								   ButtonType="ButtonType.Submit" Disabled="@_processing">
+							@if (_processing)
+							{
+								<MudProgressCircular Size="Size.Small" Indeterminate="true" />
+								<MudText>Đang xữ lý..</MudText>
+							}
+							else
+							{
+								<MudText>Đăng nhập</MudText>
+							}
+						</MudButton>
+					</MudItem>
+				</MudCardActions>
+				<MudCardContent>
+					<MudText Color="@Color.Error" Typo="Typo.subtitle2"> <ValidationSummary /> </MudText>
+					<MudText Color="@Color.Error" Typo="Typo.subtitle2">@textResult</MudText>
+				</MudCardContent>
+			</EditForm>
+		</MudPaper>
+	</MudItem>
+	<!-- gallery images-->
+	<MudItem sm="6" md="7" lg="8" Class="d-none d-sm-block">
+		<MudItem Class="swiper swiperJsEffect">
+			<MudItem Class="swiper-wrapper">
+				<MudItem Class="swiper-slide">
+					<img src="/imgs/logins/login-01.jpg" width="100%" height="100%" class="rounded-lg" />
+				</MudItem>
+				<MudItem class="swiper-slide">
+					<img src="/imgs/logins/login-02.jpg" width="100%" height="100%" class="rounded-lg" />
+				</MudItem>
+				<MudItem class="swiper-slide">
+					<img src="/imgs/logins/login-03.jpg" width="100%" height="100%" class="rounded-lg" />
+				</MudItem>
+				<MudItem class="swiper-slide">
+					<img src="/imgs/logins/login-04.jpg" width="100%" height="100%" class="rounded-lg" />
+				</MudItem>
+			</MudItem>
+		</MudItem>
+	</MudItem>
+</MudGrid>
 
