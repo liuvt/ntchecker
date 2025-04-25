@@ -1,0 +1,16 @@
+﻿@page "/dashboard"
+@rendermode InteractiveServer
+
+<AuthorizeView>
+    <Authorized>
+        <h3>Dashboard</h3>
+        <p>Xin chào, bạn đã đăng nhập thành công!</p>
+    </Authorized>
+    <NotAuthorized>
+        <MessageError Title="Bạn cần đăng nhập" Link="/" TitleLink="Đăng nhập ngay!" />
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+}

@@ -1,6 +1,9 @@
 ﻿namespace ntchecker.Components.Pages.Bases;
+
+using Humanizer.Localisation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.JSInterop;
 using MudBlazor;
 using ntchecker.Data.Entities;
 using ntchecker.Services.Interfaces;
@@ -8,26 +11,39 @@ using ntchecker.Services.Interfaces;
 public class LoginBase : ComponentBase
 {
     [Inject]
+    protected IJSRuntime js { get; set; }
+    [Inject]
     private IAuthenService authenService { get; set; }
     [Inject]
     private NavigationManager nav { get; set; }
     [Inject]
-    private ISnackbar snackBar { get; set; }
-    protected string token { get; set; }
+    protected ISnackbar snackBar { get; set; }
     protected string ErrorMessage { get; set; }
-    protected override async Task OnInitializedAsync()
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        try
+        if (firstRender)
         {
-            // Check authentication state
-            if (await authenService.CheckAuthenState()) nav.NavigateTo("/", true);
-            await base.OnInitializedAsync();
-        }
-        catch (Exception ex)
-        {
-            ErrorMessage = ex.Message;
+            try
+            {
+                // Check authentication state
+                if (await authenService.CheckAuthenState())
+                {
+                    nav.NavigateTo("/dashboard", true);
+                }
+                else
+                {
+                    await Task.Delay(100); // Đợi 100ms cho các phần tử DOM được tải hoàn toàn
+                    await js.InvokeVoidAsync("callSwiperJSEffect", null);
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+            }
         }
     }
+
 
     #region Private to handler with data                             
     // Login
@@ -39,15 +55,16 @@ public class LoginBase : ComponentBase
             snackBar.Add($"Đăng nhập thành công.", Severity.Success);
 
             // Dừng 3s sau khi chuyển hướng
-            Thread.Sleep(TimeSpan.FromSeconds(3));
+            await Task.Delay(3000);
 
             // Chuyển về trang chủ
-            nav.NavigateTo("/", true);
+            nav.NavigateTo("/dashboard", true);
         }
         catch (Exception ex)
         {
             await ClearEditForm();
             snackBar.Add(ex.Message, Severity.Error);
+            textResult = ex.Message;
         }
     }
     #endregion
@@ -58,7 +75,7 @@ public class LoginBase : ComponentBase
     protected string textResult;
 
     // Submit
-    protected async void OnValidSubmit(EditContext editContext)
+    protected async Task OnValidSubmit(EditContext editContext)
     {
         _processing = true;
         // Do something
@@ -71,9 +88,11 @@ public class LoginBase : ComponentBase
     {
         models = new LoginUserDto();
         _processing = false;
+        textResult = string.Empty;
         StateHasChanged();
     }
     #endregion
+
 
     #region MudTextField Password
     protected bool isShowPassword = false;

@@ -1,29 +1,29 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
+using Microsoft.OpenApi.Models;
+
+using Swashbuckle.AspNetCore.Filters;
+using System.Text;
+using MudBlazor.Services;
+
 using ntchecker.Components;
 using ntchecker.Data;
 using ntchecker.Data.Models;
-using MudBlazor.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Filters;
-using Microsoft.AspNetCore.Components.Authorization;
 using ntchecker.Services;
 using ntchecker.Repositories;
-using Microsoft.Net.Http.Headers;
 using ntchecker.Services.Interfaces;
 using ntchecker.Repositories.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddMudServices();
-
 // Add identity
 builder.Services.AddDbContext<ntcheckerDBContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Hosting")));
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = true;
@@ -43,6 +43,19 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddRazorPages();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddMudServices();
+
+// Cấu hình lại cho kết nối SingleIR
+builder.Services.AddServerSideBlazor()
+    .AddHubOptions(options =>
+    {
+        options.ClientTimeoutInterval = TimeSpan.FromMinutes(2); // Khoảng thời gian server chờ tín hiệu từ client (ping).
+        options.HandshakeTimeout = TimeSpan.FromSeconds(30); // Khoảng thời gian client phải hoàn tất bắt tay ban đầu với server
+        options.KeepAliveInterval = TimeSpan.FromSeconds(15); // Giữ kết nối sống lâu hơn với KeepAlive
+        options.MaximumReceiveMessageSize = 100 * 1024 * 1024; // 100MB Tăng kích thước nhận thông tin
+
+    });
 
 // API: Add SwaggerGen (dotnet add package Swashbuckle.AspNetCore)
 builder.Services.AddSwaggerGen(
@@ -95,7 +108,7 @@ builder.Services.AddAuthorizationCore();
 // UI: Register Client Factory
 builder.Services.AddHttpClient("ntChecker", httpClient =>
 {
-    httpClient.BaseAddress = new Uri(builder.Configuration["API:Default"] ??
+    httpClient.BaseAddress = new Uri(builder.Configuration["API:Hosting"] ??
                             throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"));
     httpClient.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
     httpClient.DefaultRequestHeaders.Add(HeaderNames.UserAgent, "HttpRequestNTChecker");
@@ -105,7 +118,7 @@ builder.Services.AddHttpClient("ntChecker", httpClient =>
 builder.Services.AddScoped(
     defaultClient => new HttpClient
     {
-        BaseAddress = new Uri(builder.Configuration["API:Default"] ??
+        BaseAddress = new Uri(builder.Configuration["API:Hosting"] ??
                                 throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"))
     });
 
@@ -114,6 +127,7 @@ builder.Services.AddScoped<IAuthenRepository, AuthenRepository>();
 
 // UI: Authentication
 builder.Services.AddScoped<AuthenticationStateProvider, AuthenService>();
+builder.Services.AddScoped<IAuthenService, AuthenService>();
 builder.Services.AddCascadingAuthenticationState();
 
 // UI: Register Services Revenue
@@ -153,6 +167,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
+app.UseAntiforgery();
+
 // API: Add Authoz and Authen
 app.UseAuthentication();
 app.UseAuthorization();
@@ -160,11 +176,8 @@ app.UseAuthorization();
 // 👇 Quan trọng cho API Controllers
 app.MapControllers();
 
-app.UseAntiforgery();
-
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
-
 
 app.Run();
 

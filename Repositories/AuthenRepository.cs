@@ -48,7 +48,7 @@ public class AuthenRepository : IAuthenRepository
             //Kiểm tra email
             var user = await this.userManager.FindByEmailAsync(login.Username+"@namthanggroup.com");
             if (user == null)
-                throw new Exception("Mật khẩu không đúng");
+                throw new Exception("Tài khoản không tồn tại");
 
             //Đăng nhập với Email và Password
             var result = await this.loginManager.PasswordSignInAsync(
@@ -72,7 +72,7 @@ public class AuthenRepository : IAuthenRepository
         var user = await this.userManager.FindByEmailAsync(register.Username+"@namthanggroup.com");
         if (user != null)
             throw new Exception("Tài khoản đã tồn tại");
-        Console.WriteLine("Email: "+ register.Username + "@namthanggroup.com");
+
         var newUser = new AppUser
         {
             Email = register.Username+"@namthanggroup.com",

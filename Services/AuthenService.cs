@@ -8,23 +8,26 @@ using ntchecker.Extensions;
 using System.Text.Json;
 using System.IdentityModel.Tokens.Jwt;
 using ntchecker.Services.Interfaces;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using MudBlazor;
 
 namespace ntchecker.Services;
 public class AuthenService : AuthenticationStateProvider, IAuthenService
 {
     #region Constructor and Parameter
     private readonly HttpClient httpClient;
-    //JavaScript
-    private readonly IJSRuntime jS;
+    // Using protected localstored of blazor not using JavaScript
+    private readonly ProtectedLocalStorage protectedLocalStorage;
+
     //Key localStorage
     private string key = "_identityApp";
     //Anonymous authentication state
     private AuthenticationState Anonymous =>
         new AuthenticationState(new System.Security.Claims.ClaimsPrincipal(new ClaimsIdentity()));
-    public AuthenService(HttpClient _httpClient, IJSRuntime _jS)
+    public AuthenService(HttpClient _httpClient, ProtectedLocalStorage _protectedLocalStorage)
     {
         this.httpClient = _httpClient;
-        this.jS = _jS;
+        this.protectedLocalStorage = _protectedLocalStorage;
     }
     #endregion
 
@@ -51,7 +54,7 @@ public class AuthenService : AuthenticationStateProvider, IAuthenService
                 var token = await response.Content.ReadAsStringAsync();
 
                 //Lưu token vào localStorage
-                await jS.ltvSetLocalStorage(key, token);
+                await protectedLocalStorage.SetAsync(key, token);
 
                 //Kiểm tra trạng thái xác thực
                 var state = await BuildAuthenticationState(token);
@@ -82,7 +85,7 @@ public class AuthenService : AuthenticationStateProvider, IAuthenService
     {
         try
         {
-            await jS.ltvRemoveLocalStorage(key);
+            await protectedLocalStorage.DeleteAsync(key);
 
             //Kiểm tra trạng thái sau khi đăng nhập
             httpClient.DefaultRequestHeaders.Authorization = null;
@@ -150,18 +153,28 @@ public class AuthenService : AuthenticationStateProvider, IAuthenService
     */
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        //Lấy token từ LocalStorage
-        var token = await jS.ltvGetLocalStorage(key);
-
-        //Kiểm tra xem token 
-        if (!ValidateToken(token))
+        try
         {
+            //Lấy token từ ProtectedLocalStorage
+            var result = await protectedLocalStorage.GetAsync<string>(key);
+            var token = result.Success ? result.Value : null;
+
+            Console.WriteLine($"Token: {token}");
+
+            //Kiểm tra xem token 
+            if (!ValidateToken(token))
+            {
+                return Anonymous;
+            }
+
+            //Build AuthenticationState
+            return await BuildAuthenticationState(token);
+        }
+        catch
+        {
+            // Trong quá trình prerendering, JavaScript-based localStorage có thể chưa sẵn sàng
             return Anonymous;
         }
-
-
-        //Build AuthenticationState
-        return await BuildAuthenticationState(token);
     }
 
     /*

@@ -28,7 +28,7 @@ public partial class ntcheckerDBContext : IdentityDbContext<AppUser>
         if (!optionsBuilder.IsConfigured)
         {
             optionsBuilder.UseSqlServer(
-                configuration["ConnectionStrings:Default"] ??
+                configuration["ConnectionStrings:Hosting"] ??
                     throw new InvalidOperationException("Can't find [ConnectionStrings:Default] in appsettings.json!")
             );
         }
