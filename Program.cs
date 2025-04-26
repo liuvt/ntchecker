@@ -141,7 +141,9 @@ var app = builder.Build();
 /*using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
+    Console.WriteLine("Seeding Identity Data...");
     await DataSeeding.SeedIdentityDataAsync(services);
+    Console.WriteLine("Seeding Done!");
 }*/
 
 // Configure the HTTP request pipeline.
