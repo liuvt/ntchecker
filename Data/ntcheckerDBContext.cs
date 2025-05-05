@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Reflection.Metadata;
 
 namespace ntchecker.Data;
 
@@ -20,6 +21,8 @@ public partial class ntcheckerDBContext : IdentityDbContext<AppUser>
         //Models - Etityties
         configuration = _configuration;
     }
+
+    public virtual DbSet<QuickLink> QuickLinks { get; set; } = null!;
 
 
     //Config to connection sql server

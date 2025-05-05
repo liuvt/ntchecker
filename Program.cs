@@ -103,7 +103,6 @@ builder.Services.AddAuthentication(authenticationOptions =>
                         ValidateAudience = false
                     };
                 });
-builder.Services.AddAuthorizationCore();
 
 // UI: Register Client Factory
 builder.Services.AddHttpClient("ntChecker", httpClient =>
@@ -126,6 +125,7 @@ builder.Services.AddScoped(
 builder.Services.AddScoped<IAuthenRepository, AuthenRepository>();
 
 // UI: Authentication
+builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, AuthenService>();
 builder.Services.AddScoped<IAuthenService, AuthenService>();
 builder.Services.AddCascadingAuthenticationState();

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
 using ntchecker.Data.Entities;
-using ntchecker.Data.Models;
 
 namespace ntchecker.Services.Interfaces
 {
@@ -13,6 +12,5 @@ namespace ntchecker.Services.Interfaces
         Task LogOut();
         Task<bool> CheckAuthenState();
         Task<AuthenticationState> GetAuthenState();
-
     }
 }

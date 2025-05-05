@@ -21,4 +21,7 @@ public static class JsRuntimeExtension
     */
     public static ValueTask<int> ltvGetVideoIdFromIframe(this IJSRuntime jS)
         => jS.InvokeAsync<int>($"(document.getElementById('iframe_youtube').src).split('=',4)[3];");
+
+    // Kiểm tra trạng thái JS runtime đã sẳn sàng hay chưa
+    public static bool IsJSRuntimeAvailable(this IJSRuntime jsRuntime) => jsRuntime is not null && jsRuntime is not IJSInProcessRuntime;
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ntchecker.Data;
 
@@ -11,9 +12,11 @@ using ntchecker.Data;
 namespace ntchecker.Data.Migrations
 {
     [DbContext(typeof(ntcheckerDBContext))]
-    partial class ntcheckerDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250426094823_QuickLink")]
+    partial class QuickLink
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

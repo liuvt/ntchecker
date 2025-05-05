@@ -1,6 +1,4 @@
 ﻿namespace ntchecker.Components.Pages.Bases;
-
-using Humanizer.Localisation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
@@ -20,14 +18,20 @@ public class LoginBase : ComponentBase
     protected ISnackbar snackBar { get; set; }
     protected string ErrorMessage { get; set; }
 
+    protected bool _firstRender = true; 
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             try
             {
-                // Check authentication state
-                if (await authenService.CheckAuthenState())
+                _firstRender = false;
+                StateHasChanged();
+                // Kiểm tra trạng thái xác thực
+                var isAuthenticated = await authenService.CheckAuthenState();
+
+                if (isAuthenticated)
                 {
                     nav.NavigateTo("/dashboard", true);
                 }
