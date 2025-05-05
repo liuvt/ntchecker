@@ -1,0 +1,10 @@
+﻿@inject NavigationManager Navigation
+
+<MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+
+@code {
+    protected override void OnInitialized()
+    {
+        Navigation.NavigateTo("/");
+    }
+}

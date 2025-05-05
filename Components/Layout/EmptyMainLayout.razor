@@ -1,6 +1,4 @@
 ﻿@inherits LayoutComponentBase
-@using MudBlazor
-
 <MudThemeProvider Theme="@_theme" />
 <MudPopoverProvider />
 <MudDialogProvider FullWidth="true" MaxWidth="MaxWidth.ExtraExtraLarge" CloseButton="true" BackdropClick="false"
@@ -12,6 +10,7 @@
 		@Body
 	</MudMainContent>
 </MudLayout>
+
 @code {
 	protected MudTheme _theme = new MudTheme()
 		{
@@ -32,4 +31,5 @@
 				Overline = new OverlineTypography { FontFamily = new[] { "Trirong", "sans-serif" } }
 			},
 		};
+
 }

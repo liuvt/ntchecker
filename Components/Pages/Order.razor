@@ -2,6 +2,7 @@
 @inherits OrderBase
 <!--InteractiveServer để chuyển trạng thái interactive-->
 @rendermode InteractiveServer
+@layout Layout.EmptyMainLayout
 
 <style>
 	/* Checker Table */
@@ -127,7 +128,7 @@
 								<MudText><b>Giá HĐ</b>: @item.ctAmount</MudText>
 								<MudText><b>KM/Giờ quy định</b>: @item.ctDefaultDistance</MudText>
 								<MudDivider />
-								<MudText Class="d-flex justify-center">SAI LỆCH HỢP ĐỒNG</MudText>
+								<MudText Class="d-flex justify-center">CHÊNH LỆCH HỢP ĐỒNG</MudText>
 								<MudText Color="Color.Primary">KM/Giờ vượt: @item.ctOverDistance</MudText>
 								<MudText Color="Color.Primary">Truy thu: @item.ctSurcharge</MudText>
 								<MudText Color="Color.Primary">Khuyến mãi (-): @item.ctPromotion</MudText>

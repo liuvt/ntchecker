@@ -1,21 +1,32 @@
 ﻿<CascadingAuthenticationState>
 	<Router AppAssembly="@typeof(Program).Assembly">
 		<Found Context="routeData">
-			<AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(EmptyLayout.EmptyMainLayout)">
+			<AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+
 				<NotAuthorized>
-					<PageTitle>Không có quyền truy cập!</PageTitle>
-					<MessageError Title="Xin lỗi, bạn không có quyền truy cập" Link="/" TitleLink="Đăng nhập ngay!" />
+					<LayoutView Layout="@typeof(EmptyMainLayout)">
+						<PageTitle>Không có quyền truy cập</PageTitle>
+						<MessageError Title="Bạn chưa đăng nhập hoặc không có quyền truy cập!"
+									  Link="/"
+									  TitleLink="Đăng nhập ngay!" />
+					</LayoutView>
 				</NotAuthorized>
+
 				<Authorizing>
-					<MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+					<LayoutView Layout="@typeof(EmptyMainLayout)">
+						<MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+					</LayoutView>
 				</Authorizing>
+
 			</AuthorizeRouteView>
-			<FocusOnNavigate RouteData="@routeData" Selector="h1" />
 		</Found>
+
 		<NotFound>
-			<PageTitle>Trang không tồn tại!</PageTitle>
-			<LayoutView Layout="@typeof(EmptyLayout.EmptyMainLayout)">
-				<MessageError Title="Xin lỗi, trang này không tồn tại" Link="/" TitleLink="Quay lại trang chủ!" />
+			<LayoutView Layout="@typeof(EmptyMainLayout)">
+				<PageTitle>Không tìm thấy trang</PageTitle>
+				<MessageError Title="Trang này không tồn tại."
+							  Link="/"
+							  TitleLink="Quay lại trang chủ" />
 			</LayoutView>
 		</NotFound>
 	</Router>
