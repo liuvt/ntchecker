@@ -10,7 +10,7 @@
 		{
 			<MudGrid Class="d-flex align-stretch pa-3">
 				<!-- gallery images-->
-				<MudItem sm="6" md="7" lg="8" Class="d-none d-sm-block">
+				<MudItem Class="d-none d-md-block" md="7" lg="8" xl="9" xxl="10" >
 					<MudItem Class="swiper swiperJsEffect">
 						<MudItem Class="swiper-wrapper">
 							<MudItem Class="swiper-slide">
@@ -28,8 +28,8 @@
 						</MudItem>
 					</MudItem>
 				</MudItem>
-				<MudItem xs="12" sm="6" md="5" lg="4">
-					<MudPaper Elevation="3" Square="true" Height="100%">
+				<MudItem xs="12" md="5" lg="4" xl="3" xxl="2">
+					<MudPaper Elevation="25" Height="100%" Class="rounded-lg">
 						<MudImage src="/imgs/logo-namthang.png" alt="Logo" Width="120" Class="pa-3" />
 						<MudText Class="text-center" Typo="Typo.h5" Color="Color.Primary">ĐĂNG NHẬP</MudText>
 						<MudItem Class="pa-3">
@@ -92,8 +92,15 @@
 						</EditForm>
 					</MudPaper>
 				</MudItem>
-				
 			</MudGrid>
+			<MudPaper Class="d-flex flex-column justify-center pa-3" Square="true">
+				<MudText Class="text-center" Typo="Typo.body2">
+					<i>Đường số 3, Ấp Sua Đũa, Xã Vĩnh Hòa Hiệp, Huyện Châu Thành, Tỉnh Kiên Giang</i>
+				</MudText>
+				<MudText Class="text-center" Typo="Typo.body2">
+					©copyright 2024 - All rights reserved by Van.LT
+				</MudText>
+			</MudPaper>
 		}
 		else
 		{

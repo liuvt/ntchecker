@@ -105,4 +105,20 @@ public static class GGSheetExtension
         => ((item.Count > index && item[index] != null)
             ? item[index].ToString().Trim()
             : defaultValue);
+
+    /// <summary>
+    /// Trích xuất giá trị theo index, trả về giá trị mặc định (0.0m) nếu không có giá trị hoặc không thể chuyển đổi.
+    /// </summary>
+    public static decimal ltvGetValueDecimal(this IList<object> item, int index, decimal defaultValue = 0.0m)
+    {
+        if (item.Count > index && item[index] != null)
+        {
+            // Kiểm tra và chuyển đổi giá trị thành decimal
+            if (decimal.TryParse(item[index].ToString().Trim(), out decimal result))
+            {
+                return result;
+            }
+        }
+        return defaultValue; // Trả về giá trị mặc định nếu không chuyển đổi được
+    }
 }

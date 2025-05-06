@@ -133,7 +133,8 @@ builder.Services.AddCascadingAuthenticationState();
 // UI: Register Services Revenue
 builder.Services.AddScoped<IBankService, BankService>();
 builder.Services.AddScoped<IOrderService, OrderService>(); 
-builder.Services.AddScoped<IOrderByHistoryService, OrderByHistoryService>(); 
+builder.Services.AddScoped<IOrderByHistoryService, OrderByHistoryService>();
+builder.Services.AddScoped<ISalaryService, SalaryService>();
 
 var app = builder.Build();
 
