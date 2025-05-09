@@ -114,7 +114,7 @@ public static class GGSheetExtension
         if (item.Count > index && item[index] != null)
         {
             // Kiểm tra và chuyển đổi giá trị thành decimal
-            if (decimal.TryParse(item[index].ToString().Trim(), out decimal result))
+            if (decimal.TryParse(item[index].ToString().Replace(".","").Replace(",","").Trim(), out decimal result))
             {
                 return result;
             }

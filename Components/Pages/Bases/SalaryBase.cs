@@ -1,5 +1,6 @@
 ﻿using ntchecker.Services.Interfaces;
 using Microsoft.AspNetCore.Components;
+using ntchecker.Extensions;
 
 namespace ntchecker.Components.Pages.Bases;
 public class SalaryBase : ComponentBase
@@ -34,8 +35,8 @@ public class SalaryBase : ComponentBase
 
         Deductions.AddRange(new List<Data.Models.GGSheetModels.DeductionItem>
         {
-            new() { Name = "Ký quỹ", Amount = salary.deductForDeposit },
-            new() { Name = "Tai nạn", Amount = salary.deductForAccident },
+            new() { Name = "Ký quỹ", Amount = salary.deductForDeposit},
+            new() { Name = "Tai nạn", Amount = salary.deductForAccident},
             new() { Name = "Lương ứng", Amount = salary.deductForSalaryAdvance },
             new() { Name = "Vi phạm biên bản", Amount = salary.deductForViolationReport },
             new() { Name = "BHXH", Amount = salary.deductForSocialInsurance },
