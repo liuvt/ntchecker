@@ -1,3 +1,2 @@
-# Bill Checker v.1
-- BlazorServer
-- Layout MudBlazor
+# ntchecker
+Nam Thang Group - helper for checker employee
