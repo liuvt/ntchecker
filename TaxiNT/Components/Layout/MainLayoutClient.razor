@@ -1,0 +1,65 @@
+﻿@inherits LayoutComponentBase
+
+<div class="flex h-screen">
+    <div class="flex flex-1 flex-col overflow-hidden">
+        <main class="flex-1 overflow-y-auto p-4">
+            <header class="bg-white shadow-sm">
+                <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+                    <a href="#" data-blazor-navigate="false" target="_self" onclick="window.location.href='/'; return false;" class="flex items-center gap-3">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-md">
+                            <img src="./imgs/customers/logo.jpg" class="flex h-12 w-12 items-center justify-center rounded-md" />
+                        </div>
+                        <div>
+                            <h1 class="text-lg font-semibold">Taxi Nam Thắng</h1>
+                            <p class="text-xs text-gray-500">An toàn • Nhanh chóng • Tin cậy</p>
+                        </div>
+                    </a>
+
+
+                    <div class="flex items-center gap-4">
+                        <!-- Nav desktop -->
+                        <nav class="hidden items-center gap-4 text-sm md:flex">
+                            <a href="/blogs" data-blazor-navigate="false" target="_self" onclick="window.location.href='/blogs'; return false;" class="hover:text-blue-600">Tin tức</a>
+                            <a href="#about" onclick="window.location.href='/#about'; return false;" class="hover:text-blue-600">Về chúng tôi</a>
+                            <a href="#services" onclick="window.location.href='/#services'; return false;" class="hover:text-blue-600">Dịch vụ</a>
+                            <a href="#fleet" onclick="window.location.href='/#fleet'; return false;" class="hover:text-blue-600">Đội xe</a>
+                            <a href="#contact" onclick="window.location.href='/#contact'; return false;" class="hover:text-blue-600">Liên hệ</a>
+                        </nav>
+
+                        <!-- Mobile menu button -->
+                        <button class="rounded-md p-2 hover:bg-gray-100 md:hidden" id="menuBtn">☰</button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Mobile nav -->
+            <div id="mobileNav" class="hidden border-b bg-white md:hidden">
+                <div class="flex flex-col gap-3 px-6 py-4">
+                    <a href="/blogs" onclick="window.location.href='/blogs'; return false;" class="py-2">Tin tức</a>
+                    <a href="#about" onclick="window.location.href='/#about'; return false;" class="py-2">Về chúng tôi</a>
+                    <a href="#services" onclick="window.location.href='/#services'; return false;" class="py-2">Dịch vụ</a>
+                    <a href="#fleet" onclick="window.location.href='/#fleet'; return false;" class="py-2">Đội xe</a>
+                    <a href="#contact" onclick="window.location.href='/#contact'; return false;" class="py-2">Liên hệ</a>
+                </div>
+            </div>
+
+            @Body
+        </main>
+    </div>
+</div>
+
+<script>
+    function initMobileMenu() {
+        const btn = document.getElementById('menuBtn');
+        const menu = document.getElementById('mobileNav');
+        if (!btn || !menu) return;
+
+        // Gỡ cũ trước khi bind lại (tránh bind chồng)
+        btn.onclick = null;
+        btn.onclick = () => menu.classList.toggle('hidden');
+    }
+
+    document.addEventListener("DOMContentLoaded", initMobileMenu);
+    document.addEventListener("blazor:afterRender", initMobileMenu);
+</script>
+

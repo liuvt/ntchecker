@@ -3,6 +3,24 @@
 ################################################################################
 
 /.vs
-/bin
-/obj
-ggsheetaccount.json
+/SQL
+/SEOExtensions
+/node_modules/.bin/mkdirp
+/node_modules
+/node_modules/.bin
+/TaxiNT/ggsheetaccount.json
+/package-lock.json
+/package.json
+/tailwind.extension.json
+/TaxiNT/.vs
+/TaxiNT/Publish
+/TaxiNT/bin
+/TaxiNT/obj
+/TaxiNT.Client/bin
+/TaxiNT.Client/obj
+/TaxiNT.Libraries/bin
+/TaxiNT.Libraries/obj
+/TaxiNT.MAUI/bin
+/TaxiNT.MAUI/obj
+/TaxiNT.MAUIWIN/bin
+/TaxiNT.MAUIWIN/obj

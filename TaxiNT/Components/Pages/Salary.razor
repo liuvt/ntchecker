@@ -1,0 +1,162 @@
+﻿@page "/salary/{userId}"
+@layout MainLayoutEmpty
+
+<SeoHeaderComponent Title="Phiếu lương v3.1 - Taxi Nam Thắng"
+                    Description="@($"Kiểm tra phiếu Lương tài xế {userId}")"
+                    Image="imgs/customers/homepage.jpg" />
+
+<div class="mx-auto max-w-7xl px-1 sm:px-6 md:px-4 lg:px-8">
+    <div class="mb-4 text-center">
+        <p class="flex items-center justify-center gap-2 text-xl font-semibold text-green-600 md:text-2xl">
+            <img width="32" src="../icons/checkerdetail/bill-v2.png" alt="Đang tải..." />
+            PHIẾU LƯƠNG THÁNG
+        </p>
+        <p class="text-sm text-gray-600 italic">@salary.salaryDate</p>
+    </div>
+
+    <div class="justify-center rounded-lg bg-white p-1 shadow md:p-6">
+        <div class="mb-6 flex flex-wrap justify-between">
+            <div class="text-green-600">
+                <p class="font-semibold">@salary.userId</p>
+                <p>TỔNG DOANH THU: @salary.revenue</p>
+                <p>TỔNG SỐ CA: @salary.businessDays</p>
+            </div>
+            <div class="hidden md:inline">
+                <img src="/imgs/logo-namthang.png" width="100" class="object-contain" />
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-4 py-2 text-left text-sm font-medium text-gray-500">Nội dung</th>
+                        <th class="px-4 py-2 text-right text-sm font-medium text-gray-500">Số tiền</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 bg-white">
+                    <tr>
+                        <td class="px-4 py-3">
+                            <h6 class="font-semibold text-green-600">TẠM TÍNH</h6>
+                            <p class="text-xs text-gray-500 italic">
+                                Lương tạm tính theo doanh thu tháng
+                            </p>
+                        </td>
+                        <td class="px-4 py-3 text-right font-semibold text-green-600">@salary.salaryBase</td>
+                    </tr>
+
+                    @foreach (var item in Deductions.Where(x => x.Amount != "0"))
+                    {
+                        <tr>
+                            <td class="px-4 py-3">
+                                <span class="font-medium text-gray-700">@item.Name (-)</span>
+                                <p class="text-xs text-gray-500 italic">@item.NameAlias</p>
+                            </td>
+                            <td class="px-4 py-3 text-right">@item.Amount</td>
+                        </tr>
+                    }
+
+                    <tr>
+                        <td class="px-4 py-3">
+                            <h6 class="font-semibold text-red-600">TỔNG TRỪ</h6>
+                        </td>
+                        <td class="px-4 py-3 text-right font-semibold text-red-600">@salary.deductTotal</td>
+                    </tr>
+
+                    <tr>
+                        <td class="px-4 py-3">
+                            <h5 class="text-lg font-bold text-green-700">THỰC NHẬN</h5>
+                        </td>
+                        <td class="px-4 py-3 text-right text-lg font-bold text-green-700">@salary.salaryNet</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-5">
+            <div class="text-green-600">
+                <p>CHI TIẾT DOANH THU NGÀY</p>
+                <p>Loại: @(salaryDetails.Select(e => e.type).FirstOrDefault())</p>
+            </div>
+            <!-- Bảng chuẩn -->
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Ngày</th>
+                            <th class="px-4 py-3 text-right text-sm font-medium text-gray-700">Doanh thu</th>
+                            <th class="px-4 py-3 text-right text-sm font-medium text-gray-700">Sau mức ăn chia</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 bg-white">
+                        @foreach (var item in salaryDetails)
+                        {
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-3 text-sm whitespace-nowrap">@item.daterevenues</td>
+                                <td class="px-4 py-3 text-right text-sm whitespace-nowrap text-green-700">@item.revenue</td>
+                                <td class="px-4 py-3 text-right text-sm whitespace-nowrap text-green-700">@item.salaryBase</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="mt-8 space-y-1 border-t border-green-200 text-center text-sm text-gray-600">
+            <p class="mt-2 text-xs">Đường số 3, Ấp Sua Đũa, Xã Vĩnh Hòa Hiệp, Huyện Châu Thành, Tỉnh Kiên Giang</p>
+            <p class="text-xs italic">©copyright 2024 - All rights reserved by Van.LT</p>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string userId { get; set; }
+    [Inject]
+    protected ISalaryService salaryService { get; set; } = default!;
+    protected Libraries.Models.GGSheets.Salary salary { get; set; } = new Libraries.Models.GGSheets.Salary();
+    protected List<SalaryDetails> salaryDetails { get; set; } = new List<SalaryDetails>();
+    protected List<DeductionItem> Deductions { get; set; } = new List<DeductionItem>();
+    protected string errorMessage { get; set; } = string.Empty;
+    protected bool isLoaded = false;
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            salary = await GetReSalary(userId);
+            salaryDetails = await salaryService.GetSalaryDetails(userId);
+            isLoaded = true;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+            Console.WriteLine($"Error: {errorMessage}");
+            isLoaded = false;
+        }
+    }
+
+    protected async Task<Libraries.Models.GGSheets.Salary> GetReSalary(string userId)
+    {
+        var _salary = await salaryService.GetSalary(userId);
+
+        Deductions.AddRange(new List<DeductionItem>
+        {
+            new() { Name = "Ký quỹ",NameAlias="Tiền ký quỷ với công ty", Amount = _salary.deductForDeposit},
+            new() { Name = "Tai nạn",NameAlias="Chi phí tai nạn", Amount = _salary.deductForAccident},
+            new() { Name = "Lương ứng",NameAlias="Tạm ứng tiền công ty", Amount = _salary.deductForSalaryAdvance },
+            new() { Name = "Biên bản",NameAlias="Phạt sai phạm của tài xế", Amount = _salary.deductForViolationReport },
+            new() { Name = "BHXH",NameAlias="BHXH", Amount = _salary.deductForSocialInsurance },
+            new() { Name = "TNCN",NameAlias="TNCN", Amount = _salary.deductForPIT },
+            new() { Name = "Bảo quản xe",NameAlias="Phạt làm hỏng xe", Amount = _salary.deductForVMV },
+            new() { Name = "Đồng phục",NameAlias="Phạt vi phạm đồng phục", Amount = _salary.deductForUV },
+            new() { Name = "Giao ca",NameAlias="Phạt giao ca", Amount = _salary.deductForSHV },
+            new() { Name = "Phạt sạc",NameAlias="Sạc pin đầy nhưng không rút sạt", Amount = _salary.deductForChargingPenalty },
+            new() { Name = "Sạt pin",NameAlias="Trừ sạt pin đối với lương ngày", Amount = _salary.deductForCharging },
+            new() { Name = "VETC",NameAlias="Qua trạm thu phí", Amount = _salary.deductForTollPayment },
+            new() { Name = "Tạm ứng",NameAlias="Chi phí ứng tiền", Amount = _salary.deductForOrderSalaryAdvance },
+            new() { Name = "Âm lương",NameAlias="Trừ tiền âm lương tháng trước", Amount = _salary.deductForNegativeSalary },
+            new() { Name = "Trừ khác",NameAlias=_salary.noteDeductOrder, Amount = _salary.deductForOrder }
+        });
+
+        return _salary;
+    }
+}

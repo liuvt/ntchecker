@@ -1,0 +1,46 @@
+﻿@page "/dashboard"
+@rendermode @(new InteractiveServerRenderMode(prerender: true))
+
+<AuthorizedContent>
+    <ChildContent>
+        <div class="container mx-auto">
+            <div class="mb-4 font-sans text-2xl font-bold text-gray-800">THÔNG TIN</div>
+
+            <div class="sm:hidden">
+                <div class="rounded bg-white p-4 shadow">
+                    <div class="text-gray-400">Mã nhân viên</div>
+                    <div class="text-xl font-bold sm:text-2xl">@authenService.UserClaimToken.Username.ToUpper()</div>
+                    <div class="text-gray-400">Họ tên - mã nhân viên</div>
+                    <div class="text-xl font-bold">@authenService.UserClaimToken.Name</div>
+                    <div class="text-gray-400">Khu vực</div>
+                    <div class="text-xl font-bold sm:text-2xl">@authenService.UserClaimToken.Area</div>
+                </div>
+            </div>
+            <div class="hidden sm:block">
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                    <div class="rounded bg-white p-4 shadow">
+                        <div class="text-gray-400">Mã nhân viên</div>
+                        <div class="text-xl font-bold sm:text-2xl">@authenService.UserClaimToken.Username.ToUpper()</div>
+                    </div>
+                    <div class="rounded bg-white p-4 shadow">
+                        <div class="text-gray-400">Họ tên - mã nhân viên</div>
+                        <div class="text-xl font-bold">@authenService.UserClaimToken.Name</div>
+                    </div>
+                    <div class="rounded bg-white p-4 shadow">
+                        <div class="text-gray-400">Khu vực</div>
+                        <div class="text-xl font-bold sm:text-2xl">@authenService.UserClaimToken.Area</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ChildContent>
+    <NotAuthorizedContent>
+        <RedirectToLogin />
+    </NotAuthorizedContent>
+</AuthorizedContent>
+
+@code {
+    [Inject]
+    public IAuthenService authenService { get; set; } = default!;
+
+}

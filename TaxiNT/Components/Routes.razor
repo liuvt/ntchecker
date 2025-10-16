@@ -1,0 +1,24 @@
+﻿<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(Program).Assembly">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <NotAuthorized>
+                    <RedirectToLogin />
+                </NotAuthorized>
+            </AuthorizeRouteView>
+        </Found>
+        <NotFound>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p>Không tìm thấy trang.</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+   @* <ReconnectDisplay>
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60">
+        <div class="rounded-lg bg-white px-8 py-6 text-center shadow-lg">
+            <div class="mb-3 animate-pulse text-xl font-bold text-blue-600">🔄 Đang kết nối lại với máy chủ...</div>
+            <div class="text-sm text-gray-500">Vui lòng đợi trong giây lát...</div>
+        </div>
+    </div>
+</ReconnectDisplay>*@
+</CascadingAuthenticationState>

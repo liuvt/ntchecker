@@ -1,0 +1,8 @@
+﻿@import "tailwindcss";
+
+@theme {
+    --font-sans: Trirong;
+    --font-mono: Trirong;
+    --font-body: Trirong, sans-serif;
+}
+

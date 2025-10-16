@@ -1,0 +1,46 @@
+﻿@inject IJSRuntime jS
+
+@if (!isJsReady)
+{
+    <div class="bg-opacity-60 fixed inset-0 z-50 flex items-center justify-center bg-white">
+        <div class="flex flex-col items-center space-y-2">
+            <div class="h-8 w-8 animate-spin rounded-full border-t-2 border-green-500"></div>
+            <span class="text-base font-semibold text-gray-700">ĐANG TẢI...</span>
+        </div>
+    </div>
+}
+else
+{
+    <CascadingAuthenticationState>
+        <AuthorizeView>
+            <Authorized>
+                @ChildContent
+            </Authorized>
+            <NotAuthorized>
+                @NotAuthorizedContent
+            </NotAuthorized>
+        </AuthorizeView>
+    </CascadingAuthenticationState>
+}
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public RenderFragment? NotAuthorizedContent { get; set; }
+
+    //Nếu không bắt trạng thái đợi, để đảm bảo trước khi render jsruntime đã sẵn sàng sẽ không nhảy vào page login
+    private bool isJsReady = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            while (!jS.IsJSRuntimeAvailable())
+            {
+                await Task.Delay(300);
+            }
+
+            isJsReady = true;
+            StateHasChanged();
+        }
+    }
+}

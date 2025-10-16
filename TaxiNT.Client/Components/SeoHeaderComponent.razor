@@ -1,0 +1,30 @@
+﻿<HeadContent>
+    <title>@PageTitle</title>
+    <meta name="description" content="@PageDescription" />
+    <meta property="og:title" content="@PageTitle" />
+    <meta property="og:description" content="@PageDescription" />
+    <meta property="og:image" content="@PageImage" />
+    <meta property="og:url" content="@Nav.Uri" />
+    @if (Unrobots)
+    {
+        <meta name="robots" content="noindex, nofollow" />
+    }
+    else
+    {
+        <meta name="robots" content="index, follow" />
+
+    }
+</HeadContent>
+
+@code {
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public string? Description { get; set; }
+    [Parameter] public string? Image { get; set; }
+    [Parameter] public bool Unrobots { get; set; } = true;
+    [Inject] public NavigationManager Nav { get; set; }
+
+
+    private string PageTitle => Title ?? "Taxi Nam Thắng – nhanh chóng, an toàn, giá rẻ";
+    private string PageDescription => Description ?? "Taxi Nam Thắng cung cấp dịch vụ taxi tại Kiên Giang, Rạch Giá, Hà Tiên, Phú Quốc, Vĩnh Long, Cần Thơ, Bạc Liêu, Cà Mau, An Giang. Phục vụ 24/7, xe đời mới, tài xế thân thiện, giá rẻ.";
+    private string PageImage => $"{Nav.Uri}/{Image}" ?? $"{Nav.Uri}/imgs/customers/homepage.jpg";
+}

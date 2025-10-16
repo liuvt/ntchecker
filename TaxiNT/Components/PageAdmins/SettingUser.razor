@@ -1,0 +1,26 @@
+﻿@page "/settings"
+@rendermode @(new InteractiveServerRenderMode(prerender: true))
+
+<AuthorizedContent>
+    <ChildContent>
+        <div class="mb-4 font-sans text-2xl font-bold text-gray-800">CÀI ĐẶT</div>
+        <div class="max-md:hidden">
+            <button @onclick="(() => Logout_Handle())" class="rounded-lg px-2 py-1 font-sans text-sm text-white dark:text-white bg-red-500 hover:bg-red-700">Đăng xuất</button>
+        </div>
+    </ChildContent>
+    <NotAuthorizedContent>
+        <RedirectToLogin />
+    </NotAuthorizedContent>
+</AuthorizedContent>
+
+@code {
+    [Inject]
+    public IAuthenService authenService { get; set; } = default!;
+    [Inject]
+    private NavigationManager Navigation { get; set; } = default!;
+    public async Task Logout_Handle()
+    {
+        await authenService.LogOut();
+        Navigation.NavigateTo("/", true);
+    }
+}

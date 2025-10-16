@@ -1,0 +1,82 @@
+﻿<div class="mt-5 flex items-center justify-center">
+    <div class="w-full max-w-md rounded-2xl bg-green-50 p-1 shadow-xl">
+        <div class="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
+            <h2 class="mb-6 text-center text-3xl font-bold text-gray-800">Đăng Nhập</h2>
+            <div>
+                <div class="mb-4">
+                    <label class="mb-1 block text-gray-600" for="username">Tài khoản</label>
+                    <input id="username"
+                           type="text"
+                           @bind="userLoginDto.Username"
+                           class="w-full rounded-lg border px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                           placeholder="bl0001" />
+                </div>
+
+                <div class="mb-4">
+                    <label class="mb-1 block text-gray-600" for="password">Mật khẩu</label>
+                    <input id="password"
+                           type="password"
+                           @bind="userLoginDto.Password"
+                           class="w-full rounded-lg border px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                           placeholder="••••••••" />
+                </div>
+
+                <div class="mb-4 flex items-center justify-between">
+                    <label class="inline-flex items-center text-sm text-gray-600">
+                        <input type="checkbox" class="form-checkbox mr-2 text-blue-500">
+                        Ghi nhớ đăng nhập
+                    </label>
+                    <a class="text-sm text-blue-500 hover:underline">Quên mật khẩu?</a>
+                </div>
+
+                <button @onclick=" (() => Login_Handle(userLoginDto))"
+                        class="w-full rounded-lg bg-blue-500 px-4 py-2 font-semibold text-white transition duration-200 hover:bg-blue-600">
+                    Đăng nhập
+                </button>
+            </div>
+
+            <p class="mt-6 text-center text-sm text-gray-600">
+                Chưa có tài khoản?
+                <a class="text-blue-500 hover:underline">Đăng ký ngay</a>
+            </p>
+        </div>
+        @if (MSError != string.Empty)
+        {
+            <p class="py-4 pl-2 text-sm text-red-500">@MSError</p>
+        }
+    </div>
+</div>
+
+
+@code {
+    [Inject]
+    public IAuthenService authenService { get; set; } = default!;
+    [Inject]
+    public NavigationManager Navigation { get; set; } = default!;
+
+    public GGSUserLoginDto userLoginDto { get; set; } = new GGSUserLoginDto();
+    public string MSError { get; set; } = string.Empty;
+
+
+    public async Task Login_Handle(GGSUserLoginDto _userLoginDto)
+    {
+        try
+        {
+            if (_userLoginDto == null)
+            {
+                MSError = "Thông tin đăng nhập không được để trống.";
+            }
+
+            await authenService.Login(_userLoginDto);
+            MSError = string.Empty;
+
+            Navigation.NavigateTo("/dashboard", forceLoad: true);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            MSError = ex.Message;
+        }
+
+    }
+}

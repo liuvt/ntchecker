@@ -1,0 +1,16 @@
+﻿@page "/checkers/{userId}"
+@page "/checkers/{userId}/{date}"
+@layout MainLayoutEmpty
+
+<SeoHeaderComponent Title="Phiếu Checker v4.1 - Taxi Nam Thắng"
+                    Description="@($"Tài xế {userId} - {date}")"
+                    Image="imgs/customers/homepage.jpg" />
+
+<BillCheckComponent userId="@userId" date="@date" @rendermode="new InteractiveWebAssemblyRenderMode(prerender: true)" />
+
+@code {
+    [Parameter]
+    public string userId { get; set; } = string.Empty;
+    [Parameter]
+    public string? date { get; set; }
+}
