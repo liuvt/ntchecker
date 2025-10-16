@@ -28,7 +28,8 @@ public partial class taxiNTDBContext : IdentityDbContext<AppUser>
         if (!optionsBuilder.IsConfigured)
         {
             optionsBuilder.UseSqlServer(
-                configuration["ConnectionStrings:Hosting"] ??
+                //configuration["ConnectionStrings:Hosting"] ??
+                configuration["ConnectionStrings:Default"] ??
                     throw new InvalidOperationException("Can't find ConnectionStrings in appsettings.json!")
             );
         }

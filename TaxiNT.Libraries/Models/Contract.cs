@@ -24,7 +24,7 @@ public class ContractDetail
 
     public string numberCar { get; set; } = string.Empty;
     public string ctKey { get; set; } = string.Empty;
-    public decimal? ctAmout { get; set; }
+    public decimal? ctAmount { get; set; }
     public string ctDefaultDistance { get; set; } = string.Empty;
     public string ctOverDistance { get; set; } = string.Empty;
     public decimal? ctSurcharge { get; set; }

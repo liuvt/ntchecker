@@ -83,7 +83,7 @@
                                     <!-- Loop for contract rows here -->
                                 <td class="border-b border-gray-100 px-2 py-1 text-center text-gray-500">@(shiftWork.Contracts.IndexOf(item) + 1)</td>
                                 <td class="border-b border-gray-100 px-2 py-1 text-center text-gray-500">@item.ctKey</td>
-                                <td class="border-b border-gray-100 px-2 py-1 text-center text-gray-500">@item.ctAmout.ltvVNDCurrency()</td>
+                                <td class="border-b border-gray-100 px-2 py-1 text-center text-gray-500">@item.ctAmount.ltvVNDCurrency()</td>
                                 <td class="border-b border-gray-100 px-2 py-1 text-center text-gray-500">@item.ctDefaultDistance</td>
                                 <td class="border-b border-gray-100 px-2 py-1 text-center text-gray-500">@item.ctOverDistance</td>
                                 <td class="border-b border-gray-100 px-2 py-1 text-right text-gray-500">@item.ctSurcharge.ltvVNDCurrency()</td>
@@ -107,7 +107,7 @@
                             <h3 class="text-lg font-semibold text-blue-700">HỢP ĐỒNG</h3>
                             <p><strong>HĐ</strong>: @(index + 1)</p>
                             <p><strong>Di chuyển</strong>: @item.ctKey</p>
-                            <p><strong>Giá HĐ</strong>: @item.ctAmout.ltvVNDCurrency()</p>
+                            <p><strong>Giá HĐ</strong>: @item.ctAmount.ltvVNDCurrency()</p>
                             <p><strong>KM/Giờ quy định</strong>: @item.ctDefaultDistance</p>
                             @if (item.ctSurcharge > 0)
                             {

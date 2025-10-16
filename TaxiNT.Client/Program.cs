@@ -11,8 +11,6 @@ builder.Services.AddScoped<IAuthenService, AuthenService>();
 builder.Services.AddCascadingAuthenticationState();
 
 // UI: Register Client Services
-builder.Services.AddScoped<ICheckerService, CheckerService>();
-builder.Services.AddScoped<ICheckerDetailService, CheckerDetailService>();
 builder.Services.AddScoped<ISalaryService, SalaryService>();
 
 //For SQL Server

@@ -294,9 +294,6 @@
   .mx-auto {
     margin-inline: auto;
   }
-  .my-4 {
-    margin-block: calc(var(--spacing) * 4);
-  }
   .mt-1 {
     margin-top: calc(var(--spacing) * 1);
   }
@@ -508,9 +505,6 @@
   .animate-spin {
     animation: var(--animate-spin);
   }
-  .cursor-pointer {
-    cursor: pointer;
-  }
   .list-inside {
     list-style-position: inside;
   }
@@ -669,9 +663,6 @@
   .border-gray-200 {
     border-color: var(--color-gray-200);
   }
-  .border-gray-300 {
-    border-color: var(--color-gray-300);
-  }
   .border-green-200 {
     border-color: var(--color-green-200);
   }
@@ -700,12 +691,6 @@
     background-color: color-mix(in srgb, oklch(13% 0.028 261.692) 2%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       background-color: color-mix(in oklab, var(--color-gray-950) 2%, transparent);
-    }
-  }
-  .bg-gray-950\/5 {
-    background-color: color-mix(in srgb, oklch(13% 0.028 261.692) 5%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      background-color: color-mix(in oklab, var(--color-gray-950) 5%, transparent);
     }
   }
   .bg-green-50 {
@@ -816,9 +801,6 @@
   .py-16 {
     padding-block: calc(var(--spacing) * 16);
   }
-  .pt-0 {
-    padding-top: calc(var(--spacing) * 0);
-  }
   .pt-2 {
     padding-top: calc(var(--spacing) * 2);
   }
@@ -828,9 +810,6 @@
   .pb-1 {
     padding-bottom: calc(var(--spacing) * 1);
   }
-  .pb-3 {
-    padding-bottom: calc(var(--spacing) * 3);
-  }
   .pl-2 {
     padding-left: calc(var(--spacing) * 2);
   }
@@ -839,9 +818,6 @@
   }
   .pl-4 {
     padding-left: calc(var(--spacing) * 4);
-  }
-  .pl-8 {
-    padding-left: calc(var(--spacing) * 8);
   }
   .text-center {
     text-align: center;
@@ -924,9 +900,6 @@
   }
   .whitespace-nowrap {
     white-space: nowrap;
-  }
-  .text-blue-400 {
-    color: var(--color-blue-400);
   }
   .text-blue-500 {
     color: var(--color-blue-500);
@@ -1228,11 +1201,6 @@
       --tw-ring-color: var(--color-blue-400);
     }
   }
-  .focus\:ring-blue-500 {
-    &:focus {
-      --tw-ring-color: var(--color-blue-500);
-    }
-  }
   .focus\:outline-none {
     &:focus {
       --tw-outline-style: none;
@@ -1260,11 +1228,6 @@
   .sm\:hidden {
     @media (width >= 40rem) {
       display: none;
-    }
-  }
-  .sm\:table-cell {
-    @media (width >= 40rem) {
-      display: table-cell;
     }
   }
   .sm\:h-72 {
@@ -1313,16 +1276,6 @@
       padding-bottom: calc(var(--spacing) * 3);
     }
   }
-  .sm\:pl-8 {
-    @media (width >= 40rem) {
-      padding-left: calc(var(--spacing) * 8);
-    }
-  }
-  .sm\:text-center {
-    @media (width >= 40rem) {
-      text-align: center;
-    }
-  }
   .sm\:text-2xl {
     @media (width >= 40rem) {
       font-size: var(--text-2xl);
@@ -1335,12 +1288,6 @@
       line-height: var(--tw-leading, var(--text-4xl--line-height));
     }
   }
-  .sm\:text-xl {
-    @media (width >= 40rem) {
-      font-size: var(--text-xl);
-      line-height: var(--tw-leading, var(--text-xl--line-height));
-    }
-  }
   .md\:col-span-2 {
     @media (width >= 48rem) {
       grid-column: span 2 / span 2;
@@ -1349,31 +1296,6 @@
   .md\:col-span-3 {
     @media (width >= 48rem) {
       grid-column: span 3 / span 3;
-    }
-  }
-  .md\:container {
-    @media (width >= 48rem) {
-      width: 100%;
-      @media (width >= 40rem) {
-        max-width: 40rem;
-      }
-      @media (width >= 48rem) {
-        max-width: 48rem;
-      }
-      @media (width >= 64rem) {
-        max-width: 64rem;
-      }
-      @media (width >= 80rem) {
-        max-width: 80rem;
-      }
-      @media (width >= 96rem) {
-        max-width: 96rem;
-      }
-    }
-  }
-  .md\:mx-auto {
-    @media (width >= 48rem) {
-      margin-inline: auto;
     }
   }
   .md\:flex {
@@ -1472,22 +1394,9 @@
       }
     }
   }
-  .dark\:bg-gray-800 {
-    @media (prefers-color-scheme: dark) {
-      background-color: var(--color-gray-800);
-    }
-  }
   .dark\:bg-gray-950 {
     @media (prefers-color-scheme: dark) {
       background-color: var(--color-gray-950);
-    }
-  }
-  .dark\:bg-gray-950\/50 {
-    @media (prefers-color-scheme: dark) {
-      background-color: color-mix(in srgb, oklch(13% 0.028 261.692) 50%, transparent);
-      @supports (color: color-mix(in lab, red, red)) {
-        background-color: color-mix(in oklab, var(--color-gray-950) 50%, transparent);
-      }
     }
   }
   .dark\:bg-white\/5 {

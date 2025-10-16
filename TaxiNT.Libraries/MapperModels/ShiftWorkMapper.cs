@@ -59,12 +59,12 @@ namespace TaxiNT.Libraries.MapperModels
 
                 Contracts = entities
                     .SelectMany(x => x.Contracts ?? new List<ContractDetail>())
-                    .Select(c => new ContractSQLDto
+                    .Select(c => new ContractDto
                     {
                         ctId = c.ctId,
                         numberCar = c.numberCar,
                         ctKey = c.ctKey,
-                        ctAmout = c.ctAmout,
+                        ctAmount = c.ctAmount,
                         ctDefaultDistance = c.ctDefaultDistance,
                         ctOverDistance = c.ctOverDistance,
                         ctSurcharge = c.ctSurcharge,

@@ -44,7 +44,8 @@ builder.Services.AddIdentity<AppUser, IdentityRole>()
 //Add connection string
 builder.Services.AddDbContext<taxiNTDBContext>(opt =>
 {
-    opt.UseSqlServer(builder.Configuration["ConnectionStrings:Hosting"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"));
+    //opt.UseSqlServer(builder.Configuration["ConnectionStrings:Hosting"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"));
+    opt.UseSqlServer(builder.Configuration["ConnectionStrings:Default"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"));
 });
 
 // UI: Get httpClient API default
@@ -115,9 +116,6 @@ builder.Services.AddScoped<IShiftWorkService, ShiftWorkService>();
 
 //Google Sheets API:
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IGGSBankService, GGSBankService>(); 
-builder.Services.AddScoped<IOrderService, OrderService>();
-builder.Services.AddScoped<IOrderByHistoryService, OrderByHistoryService>();
 builder.Services.AddScoped<ISalaryAPIService, SalaryAPIService>();
 
 //Zalo to save GGS
@@ -134,8 +132,6 @@ builder.Services.AddScoped<AuthenticationStateProvider, AuthenService>();
 builder.Services.AddScoped<IAuthenService, AuthenService>();
 builder.Services.AddCascadingAuthenticationState();
 // UI: Register Client Services
-builder.Services.AddScoped<ICheckerService, CheckerService>();
-builder.Services.AddScoped<ICheckerDetailService, CheckerDetailService>();
 builder.Services.AddScoped<ISalaryService, SalaryService>();
 
 //For SQL Server

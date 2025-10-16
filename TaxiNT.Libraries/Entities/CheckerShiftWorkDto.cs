@@ -44,7 +44,7 @@ namespace TaxiNT.Libraries.Entities
 
         // Dữ liệu chi tiết
         public List<TripDto> Trips { get; set; } = new();
-        public List<ContractSQLDto> Contracts { get; set; } = new();
+        public List<ContractDto> Contracts { get; set; } = new();
 
         // Tổng hợp
         public int TotalTrips => Trips.Count;

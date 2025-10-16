@@ -19,7 +19,6 @@ public class TripDetail
 {
     [Key]
     public string Id { get; set; } = Guid.NewGuid().ToString();
-
     public string NumberCar { get; set; } = string.Empty;
     public DateTime? tpTimeStart { get; set; }
     public DateTime? tpTimeEnd { get; set; }
