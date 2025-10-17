@@ -44,7 +44,8 @@ builder.Services.AddIdentity<AppUser, IdentityRole>()
 //Add connection string
 builder.Services.AddDbContext<taxiNTDBContext>(opt =>
 {
-    opt.UseSqlServer(builder.Configuration["ConnectionStrings:Hosting"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"));
+    opt.UseSqlServer(builder.Configuration["ConnectionStrings:Vps"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"));
+    //opt.UseSqlServer(builder.Configuration["ConnectionStrings:Hosting"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"));
     //opt.UseSqlServer(builder.Configuration["ConnectionStrings:Default"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"));
 });
 
