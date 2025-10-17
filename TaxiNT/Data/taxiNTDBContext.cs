@@ -17,9 +17,9 @@ public partial class taxiNTDBContext : IdentityDbContext<AppUser>
     }
 
     //Call Model to create table in database
-    public virtual DbSet<ModelBank> Banks { get; set; } = null!;
-    public virtual DbSet<TripDetail> Trips { get; set; } = null!;
-    public virtual DbSet<ContractDetail> Contracts { get; set; } = null!;
+    public virtual DbSet<Bank> Banks { get; set; } = null!;
+    public virtual DbSet<Trip> Trips { get; set; } = null!;
+    public virtual DbSet<Contract> Contracts { get; set; } = null!;
     public virtual DbSet<ShiftWork> ShiftWorks { get; set; } = null!;
 
     //Config to connection sql server
@@ -28,8 +28,8 @@ public partial class taxiNTDBContext : IdentityDbContext<AppUser>
         if (!optionsBuilder.IsConfigured)
         {
             optionsBuilder.UseSqlServer(
-                //configuration["ConnectionStrings:Hosting"] ??
-                configuration["ConnectionStrings:Default"] ??
+                configuration["ConnectionStrings:Hosting"] ??
+                //configuration["ConnectionStrings:Default"] ??
                     throw new InvalidOperationException("Can't find ConnectionStrings in appsettings.json!")
             );
         }

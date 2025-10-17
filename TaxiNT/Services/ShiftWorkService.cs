@@ -48,19 +48,19 @@ public class ShiftWorkService : IShiftWorkService
                 {
                     g.ShiftWork.numberCar,
                     g.ShiftWork.userId,
-                    g.ShiftWork.Area,
+                    g.ShiftWork.area,
                     WorkDate = g.ShiftWork.createdAt?.Date
                 })
                 .ToList();
 
             // Xóa dữ liệu củ không có trong batch hiện tại theo key:  Area - Date
             // var allUserIds = incomingKeys.Select(k => k.userId).Distinct().ToList(); 
-            var allAreas = incomingKeys.Select(k => k.Area).Distinct().ToList();
+            var allAreas = incomingKeys.Select(k => k.area).Distinct().ToList();
             var allDates = incomingKeys.Select(k => k.WorkDate).Distinct().ToList();
 
             // === Lấy Toàn bộ dữ liệu shiftwork SQL theo key: Area - Date ===
             var existingShiftworks = await _context.ShiftWorks
-                .Where(sw => allAreas.Contains(sw.Area)
+                .Where(sw => allAreas.Contains(sw.area)
                           && sw.createdAt.HasValue //Kiểm tra trước xem có null không
                           && allDates.Contains(sw.createdAt.Value.Date))
                 .Include(sw => sw.Trips)
@@ -72,7 +72,7 @@ public class ShiftWorkService : IShiftWorkService
                 .Where(old => !incomingKeys.Any(k =>
                     k.numberCar == old.numberCar && // Tìm trong batch mới có số xe trùng không
                     k.userId == old.userId &&
-                    k.Area == old.Area &&
+                    k.area == old.area &&
                     k.WorkDate == old.createdAt.Value.Date))
                 .ToList();
 
@@ -89,7 +89,7 @@ public class ShiftWorkService : IShiftWorkService
                         sw.numberCar,
                         sw.userId,
                         sw.createdAt?.ToString("yyyy-MM-dd"),
-                        sw.Area,
+                        sw.area,
                         sw.Id
                     );
                 }
@@ -113,14 +113,14 @@ public class ShiftWorkService : IShiftWorkService
                     throw new Exception("ShiftWork.createdAt is required to determine WorkDate.");
 
                 var workDate = sw.createdAt.Value.Date;
-                var area = sw.Area;
+                var area = sw.area;
                 var userId = sw.userId;
                 var numberCar = sw.numberCar;
 
                 // Tìm ShiftWork hiện có theo Area + NumberCar + User + Ngày 
                 var existingShift = await _context.ShiftWorks
                     .FirstOrDefaultAsync(x =>
-                        x.Area == area &&
+                        x.area == area &&
                         x.numberCar == numberCar &&
                         x.userId == userId &&
                         x.createdAt.HasValue && //Kiểm tra trước khi null
@@ -148,9 +148,9 @@ public class ShiftWorkService : IShiftWorkService
                     existingShift.bank_Id = sw.bank_Id;
                     existingShift.createdAt = sw.createdAt;
                     existingShift.typeCar = sw.typeCar;
-                    existingShift.Area = sw.Area;
-                    existingShift.Rank = sw.Rank;
-                    existingShift.SauMucAnChia = sw.SauMucAnChia;
+                    existingShift.area = sw.area;
+                    existingShift.ranking = sw.ranking;
+                    existingShift.basicSalary = sw.basicSalary;
 
                     // Log cập nhật ShiftWork
                     _logger.LogInformation(
@@ -158,7 +158,7 @@ public class ShiftWorkService : IShiftWorkService
                         existingShift.userId,
                         existingShift.numberCar,
                         existingShift.createdAt?.ToString("yyyy-MM-dd"),
-                        existingShift.Area,
+                        existingShift.area,
                         existingShift.Id
                     );
 
@@ -175,7 +175,7 @@ public class ShiftWorkService : IShiftWorkService
                         "🆕 Thêm mới ShiftWork: User = {UserId}, Ngày = {WorkDate}, Khu vực = {Area}",
                         sw.userId,
                         sw.createdAt?.ToString("yyyy-MM-dd"),
-                        sw.Area
+                        sw.area
                     );
 
                     //Ghi lại liệu để thêm mới

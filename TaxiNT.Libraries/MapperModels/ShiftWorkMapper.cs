@@ -37,12 +37,12 @@ namespace TaxiNT.Libraries.MapperModels
                 bank_Id = first.bank_Id,
                 createdAt = first.createdAt,
                 typeCar = first.typeCar,
-                Area = first.Area,
-                Rank = first.Rank,
-                SauMucAnChia = entities.Sum(x => x.SauMucAnChia), // Cộng dồn nhưng sai vì lương ngày phải tính lại lương
+                area = first.area,
+                ranking = first.ranking,
+                basicSalary = entities.Sum(x => x.basicSalary), // Cộng dồn nhưng sai vì lương ngày phải tính lại lương
 
                 Trips = entities
-                    .SelectMany(x => x.Trips ?? new List<TripDetail>())
+                    .SelectMany(x => x.Trips ?? new List<Trip>())
                     .Select(t => new TripDto
                     {
                         Id = t.Id,
@@ -58,7 +58,7 @@ namespace TaxiNT.Libraries.MapperModels
                     }).OrderByDescending(e => e.tpTimeStart).ToList(),
 
                 Contracts = entities
-                    .SelectMany(x => x.Contracts ?? new List<ContractDetail>())
+                    .SelectMany(x => x.Contracts ?? new List<Contract>())
                     .Select(c => new ContractDto
                     {
                         ctId = c.ctId,

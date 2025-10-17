@@ -3,19 +3,19 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TaxiNT.Libraries.Models;
 
-public class Trip
+public class TripGroup
 {
     [Key]
     public string Id { get; set; } = Guid.NewGuid().ToString();
     [NotMapped]// Không lưu vào SQL
-    public List<TripDetail> TripDetails { get; set; } = new();
+    public List<Trip> TripDetails { get; set; } = new();
 
     [NotMapped]// Không lưu vào SQL
     public int RecordTotal => TripDetails.Count; 
 }
 
 [Table("Trips")]
-public class TripDetail
+public class Trip
 {
     [Key]
     public string Id { get; set; } = Guid.NewGuid().ToString();
@@ -23,6 +23,7 @@ public class TripDetail
     public DateTime? tpTimeStart { get; set; }
     public DateTime? tpTimeEnd { get; set; }
     public double? tpDistance { get; set; }
+    [Column(TypeName = "decimal(18,2)")]
     public decimal? tpPrice { get; set; }
     public string tpPickUp { get; set; } = string.Empty;
     public string tpDropOut { get; set; } = string.Empty;

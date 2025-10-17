@@ -10,8 +10,8 @@ namespace TaxiNT.Libraries.Entities
     public class ShiftWorkGroupDto
     {
         public ShiftWork ShiftWork { get; set; } = new();
-        public List<TripDetail> Trips { get; set; } = new();
-        public List<ContractDetail> Contracts { get; set; } = new();
+        public List<Trip> Trips { get; set; } = new();
+        public List<Contract> Contracts { get; set; } = new();
     }
 
     public class ShiftWorkDto
@@ -38,9 +38,9 @@ namespace TaxiNT.Libraries.Entities
         public DateTime? createdAt { get; set; }
         public string typeCar { get; set; } = string.Empty;
 
-        public string Area { get; set; } = string.Empty;
-        public int Rank { get; set; }
-        public decimal SauMucAnChia { get; set; } //Không dùng
+        public string area { get; set; } = string.Empty;
+        public int ranking { get; set; }
+        public decimal basicSalary { get; set; } //Không dùng
 
         // Dữ liệu chi tiết
         public List<TripDto> Trips { get; set; } = new();

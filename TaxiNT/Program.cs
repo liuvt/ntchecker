@@ -44,16 +44,16 @@ builder.Services.AddIdentity<AppUser, IdentityRole>()
 //Add connection string
 builder.Services.AddDbContext<taxiNTDBContext>(opt =>
 {
-    //opt.UseSqlServer(builder.Configuration["ConnectionStrings:Hosting"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"));
-    opt.UseSqlServer(builder.Configuration["ConnectionStrings:Default"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"));
+    opt.UseSqlServer(builder.Configuration["ConnectionStrings:Hosting"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"));
+    //opt.UseSqlServer(builder.Configuration["ConnectionStrings:Default"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"));
 });
 
 // UI: Get httpClient API default
 builder.Services.AddScoped(
     defaultClient => new HttpClient
     {
-        BaseAddress = new Uri(builder.Configuration["API:Default"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"))
-        //BaseAddress = new Uri(builder.Configuration["API:Hosting"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"))
+        //BaseAddress = new Uri(builder.Configuration["API:Default"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"))
+        BaseAddress = new Uri(builder.Configuration["API:Hosting"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"))
     });
 
 // API: Add Jwt, Gooogle Authentication
@@ -117,12 +117,10 @@ builder.Services.AddScoped<IShiftWorkService, ShiftWorkService>();
 //Google Sheets API:
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ISalaryAPIService, SalaryAPIService>();
-
-//Zalo to save GGS
-builder.Services.AddScoped<IZaloService, ZaloService>();
-builder.Services.AddScoped<IZaloCustomerService, ZaloCustomerService>();
-builder.Services.AddScoped<ISwitchboardService, SwitchboardService>();
 #endregion
+
+//Zalo Customer Service
+builder.Services.AddScoped<IZaloCustomerService, ZaloCustomerService>();
 
 #region Font-end Register services
 // Blazor (client-side or server-side UI): [Authorize], [AuthorizeView]

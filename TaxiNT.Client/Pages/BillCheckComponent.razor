@@ -11,15 +11,6 @@
             PHIẾU CHECKER v4.1
         </p>
         <p class="text-sm font-bold text-red-400 italic underline">@($"{shiftWork?.createdAt?.ToString("dd/MM/yyyy") ?? ""}")</p>
-        <!-- Ads -->
-        <amp-ad width="100vw" height="320"
-                type="adsense"
-                data-ad-client="ca-pub-4772558027240339"
-                data-ad-slot="4775797103"
-                data-auto-format="rspv"
-                data-full-width="">
-            <div overflow=""></div>
-        </amp-ad>
     </div>
     @if (StateMessage != string.Empty)
     {
@@ -27,6 +18,10 @@
     }
     else if (isLoaded)
     {
+        <amp-auto-ads type="adsense"
+                      data-ad-client="ca-pub-4772558027240339">
+        </amp-auto-ads>
+
         <div>
             <div class="round-lg mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
@@ -54,6 +49,16 @@
 
                 </div>
             </div>
+
+            <!-- Ads -->
+            <amp-ad width="100vw" height="320"
+                    type="adsense"
+                    data-ad-client="ca-pub-4772558027240339"
+                    data-ad-slot="4775797103"
+                    data-auto-format="rspv"
+                    data-full-width="">
+                <div overflow=""></div>
+            </amp-ad>
 
             @if (shiftWork.TotalContracts > 0)
             {
@@ -310,13 +315,13 @@
                 //Gọi API nếu chưa có data
                 Logger.LogInformation("Không có dữ liệu AppState, đang gọi API từ server");
                 shiftWork = await billCheckService.Get(userId, date);
-                ranking = (shiftWork.Rank != 0) ? $"Xếp hạng: {shiftWork.Rank}" : string.Empty;
+                ranking = (shiftWork.ranking != 0) ? $"Xếp hạng: {shiftWork.ranking}" : string.Empty;
             }
             else
             {
                 Logger.LogInformation("Tìm thấy dữ liệu AppState, không cần gọi API");
                 shiftWork = _shiftWork!;
-                ranking = (shiftWork.Rank != 0) ? $"Xếp hạng: {shiftWork.Rank}" : string.Empty;
+                ranking = (shiftWork.ranking != 0) ? $"Xếp hạng: {shiftWork.ranking}" : string.Empty;
             }
 
             await HandleDisplayData(shiftWork);

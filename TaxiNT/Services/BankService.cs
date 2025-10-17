@@ -26,12 +26,13 @@ public class BankService : IBankService
         this.context = _context;
     }
     #endregion
+
     #region CURD
     //Check Exists
     async Task<bool> isExists(string bankId) => await context.Banks.AnyAsync(b => b.bank_Id == bankId);
 
     //Get bank by Id
-    public async Task<ModelBank> Get(string bankId)
+    public async Task<Bank> Get(string bankId)
     {
         var result = await context.Banks.SingleOrDefaultAsync(c => c.bank_Id == bankId);
         if (result == null)
@@ -41,7 +42,7 @@ public class BankService : IBankService
     }
 
     //Get all
-    public async Task<List<ModelBank>> Gets()
+    public async Task<List<Bank>> Gets()
     {
         try
         {
@@ -57,7 +58,7 @@ public class BankService : IBankService
     }
 
     //Post
-    public async Task<ModelBank> Post(BankPostDto model)
+    public async Task<Bank> Post(BankPostDto model)
     {
         if (model.bank_Id != string.Empty && (await isExists(model.bank_Id)))
         {
@@ -65,7 +66,7 @@ public class BankService : IBankService
         }
 
         //Nhập thông tin category
-        var result = new ModelBank
+        var result = new Bank
         {
             bank_Id = !string.IsNullOrEmpty(model.bank_Id) ? model.bank_Id : Guid.NewGuid().ToString(),
             bank_NumberId = model.bank_NumberId,
@@ -85,7 +86,7 @@ public class BankService : IBankService
     }
 
     //Patch
-    public async Task<ModelBank> Patch(string bankId, BankPatchDto model)
+    public async Task<Bank> Patch(string bankId, BankPatchDto model)
     {
         var result = await context.Banks.FindAsync(bankId);
         if (result == null)
@@ -204,7 +205,7 @@ public class BankService : IBankService
                 else
                 {
                     // Thêm mới nếu chưa tồn tại hoặc bank_Id trống
-                    var newBank = new ModelBank
+                    var newBank = new Bank
                     {
                         bank_Id = string.IsNullOrWhiteSpace(input.bank_Id) ? Guid.NewGuid().ToString() : input.bank_Id,
                         bank_NumberId = input.bank_NumberId ?? string.Empty,

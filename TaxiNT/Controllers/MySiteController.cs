@@ -66,7 +66,7 @@ public class SitemapController : ControllerBase
         var staticUrls = new[]
         {
             new { loc = baseUrl, priority = "1.0", changefreq = "daily" },
-            new { loc = $"{baseUrl}/blogs", priority = "0.6", changefreq = "yearly" },
+            //new { loc = $"{baseUrl}/blogs", priority = "0.6", changefreq = "yearly" },
             //new { loc = "https://taxinamthang.com/gioi-thieu", priority = "0.8", changefreq = "monthly" },
         };
 
@@ -137,7 +137,7 @@ public class VideoSitemapController : ControllerBase
                 var fileName = Path.GetFileNameWithoutExtension(videoFile);
                 var metaPath = Path.Combine(videoDir, $"{fileName}.json");
 
-                // --- default metadata
+                // --- default metadata lây mặt định
                 var meta = new VideoMetaSeo
                 {
                     Title = fileName.Replace('-', ' '),
@@ -151,7 +151,7 @@ public class VideoSitemapController : ControllerBase
                     Publication_Date = fileInfo.LastWriteTimeUtc
                 };
 
-                // --- đọc file JSON (ưu tiên .json, .json.br, .json.gz)
+                // --- đọc file JSON (ưu tiên .json, .json.br, .json.gz) để ghi đè metadata
                 string? json = null;
                 try
                 {
@@ -214,14 +214,14 @@ public class VideoSitemapController : ControllerBase
                     : meta.Publication_Date;
 
                 sb.AppendLine("  <url>");
-                sb.AppendLine($"    <loc>{Escape(meta.locationVideoShow)}</loc>");
+                sb.AppendLine($"    <loc>{meta.locationVideoShow}</loc>");
                 sb.AppendLine($"    <lastmod>{lastMod}</lastmod>");
                 sb.AppendLine("    <video:video>");
-                sb.AppendLine($"      <video:thumbnail_loc>{Escape(thumbUrl)}</video:thumbnail_loc>");
                 sb.AppendLine($"      <video:title>{Escape(meta.Title)}</video:title>");
                 sb.AppendLine($"      <video:description>{Escape(meta.Description)}</video:description>");
-                sb.AppendLine($"      <video:content_loc>{Escape(videoUrl)}</video:content_loc>");
                 sb.AppendLine($"      <video:player_loc>{Escape($"{baseUrl}/videos/{fileName}")}</video:player_loc>");
+                sb.AppendLine($"      <video:content_loc>{Escape(videoUrl)}</video:content_loc>");
+                sb.AppendLine($"      <video:thumbnail_loc>{Escape(thumbUrl)}</video:thumbnail_loc>");
                 sb.AppendLine($"      <video:duration>{meta.Duration}</video:duration>");
                 sb.AppendLine($"      <video:publication_date>{pubDate:yyyy-MM-ddTHH:mm:ssZ}</video:publication_date>");
                 sb.AppendLine("      <video:family_friendly>yes</video:family_friendly>");

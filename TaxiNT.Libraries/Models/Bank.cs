@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace TaxiNT.Libraries.Models;
-public class ModelBank
+public class Bank
 {
     [Key]
     public string bank_Id { get; set; } = string.Empty;
@@ -18,8 +18,8 @@ public class ModelBank
 
 public class UpsertBanksResult
 {
-    public List<ModelBank> InsertResults { get; set; } = new();
-    public List<ModelBank> UpdateResults { get; set; } = new();
+    public List<Bank> InsertResults { get; set; } = new();
+    public List<Bank> UpdateResults { get; set; } = new();
     public List<string> Errors { get; set; } = new();
     public int InsertedCounts => InsertResults.Count;
     public int UpdatedCounts => UpdateResults.Count;
