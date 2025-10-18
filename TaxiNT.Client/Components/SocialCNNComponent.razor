@@ -1,0 +1,33 @@
+﻿<div class="share-bar flex items-center gap-2">
+    <!-- Facebook -->
+    <button onclick="window.open('https://www.facebook.com/dialog/share?app_id=80401312489&href='+encodeURIComponent(window.location.href),'_blank','width=600,height=400')"
+            aria-label="Share with Facebook" title="Share with Facebook">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8.041 1.333C11.746 1.333 14.749 4.336 14.749 8.04C14.749 11.388 12.296 14.163 9.089 14.666V9.979H10.652L10.95 8.04H9.089V6.782C9.089 6.252 9.349 5.735 10.183 5.735H11.028V4.084C11.028 4.084 10.261 3.953 9.527 3.953C7.995 3.953 6.993 4.882 6.993 6.563V8.04H5.29V9.979H6.993V14.666C3.787 14.163 1.334 11.388 1.334 8.04C1.334 4.336 4.337 1.333 8.041 1.333Z" />
+        </svg>
+    </button>
+
+    <!-- X (Twitter) -->
+    <button onclick="window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(document.title)+'&url='+encodeURIComponent(window.location.href),'_blank','width=600,height=400')"
+            aria-label="Share with X" title="Share with X">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M5.994 8.115L0 0.667H4.748L8.448 5.27L12.4 0.688H15.015L9.712 6.843L16 14.667H11.267L7.26 9.689L2.983 14.653H0.354L5.994 8.115Z" />
+        </svg>
+    </button>
+
+    <!-- Email -->
+    <a href="mailto:?subject=Check%20this%20article&body=" +encodeURIComponent(document.title+' - '+window.location.href)
+       aria-label="Share via Email" title="Share via Email">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M2 6C2 4.895 2.895 4 4 4H20C21.105 4 22 4.895 22 6V18C22 19.105 21.105 20 20 20H4C2.895 20 2 19.105 2 18V6ZM4 6H20V9.116L12 11.94L4 9.116V6Z" />
+        </svg>
+    </a>
+
+    <!-- Copy -->
+    <button onclick="navigator.clipboard.writeText(window.location.href).then(()=>alert('Link Copied!'))"
+            aria-label="Copy link" title="Copy link">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M5.644 10.357a.5.5 0 010-.943l4.243-4.243a.5.5 0 01.707.707L6.35 10.121a.5.5 0 01-.707 0z" />
+        </svg>
+    </button>
+</div>

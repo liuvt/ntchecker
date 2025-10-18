@@ -21,6 +21,8 @@ public partial class taxiNTDBContext : IdentityDbContext<AppUser>
     public virtual DbSet<Trip> Trips { get; set; } = null!;
     public virtual DbSet<Contract> Contracts { get; set; } = null!;
     public virtual DbSet<ShiftWork> ShiftWorks { get; set; } = null!;
+    public virtual DbSet<Blog> Blogs { get; set; } = null!;
+
 
     //Config to connection sql server
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -8,7 +8,7 @@ using TaxiNT.Services.Interfaces;
 
 namespace TaxiNT.Services;
 
-public class SalaryAPIService : ISalaryAPIService
+public class SalaryServer : ISalaryServer
 {
     #region Constructor 
     //For Connection to Spread
@@ -22,7 +22,7 @@ public class SalaryAPIService : ISalaryAPIService
     private readonly string sheetSALARIES = "SALARIES";
     private readonly string sheetSALARYDETAILS = "SALARYDETAILS";
 
-    public SalaryAPIService()
+    public SalaryServer()
     {
         //File xác thực google tài khoản
         GoogleCredential credential;

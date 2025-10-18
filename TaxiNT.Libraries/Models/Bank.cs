@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace TaxiNT.Libraries.Models;
+
 public class Bank
 {
     [Key]

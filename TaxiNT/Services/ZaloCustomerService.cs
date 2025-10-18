@@ -26,7 +26,6 @@ namespace TaxiNT.Services
         {
             try
             {
-
                 ZPayloads payload = new ZPayloads
                 {
                     customer = new ZCustomer

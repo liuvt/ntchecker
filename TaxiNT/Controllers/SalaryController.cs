@@ -8,9 +8,9 @@ namespace TaxiNT.Controllers;
 public class SalaryController : ControllerBase
 {
     //Get API Server
-    private readonly ISalaryAPIService context;
+    private readonly ISalaryServer context;
     private readonly ILogger<SalaryController> logger;
-    public SalaryController(ISalaryAPIService _context, ILogger<SalaryController> _logger)
+    public SalaryController(ISalaryServer _context, ILogger<SalaryController> _logger)
     {
         this.context = _context;
         this.logger = _logger;

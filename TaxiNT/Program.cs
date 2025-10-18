@@ -114,13 +114,14 @@ builder.Services.AddAuthorization();
 //For SQL Server
 builder.Services.AddScoped<IBankService, BankService>();
 builder.Services.AddScoped<IShiftWorkService, ShiftWorkService>();
+builder.Services.AddScoped<IBlogServer, BlogServer>();
 
 //Google Sheets API:
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ISalaryAPIService, SalaryAPIService>();
+builder.Services.AddScoped<ISalaryServer, SalaryServer>();
 #endregion
 
-//Zalo Customer Service
+//Zalo Customer Service: dùng để nhận thông tin khách đặt xe
 builder.Services.AddScoped<IZaloCustomerService, ZaloCustomerService>();
 
 #region Font-end Register services
@@ -132,6 +133,7 @@ builder.Services.AddScoped<IAuthenService, AuthenService>();
 builder.Services.AddCascadingAuthenticationState();
 // UI: Register Client Services
 builder.Services.AddScoped<ISalaryService, SalaryService>();
+builder.Services.AddScoped<IBlogService, BlogService>();
 
 //For SQL Server
 builder.Services.AddScoped<IBillCheckService, BillCheckService>();

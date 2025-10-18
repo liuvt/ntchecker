@@ -1,0 +1,168 @@
+﻿@page "/blogs/{Slug}"
+@layout MainLayoutClient
+
+<SeoHeaderComponent Title="Tin tức - Taxi Nam Thắng"
+                    Description="Cập nhật tin tức, khuyến mãi và hoạt động mới nhất của Taxi Nam Thắng tại Kiên Giang, Rạch Giá, Hà Tiên, Phú Quốc, Vĩnh Long, Cần Thơ, Bạc Liêu, Cà Mau, An Giang và miền Tây."
+                    Image="imgs/customers/homepage.jpg" Unrobots="false" />
+<div class="mx-auto max-w-5xl px-4 py-10">
+
+    @if (blog == null)
+    {
+        <p class="text-center text-gray-500">Đang tải bài viết...</p>
+    }
+    else
+    {
+       
+        <!-- Breadcrumb -->
+        <nav class="mb-4 text-xs tracking-wide text-gray-500 uppercase">
+            <a href="/" class="text-gray-700 hover:underline">Trang chủ</a> ›
+            <a href="/blogs" class="text-gray-700 hover:underline">Blogs</a> ›
+            <span>@blog.Title</span>
+        </nav>
+
+        <!-- 📰 Tiêu đề & Metadata -->
+        <article>
+            <h1 class="mb-4 border-l-8 border-red-600 pl-3 text-4xl leading-tight font-extrabold text-gray-900 sm:text-5xl">
+                @blog.Title
+            </h1>
+
+            <!-- Meta -->
+            <div class="mb-8 flex flex-wrap items-center gap-6 border-b pb-4 text-sm text-gray-600">
+                <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M8 7V3m8 4V3m-9 8h10m-7 4h4m-9 4h14M5 21h14a2 2 0 002-2V7H3v12a2 2 0 002 2z" />
+                    </svg>
+                    <span>@blog.CreatedAt.ToString("dd/MM/yyyy")</span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M15 10l4.553 2.276A2 2 0 0121 14.105V17a2 2 0 01-2 2H5a2 2 0 01-2-2v-2.895a2 2 0 011.447-1.829L9 10m6 0V7a3 3 0 00-6 0v3m6 0H9" />
+                    </svg>
+                    <span>@blog.ViewCount lượt xem</span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M5.121 17.804A1 1 0 016 17h12a1 1 0 01.879.516l2 3.5A1 1 0 0120 23H4a1 1 0 01-.879-1.484l2-3.5zM6 17V9a6 6 0 1112 0v8" />
+                    </svg>
+                    <span>@blog.Author</span>
+                </div>
+            </div>
+        </article>
+
+
+        <!-- Hero image -->
+        <div class="mb-10 overflow-hidden rounded-xl shadow-sm">
+            <img src="@blog.CoverImageUrl"
+                 alt="@blog.Title"
+                 class="max-h-[500px] w-full object-cover" />
+        </div>
+
+        <!-- Content -->
+        <article class="prose prose-lg max-w-none leading-relaxed text-gray-800">
+            @((MarkupString)blog.Content)
+        </article>
+
+        <!-- Share section -->
+        <div class="mt-10 flex items-center gap-4 border-t pt-6">
+            <span class="text-sm font-medium text-gray-600">Chia sẻ:</span>
+            <button class="rounded-full p-2 transition hover:bg-gray-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="currentColor"
+                     viewBox="0 0 24 24">
+                    <path d="M22 12a10 10 0..." />
+                </svg>
+            </button>
+            <button class="rounded-full p-2 transition hover:bg-gray-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-sky-500" fill="currentColor"
+                     viewBox="0 0 24 24">
+                    <path d="M24 4.56c-.9.4..." />
+                </svg>
+            </button>
+            <button class="rounded-full p-2 transition hover:bg-gray-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700" fill="currentColor"
+                     viewBox="0 0 24 24">
+                    <path d="M8 19h8V5H8z" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Related -->
+        <section class="mt-12 grid gap-8 md:grid-cols-3">
+            <!-- UP NEXT -->
+            <div class="md:col-span-2">
+                <h2 class="mb-4 border-b pb-2 text-2xl font-bold">Tiếp theo</h2>
+                <div class="grid gap-6 sm:grid-cols-2">
+                    @foreach (var post in RelatedPosts)
+                    {
+                        <a href="/blogs/@post.Slug"
+                           class="group block overflow-hidden rounded-xl shadow transition duration-200 hover:shadow-lg">
+                            <img src="@post.CoverImageUrl" alt="@post.Title"
+                                 class="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                            <div class="p-4">
+                                <h3 class="line-clamp-2 text-lg font-semibold text-gray-800 group-hover:text-red-600">
+                                    @post.Title
+                                </h3>
+                                <p class="mt-1 text-sm text-gray-500">@post.CreatedAt.ToString("dd/MM/yyyy")</p>
+                            </div>
+                        </a>
+                    }
+                </div>
+            </div>
+
+            <!-- MOST POPULAR -->
+            <div>
+                <h2 class="mb-4 border-b pb-2 text-2xl font-bold">Phổ biến</h2>
+                <ul class="space-y-4">
+                    @foreach (var post in PopularPosts)
+                    {
+                        <li>
+                            <a href="/blogs/@post.Slug"
+                               class="flex items-start space-x-3 transition hover:text-red-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="mt-1 h-5 w-5 text-red-500"
+                                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M9 5l7 7-7 7" />
+                                </svg>
+                                <div>
+                                    <h3 class="line-clamp-2 text-base font-medium">@post.Title</h3>
+                                    <p class="text-xs text-gray-400">@post.CreatedAt.ToString("dd/MM/yyyy")</p>
+                                </div>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </section>
+    }
+</div>
+
+@code {
+    [Parameter] public string Slug { get; set; } = string.Empty;
+    [Inject] IBlogService BlogService { get; set; } = default!;
+    private Blog? blog;
+    private List<Blog> RelatedPosts = new()
+    {
+        new() { Title = "Taxi Nam Thắng mở rộng tuyến Cần Thơ", Slug = "taxi-can-tho", CoverImageUrl = "/images/blog1.jpg", CreatedAt = DateTime.UtcNow.AddDays(-1) },
+        new() { Title = "Bí quyết tiết kiệm nhiên liệu khi lái xe", Slug = "tiet-kiem-xang", CoverImageUrl = "/images/blog2.jpg", CreatedAt = DateTime.UtcNow.AddDays(-2) },
+        new() { Title = "Ứng dụng đặt xe nhanh được yêu thích", Slug = "ung-dung-xe", CoverImageUrl = "/images/blog3.jpg", CreatedAt = DateTime.UtcNow.AddDays(-3) },
+    };
+
+    private List<Blog> PopularPosts = new()
+    {
+        new() { Title = "Taxi Nam Thắng đạt 10.000 chuyến trong tháng 9", Slug = "thang-9-ky-luc", CreatedAt = DateTime.UtcNow.AddDays(-5) },
+        new() { Title = "Hướng dẫn đặt xe nhanh qua ứng dụng", Slug = "huong-dan-dat-xe", CreatedAt = DateTime.UtcNow.AddDays(-7) },
+        new() { Title = "Ưu đãi tháng 10: Giảm 20% tất cả tuyến", Slug = "uu-dai-thang-10", CreatedAt = DateTime.UtcNow.AddDays(-8) },
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        blog = await BlogService.GetBySlugAsync($"{Slug}");
+    }
+}
