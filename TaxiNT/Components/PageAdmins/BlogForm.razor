@@ -1,0 +1,90 @@
+﻿@page "/admin/blogs/create"
+@page "/admin/blogs/edit/{Id:int}"
+@inject BlogService BlogService
+@inject NavigationManager Nav
+@rendermode @(new InteractiveServerRenderMode(prerender: true))
+
+<h1 class="mb-4 text-2xl font-semibold">@((Id == 0) ? "Thêm mới bài viết" : "Chỉnh sửa bài viết")</h1>
+
+<EditForm Model="model" OnValidSubmit="HandleValidSubmit" class="space-y-4">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label class="block text-sm font-medium">Tiêu đề</label>
+        <InputText @bind-Value="model.Title" class="mt-1 block w-full rounded border px-3 py-2" />
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="block text-sm font-medium">Danh mục</label>
+            <InputText @bind-Value="model.Category" class="mt-1 block w-full rounded border px-3 py-2" />
+        </div>
+        <div>
+            <label class="block text-sm font-medium">Tags (phân tách bằng dấu phẩy)</label>
+            <InputText @bind-Value="model.Tags" class="mt-1 block w-full rounded border px-3 py-2" />
+        </div>
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium">Tóm tắt</label>
+        <InputTextArea @bind-Value="model.Summary" class="mt-1 block h-24 w-full rounded border px-3 py-2" />
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium">Ảnh đại diện (URL)</label>
+        <InputText @bind-Value="model.CoverImageUrl" class="mt-1 block w-full rounded border px-3 py-2" />
+        @if (!string.IsNullOrWhiteSpace(model.CoverImageUrl))
+        {
+            <img src="@model.CoverImageUrl" alt="cover" class="mt-2 h-28 w-48 rounded object-cover" />
+        }
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium">Nội dung (HTML/Markdown)</label>
+        <!-- TODO: Thay bằng editor WYSIWYG (Quill/TinyMCE) qua JSInterop -->
+        <InputTextArea @bind-Value="model.Content" class="mt-1 block h-64 w-full rounded border px-3 py-2" />
+        <div class="mt-1 text-xs text-gray-500">Bạn có thể dán HTML hoặc Markdown. Nếu muốn WYSIWYG, mình sẽ thêm JSInterop.</div>
+    </div>
+
+    <div class="flex items-center gap-3">
+        <InputCheckbox @bind-Value="model.IsPublished" class="h-4 w-4" />
+        <label>Xuất bản</label>
+    </div>
+
+    <div class="flex gap-2">
+        <button type="submit" class="rounded bg-green-600 px-4 py-2 text-white">Lưu</button>
+        <button type="button" class="rounded border px-4 py-2" @onclick="Cancel">Hủy</button>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter] public int Id { get; set; } = 0;
+    private Blog model = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id != 0)
+        {
+            var b = await BlogService.GetByIdAsync(Id);
+            if (b != null) model = b;
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (Id == 0)
+        {
+            model.CreatedAt = DateTime.UtcNow;
+            await BlogService.CreateAsync(model);
+        }
+        else
+        {
+            model.UpdatedAt = DateTime.UtcNow;
+            await BlogService.UpdateAsync(model);
+        }
+        Nav.NavigateTo("/admin/blogs");
+    }
+
+    private void Cancel() => Nav.NavigateTo("/admin/blogs");
+}

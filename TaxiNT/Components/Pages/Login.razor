@@ -1,11 +1,10 @@
 ﻿@page "/login"
-@layout MainLayoutEmpty
+@layout EmptyMainLayout
 @inject IJSRuntime jS
 @rendermode @(new InteractiveServerRenderMode(prerender: true))
 
-<HeadContent>
-    <meta name="robots" content="noindex, nofollow" />
-</HeadContent>
+<SeoHeaderComponent Title="Đăng nhập - Taxi Nam Thắng"
+                    Description="@($"Login")" />
 
 <PageTitle>Đăng nhập</PageTitle>
 

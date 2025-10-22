@@ -1,24 +1,10 @@
 ﻿@page "/"
-@layout MainLayoutClient
+@layout ClientMainLayout
 @rendermode @(new InteractiveServerRenderMode(prerender: true))
-
-<!-- GG Adsense -->
-<meta name="google-adsense-account" content="ca-pub-4772558027240339">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4772558027240339"
-        crossorigin="anonymous"></script>
-
-<!--AMP Adsense-->
-<script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
-<script async custom-element="amp-auto-ads"
-        src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
-</script>
-<amp-auto-ads type="adsense"
-              data-ad-client="ca-pub-4772558027240339">
-</amp-auto-ads>
 
 <SeoHeaderComponent Title="Trang chủ | Taxi Nam Thắng – Đặt taxi Rạch Giá, Kiên Giang, Hà Tiên, Phú Quốc, Cần Thơ, Bạc Liêu, Cà Mau, Vĩnh Long, An Giang"
                     Description="Taxi Nam Thắng – Dịch vụ đặt taxi nhanh tại Rạch Giá, Kiên Giang, Hà Tiên, Phú Quốc, Cần Thơ, Bạc Liêu, Cà Mau, Vĩnh Long, An Giang. Xe điện đời mới, thân thiện môi trường, tài xế chuyên nghiệp, giá rẻ nhất khu vực."
-                    Image="imgs/customers/homepage.jpg" Unrobots="false" />
+                    Image="imgs/customers/homepage.jpg" Unrobots="false" Ads="false"/>
 
 <!-- Hero -->
 <main class="mx-auto max-w-7xl px-4 py-3">
@@ -94,16 +80,6 @@
             </div>
         </div>
     </section>
-
-    <!-- Ads -->
-    <amp-ad width="100vw" height="320"
-            type="adsense"
-            data-ad-client="ca-pub-4772558027240339"
-            data-ad-slot="4775797103"
-            data-auto-format="rspv"
-            data-full-width="">
-        <div overflow=""></div>
-    </amp-ad>
 
     <!-- Services -->
     <section id="services" aria-label="Dịch vụ xe điện Taxi Nam Thắng cung cấp" class="mt-10">
@@ -357,16 +333,6 @@
             </div>
         </div>
     </section>
-
-    <!-- Ads -->
-    <amp-ad width="100vw" height="320"
-            type="adsense"
-            data-ad-client="ca-pub-4772558027240339"
-            data-ad-slot="4775797103"
-            data-auto-format="rspv"
-            data-full-width="">
-        <div overflow=""></div>
-    </amp-ad>
 
     <!-- Footer -->
     <footer class="mt-10 text-center text-sm text-gray-500">

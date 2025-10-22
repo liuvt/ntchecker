@@ -45,8 +45,15 @@ public partial class taxiNTDBContext : IdentityDbContext<AppUser>
 //Create mirations: dotnet ef migrations add Init -o Data/Migrations
 //Create database: dotnet ef database update
 
-//Publish project: dotnet publish -c Release --output ./Publish TaxiNT.csproj
+
 /* 
+ * ///Publish project: 
+dotnet publish -c Release --output ./Publish TaxiNT.csproj
+dotnet publish -c Release --output ./Monsterasp TaxiNT.csproj
+dotnet publish -c Release --output ./Hosting TaxiNT.csproj
+
+ * ///Tailwind project: 
 npx @tailwindcss/cli -i ./TaxiNT/TailwindImport/input.css -o ./TaxiNT/wwwroot/css/tailwindcss.css --watch 
+
 */
 

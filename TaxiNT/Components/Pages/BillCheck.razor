@@ -1,24 +1,9 @@
 ﻿@page "/checkers/{userId}"
 @page "/checkers/{userId}/{date}"
-@layout MainLayoutEmpty
-
-<!-- GG Adsense -->
-<meta name="google-adsense-account" content="ca-pub-4772558027240339">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4772558027240339"
-        crossorigin="anonymous"></script>
-
-<!--AMP Adsense-->
-<script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
-<script async custom-element="amp-auto-ads"
-        src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
-</script>
-<amp-auto-ads type="adsense"
-              data-ad-client="ca-pub-4772558027240339">
-</amp-auto-ads>
+@layout EmptyMainLayout
 
 <SeoHeaderComponent Title="Phiếu Checker v4.1 - Taxi Nam Thắng"
-                    Description="@($"Tài xế {userId} - {date}")"
-                    Image="imgs/customers/homepage.jpg" />
+                    Description="@($"Tài xế {userId} - {date}")" Ads="false" />
 
 <BillCheckComponent userId="@userId" date="@date" @rendermode="new InteractiveWebAssemblyRenderMode(prerender: true)" />
 

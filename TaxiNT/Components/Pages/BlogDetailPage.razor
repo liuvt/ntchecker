@@ -1,14 +1,15 @@
-﻿@page "/blogs/{Slug}"
-@layout MainLayoutClient
+﻿@* @page "/blogs/{Slug}" *@
+@layout ClientMainLayout
 
 <SeoHeaderComponent Title="Tin tức - Taxi Nam Thắng"
                     Description="Cập nhật tin tức, khuyến mãi và hoạt động mới nhất của Taxi Nam Thắng tại Kiên Giang, Rạch Giá, Hà Tiên, Phú Quốc, Vĩnh Long, Cần Thơ, Bạc Liêu, Cà Mau, An Giang và miền Tây."
                     Image="imgs/customers/homepage.jpg" Unrobots="false" />
+
 <div class="mx-auto max-w-5xl px-4 py-10">
 
     @if (blog == null)
     {
-        <p class="text-center text-gray-500">Đang tải bài viết...</p>
+        <p class="text-center text-gray-500">Đang tải tin tức...</p>
     }
     else
     {

@@ -12,7 +12,11 @@
     else
     {
         <meta name="robots" content="index, follow" />
-
+    }
+    @if (!Ads)
+    {
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4772558027240339"
+                crossorigin="anonymous"></script>
     }
 </HeadContent>
 
@@ -21,6 +25,7 @@
     [Parameter] public string? Description { get; set; }
     [Parameter] public string? Image { get; set; }
     [Parameter] public bool Unrobots { get; set; } = true;
+    [Parameter] public bool Ads { get; set; } = true;
     [Inject] public NavigationManager Nav { get; set; }
 
 
