@@ -60,29 +60,31 @@ public class SalaryServer : ISalaryServer
                 userId = item.ltvGetValueString(0),
                 revenue = item.ltvGetValueString(1),
                 tripsTotal = Convert.ToInt32(item.ltvGetValueDecimal(2)),
-                kilometer = Convert.ToInt32(item.ltvGetValueDecimal(3)),
-                kilometerWithCustomer = Convert.ToInt32(item.ltvGetValueDecimal(4)),
-                businessDays = Convert.ToInt32(item.ltvGetValueDecimal(5)),
-                salaryBase = item.ltvGetValueString(6),
-                deductForDeposit = item.ltvGetValueString(7),//Trừ ký quỹ 
-                deductForAccident = item.ltvGetValueString(8),//Trừ tai nạn
-                deductForSalaryAdvance = item.ltvGetValueString(9),//Trừ lương ứng
-                deductForViolationReport = item.ltvGetValueString(10),//Trừ vi phạm biên bản
-                deductForSocialInsurance = item.ltvGetValueString(11),//Trừ BHXH
-                deductForPIT = item.ltvGetValueString(12),//Trừ TNCN - Personal Income Tax Deduction 
-                deductForVMV = item.ltvGetValueString(13),//Lỗi bảo quản xe: Vehicle Maintenance Violation
-                deductForUV = item.ltvGetValueString(14),//Lỗi đồng phục: Uniform Violation
-                deductForSHV = item.ltvGetValueString(15),//Lỗi giao ca: Shift Handover Violation
-                deductForChargingPenalty = item.ltvGetValueString(16),// Phạt sạt: Charging Penalty
-                deductForTollPayment = item.ltvGetValueString(17), //Trừ tiền qua trạm : Deduction for Toll Payment
-                deductForCharging = item.ltvGetValueString(18),//Sạt pin
+                //kilometer = Convert.ToInt32(item.ltvGetValueDecimal(3)),
+                //kilometerWithCustomer = Convert.ToInt32(item.ltvGetValueDecimal(4)),
+                businessDays = Convert.ToInt32(item.ltvGetValueDecimal(3)),
+                salaryBase = item.ltvGetValueString(4),
+                deductForDeposit = item.ltvGetValueString(5),//Trừ ký quỹ 
+                deductForAccident = item.ltvGetValueString(6),//Trừ tai nạn
+                deductForSalaryAdvance = item.ltvGetValueString(7),//Trừ lương ứng
+                deductForViolationReport = item.ltvGetValueString(8),//Trừ vi phạm biên bản
+                deductForSocialInsurance = item.ltvGetValueString(9),//Trừ BHXH
+                deductForPIT = item.ltvGetValueString(10),//Trừ TNCN - Personal Income Tax Deduction 
+                deductForVMV = item.ltvGetValueString(11),//Lỗi bảo quản xe: Vehicle Maintenance Violation
+                deductForUV = item.ltvGetValueString(12),//Lỗi đồng phục: Uniform Violation
+                deductForSHV = item.ltvGetValueString(13),//Lỗi giao ca: Shift Handover Violation
+                deductForChargingPenalty = item.ltvGetValueString(14),// Phạt sạt: Charging Penalty
+                deductForCharging = item.ltvGetValueString(15),//Sạt pin
+                deductForTollPayment = item.ltvGetValueString(16), //Trừ tiền qua trạm : Deduction for Toll Payment
+                deductForOrder = item.ltvGetValueString(17),//Trừ khác
+                noteDeductOrder = item.ltvGetValueString(18),//Ghi chú trừ khác
                 deductForOrderSalaryAdvance = item.ltvGetValueString(19),//Trừ tạm ứng: nợ doanh thu, hoặc ứng tiền vì mục đích nào đó, kế toán cho phép
                 deductForNegativeSalary = item.ltvGetValueString(20),//Trừ âm lương: Nợ tiền tháng trước, qua tháng này trừ lại vào lương
-                deductForOrder = item.ltvGetValueString(21),//Trừ khác
-                noteDeductOrder = item.ltvGetValueString(22),//Ghi chú trừ khác
-                deductTotal = item.ltvGetValueString(23), //Tổng trừ
-                salaryNet = item.ltvGetValueString(24),//Lương thực nhận
-                salaryDate = item.ltvGetValueString(25),//Tháng/năm
+                no_sua_chua = item.ltvGetValueString(21),//Nợ sửa chữa
+                deductTotal = item.ltvGetValueString(22), //Tổng trừ
+                salaryNet = item.ltvGetValueString(23),//Lương thực nhận
+                salaryDate = item.ltvGetValueString(24),//Tháng/năm
+                salaryType = item.ltvGetValueString(25),//Loại hình lương
             });
         }
 
@@ -120,10 +122,11 @@ public class SalaryServer : ISalaryServer
             {
                 userId = item.ltvGetValueString(0),
                 revenue = item.ltvGetValueString(1),
-                type = item.ltvGetValueString(2),
-                salaryBase = item.ltvGetValueString(3),
-                daterevenues = item.ltvGetValueString(4),
-                createdAt = item.ltvGetValueString(5),
+                revenueAC = item.ltvGetValueString(2),
+                type = item.ltvGetValueString(3),
+                salaryBase = item.ltvGetValueString(4),
+                daterevenues = item.ltvGetValueString(5),
+                createdAt = item.ltvGetValueString(6),
             });
         }
 

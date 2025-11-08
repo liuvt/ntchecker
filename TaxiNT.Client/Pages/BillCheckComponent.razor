@@ -78,7 +78,7 @@
                                 <td class="border-b border-gray-100 px-2 py-1 text-center text-gray-500">@item.ctDefaultDistance</td>
                                 <td class="border-b border-gray-100 px-2 py-1 text-center text-gray-500">@item.ctOverDistance</td>
                                 <td class="border-b border-gray-100 px-2 py-1 text-right text-gray-500">@item.ctSurcharge.ltvVNDCurrency()</td>
-                                <td class="border-b border-gray-100 px-2 py-1 text-center text-gray-500">@item.ctPromotion</td>
+                                <td class="border-b border-gray-100 px-2 py-1 text-center text-gray-500">@item.ctPromotion.ltvVNDCurrency()</td>
                                 <td class="border-b border-gray-100 px-2 py-1 text-center text-gray-500">@item.totalPrice.ltvVNDCurrency()</td>
                                 </tbody>
                             }
@@ -106,7 +106,7 @@
                                     <p class="text-center font-semibold">CHÊNH LỆCH HỢP ĐỒNG</p>
                                     <p class="text-green-700">KM/Giờ vượt: @item.ctOverDistance</p>
                                     <p class="text-green-700">Truy thu: @item.ctSurcharge.ltvVNDCurrency()</p>
-                                    <p class="text-green-700">Khuyến mãi (-): @item.ctPromotion</p>
+                                    <p class="text-green-700">Khuyến mãi (-): @item.ctPromotion.ltvVNDCurrency()</p>
                                 </div>
                             }
                             <p class="mt-2 text-right text-red-600">THỰC THU: @item.totalPrice.ltvVNDCurrency()</p>

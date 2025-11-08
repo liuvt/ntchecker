@@ -1,4 +1,4 @@
-﻿@* @page "/blogs/{Slug}" *@
+﻿@page "/blogs/{Slug}"
 @layout ClientMainLayout
 
 <SeoHeaderComponent Title="Tin tức - Taxi Nam Thắng"
@@ -124,7 +124,7 @@
                     @foreach (var post in PopularPosts)
                     {
                         <li>
-                            <a href="/blogs/@post.Slug"
+                            <a href="/blogs/@post.Slug#top"
                                class="flex items-start space-x-3 transition hover:text-red-600">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="mt-1 h-5 w-5 text-red-500"
                                      fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -148,22 +148,13 @@
     [Parameter] public string Slug { get; set; } = string.Empty;
     [Inject] IBlogService BlogService { get; set; } = default!;
     private Blog? blog;
-    private List<Blog> RelatedPosts = new()
-    {
-        new() { Title = "Taxi Nam Thắng mở rộng tuyến Cần Thơ", Slug = "taxi-can-tho", CoverImageUrl = "/images/blog1.jpg", CreatedAt = DateTime.UtcNow.AddDays(-1) },
-        new() { Title = "Bí quyết tiết kiệm nhiên liệu khi lái xe", Slug = "tiet-kiem-xang", CoverImageUrl = "/images/blog2.jpg", CreatedAt = DateTime.UtcNow.AddDays(-2) },
-        new() { Title = "Ứng dụng đặt xe nhanh được yêu thích", Slug = "ung-dung-xe", CoverImageUrl = "/images/blog3.jpg", CreatedAt = DateTime.UtcNow.AddDays(-3) },
-    };
-
-    private List<Blog> PopularPosts = new()
-    {
-        new() { Title = "Taxi Nam Thắng đạt 10.000 chuyến trong tháng 9", Slug = "thang-9-ky-luc", CreatedAt = DateTime.UtcNow.AddDays(-5) },
-        new() { Title = "Hướng dẫn đặt xe nhanh qua ứng dụng", Slug = "huong-dan-dat-xe", CreatedAt = DateTime.UtcNow.AddDays(-7) },
-        new() { Title = "Ưu đãi tháng 10: Giảm 20% tất cả tuyến", Slug = "uu-dai-thang-10", CreatedAt = DateTime.UtcNow.AddDays(-8) },
-    };
+    private List<Blog> RelatedPosts = new();
+    private List<Blog> PopularPosts = new();
 
     protected override async Task OnInitializedAsync()
     {
         blog = await BlogService.GetBySlugAsync($"{Slug}");
+        RelatedPosts = await BlogService.GetAllAsync();
+        PopularPosts = await BlogService.GetMostPopularAsync();
     }
 }

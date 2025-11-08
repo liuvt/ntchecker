@@ -75,16 +75,38 @@
         <div class="mt-5">
             <div class="text-green-600">
                 <p>CHI TIẾT DOANH THU NGÀY</p>
-                <p>Loại: @(salaryDetails.Select(e => e.type).FirstOrDefault())</p>
+                <p>Loại: @(salary.salaryType)</p>
+                <!-- <p>Loại: @(salaryDetails.Select(e => e.type).FirstOrDefault())</p> -->
             </div>
             <!-- Bảng chuẩn -->
             <div class="overflow-x-auto">
+                @if(((salary.salaryType != "Lương tháng")))
+                {
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Ngày</th>
+                                <th class="px-4 py-3 text-right text-sm font-medium text-gray-700">Doanh thu</th>
+                                <th class="px-4 py-3 text-right text-sm font-medium text-gray-700">Sau mức ăn chia</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 bg-white">
+                            @foreach (var item in salaryDetails)
+                            {
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 text-sm whitespace-nowrap">@item.daterevenues</td>
+                                    <td class="px-4 py-3 text-right text-sm whitespace-nowrap text-green-700">@item.revenue</td>
+                                    <td class="px-4 py-3 text-right text-sm whitespace-nowrap text-green-700">@item.salaryBase</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }else{
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Ngày</th>
                             <th class="px-4 py-3 text-right text-sm font-medium text-gray-700">Doanh thu</th>
-                            <th class="px-4 py-3 text-right text-sm font-medium text-gray-700">Sau mức ăn chia</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 bg-white">
@@ -93,11 +115,11 @@
                             <tr class="hover:bg-gray-50">
                                 <td class="px-4 py-3 text-sm whitespace-nowrap">@item.daterevenues</td>
                                 <td class="px-4 py-3 text-right text-sm whitespace-nowrap text-green-700">@item.revenue</td>
-                                <td class="px-4 py-3 text-right text-sm whitespace-nowrap text-green-700">@item.salaryBase</td>
                             </tr>
                         }
                     </tbody>
                 </table>
+                }
             </div>
         </div>
         <div class="mt-8 space-y-1 border-t border-green-200 text-center text-sm text-gray-600">
@@ -153,6 +175,7 @@
             new() { Name = "VETC",NameAlias="Qua trạm thu phí", Amount = _salary.deductForTollPayment },
             new() { Name = "Tạm ứng",NameAlias="Chi phí ứng tiền", Amount = _salary.deductForOrderSalaryAdvance },
             new() { Name = "Âm lương",NameAlias="Trừ tiền âm lương tháng trước", Amount = _salary.deductForNegativeSalary },
+            new() { Name = "Sửa chữa",NameAlias="Trừ tiền nợ sửa chữa", Amount = _salary.no_sua_chua },
             new() { Name = "Trừ khác",NameAlias=_salary.noteDeductOrder, Amount = _salary.deductForOrder }
         });
 

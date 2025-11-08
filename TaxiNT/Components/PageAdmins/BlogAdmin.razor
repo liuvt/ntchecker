@@ -1,149 +1,213 @@
-﻿@* @page "/admin/blogs" *@
+﻿@page "/admin/blogs"
 @inject IBlogService BlogService
-@rendermode @(new InteractiveServerRenderMode(prerender: true))
+@rendermode InteractiveServer
+@layout AdminMainLayout
 
-<h1 class="mb-6 text-2xl font-bold">📝 Quản lý Blog</h1>
+<AuthorizedContent>
+    <ChildContent>
+        <h1 class="mb-6 text-2xl font-bold">📝 Quản lý Blog</h1>
 
-<!-- Button tạo mới -->
-<button @onclick="CreateNew" class="mb-4 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
-    ➕ Thêm bài viết
-</button>
+        <!-- Button tạo mới -->
+        <button @onclick="CreateNew" class="mb-4 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
+            ➕ Thêm bài viết
+        </button>
 
-<!-- Bảng danh sách -->
-@if (blogs == null)
-{
-    <p>Đang tải dữ liệu...</p>
-}
-else if (blogs.Count == 0)
-{
-    <p>Không có bài viết nào.</p>
-}
-else
-{
-    <div class="overflow-x-auto rounded-lg bg-white shadow">
-        <table class="min-w-full border text-left text-sm">
-            <thead class="bg-gray-100 text-xs text-gray-600 uppercase">
-                <tr>
-                    <th class="p-3">ID</th>
-                    <th class="p-3">Tiêu đề</th>
-                    <th class="p-3">Danh mục</th>
-                    <th class="p-3">Trạng thái</th>
-                    <th class="p-3 text-right">Hành động</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var b in blogs)
-                {
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="p-3">@b.Id</td>
-                        <td class="p-3 font-medium">@b.Title</td>
-                        <td class="p-3">@b.Category</td>
-                        <td class="p-3">
-                            @if (b.IsPublished)
-                            {
-                                <span class="font-semibold text-green-600">Đã đăng</span>
-                            }
-                            else
-                            {
-                                <span class="text-gray-400">Bản nháp</span>
-                            }
-                        </td>
-                        <td class="space-x-2 p-3 text-right">
-                            <button @onclick="() => Edit(b)" class="text-blue-600 hover:underline">Sửa</button>
-                            <button @onclick="() => Delete(b.Id)" class="text-red-600 hover:underline">Xóa</button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-}
-
-<!-- Form thêm / sửa -->
-@if (isModalOpen)
-{
-    <div class="bg-opacity-40 fixed inset-0 z-50 flex items-center justify-center bg-black">
-        <div class="w-full max-w-2xl rounded-xl bg-white p-6 shadow-lg">
-            <h2 class="mb-4 text-xl font-semibold">@((editingBlog.Id == 0 ? "Thêm bài viết mới" : "Chỉnh sửa bài viết"))</h2>
-
-            <div class="space-y-3">
-                <input class="w-full rounded border p-2" placeholder="Tiêu đề" @bind="editingBlog.Title" />
-                <input class="w-full rounded border p-2" placeholder="Slug (vd: bai-viet-moi)" @bind="editingBlog.Slug" />
-                <input class="w-full rounded border p-2" placeholder="Danh mục" @bind="editingBlog.Category" />
-                <textarea class="h-40 w-full rounded border p-2" placeholder="Nội dung bài viết" @bind="editingBlog.Content"></textarea>
-                <label class="flex items-center space-x-2">
-                    <input type="checkbox" @bind="editingBlog.IsPublished" />
-                    <span>Đăng ngay</span>
-                </label>
+        <!-- Bảng danh sách -->
+        @if (blogs == null)
+        {
+            <p>Đang tải dữ liệu...</p>
+        }
+        else if (blogs.Count == 0)
+        {
+            <p>Không có bài viết nào.</p>
+        }
+        else
+        {
+            <div class="overflow-x-auto rounded-lg bg-white shadow">
+                <table class="w-full min-w-[800px] border text-left text-sm">
+                    <thead class="bg-gray-100 text-xs text-gray-600 uppercase">
+                        <tr>
+                            <th class="p-3">ID</th>
+                            <th class="p-3">Tiêu đề</th>
+                            <th class="p-3">Mô tả ngắn</th>
+                            <th class="p-3">Khu vực</th>
+                            <th class="p-3">Trạng thái</th>
+                            <th class="p-3 text-right">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var b in blogs)
+                        {
+                            <tr class="border-b hover:bg-gray-50">
+                                <td class="p-3">@b.Id</td>
+                                <td class="p-3 font-medium">@b.Title</td>
+                                <td class="p-3 font-medium">@b.Summary</td>
+                                <td class="p-3">@b.Category</td>
+                                <td class="p-3">
+                                    @if (b.IsPublished)
+                                    {
+                                        <span class="font-semibold text-green-600">Đã đăng</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-gray-400">Bản nháp</span>
+                                    }
+                                </td>
+                                <td class="space-x-2 p-3 text-right">
+                                    <button @onclick="() => Edit(b)" class="text-blue-600 hover:underline">Sửa</button>
+                                    <button @onclick="() => Delete(b.Id)" class="text-red-600 hover:underline">Xóa</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
+        }
 
-            <div class="mt-5 flex justify-end space-x-2">
-                <button @onclick="Save" class="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700">Lưu</button>
-                <button @onclick="CloseModal" class="rounded bg-gray-400 px-4 py-2 text-white hover:bg-gray-500">Hủy</button>
+        <!-- Form thêm / sửa -->
+        @if (isModalOpen)
+        {
+            <div class="bg-opacity-40 fixed inset-0 z-50 flex items-center justify-center bg-black">
+                <div class="my-10 max-h-screen w-full max-w-2xl overflow-y-auto rounded-xl bg-white p-6 shadow-lg">
+                    <h2 class="mb-4 text-xl font-semibold">@((editingBlog.Id == 0 ? "Thêm bài viết mới" : "Chỉnh sửa bài viết"))</h2>
+
+                    <div class="space-y-3">
+                        <input class="w-full rounded border p-2" placeholder="Tiêu đề" @bind="editingBlog.Title" />
+                        <input class="w-full rounded border p-2" placeholder="Slug (vd: bai-viet-moi)" @bind="editingBlog.Slug" />
+
+                        <div>
+                            <label class="block text-sm font-medium">Ảnh đại diện (URL)</label>
+                            <input @bind="editingBlog.CoverImageUrl" class="mt-1 block w-full rounded border px-3 py-2" />
+                            @if (!string.IsNullOrWhiteSpace(editingBlog.CoverImageUrl))
+                            {
+                                <img src="@editingBlog.CoverImageUrl" alt="cover" class="mt-2 h-28 w-48 rounded object-cover" />
+                            }
+                        </div>
+
+                        <input class="w-full rounded border p-2" placeholder="Mô tả" @bind="editingBlog.Summary" />
+
+                        <!-- Quill editor -->
+                        <div id="editor-container" class="h-56 w-full rounded border p-2" spellcheck="false"></div>
+
+                        <input class="w-full rounded border p-2" placeholder="Khu vực" @bind="editingBlog.Category" />
+
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" @bind="editingBlog.IsPublished" />
+                            <span>Đăng ngay</span>
+                        </label>
+                    </div>
+
+                    <div class="mt-5 flex justify-end space-x-2">
+                        <button @onclick="Save" class="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700">Lưu</button>
+                        <button @onclick="CloseModal" class="rounded bg-gray-400 px-4 py-2 text-white hover:bg-gray-500">Hủy</button>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-}
-
-
+        }
+    </ChildContent>
+    <NotAuthorizedContent>
+        <RedirectToLogin />
+    </NotAuthorizedContent>
+</AuthorizedContent>
 
 @code {
     private List<Blog>? blogs;
     private Blog editingBlog = new();
     private bool isModalOpen = false;
+    private bool shouldInitQuill;
+
+    [Inject] private IJSRuntime js { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
-        blogs = await BlogService.GetAllAsync();
+        await LoadBlogsAsync();
     }
 
-    private void CreateNew()
+    //Load Quill khi modal mở và giữ
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (shouldInitQuill)
+        {
+            shouldInitQuill = false;
+            await js.InvokeVoidAsync("loadQuill");
+            await js.InvokeVoidAsync("setQuillHtml", editingBlog.Content ?? "");
+        }
+    }
+
+    private async Task CreateNew()
     {
         editingBlog = new Blog();
         isModalOpen = true;
+        shouldInitQuill = true;
     }
 
-    private void Edit(Blog blog)
+    private async Task Edit(Blog blog)
     {
         editingBlog = new Blog
         {
             Id = blog.Id,
             Title = blog.Title,
             Slug = blog.Slug,
-            Category = blog.Category,
+            CoverImageUrl = blog.CoverImageUrl,
+            Summary = blog.Summary,
             Content = blog.Content,
+            Category = blog.Category,
             IsPublished = blog.IsPublished
         };
         isModalOpen = true;
-    }
-
-    private async Task Save()
-    {
-        if (editingBlog.Id == 0)
-        {
-            var newBlog = await BlogService.CreateAsync(editingBlog);
-            if (newBlog != null)
-                blogs?.Add(newBlog);
-        }
-        else
-        {
-            var ok = await BlogService.UpdateAsync(editingBlog);
-            if (ok && blogs != null)
-            {
-                var idx = blogs.FindIndex(x => x.Id == editingBlog.Id);
-                if (idx >= 0) blogs[idx] = editingBlog;
-            }
-        }
-        isModalOpen = false;
-        StateHasChanged();
+        shouldInitQuill = true;
     }
 
     private async Task Delete(int id)
     {
         if (!await BlogService.DeleteAsync(id)) return;
         blogs?.RemoveAll(x => x.Id == id);
-        StateHasChanged();
     }
 
-    private void CloseModal() => isModalOpen = false;
+    private async Task CloseModal()
+    {
+        await Task.Delay(150);
+        await js.InvokeVoidAsync("destroyQuill");
+        isModalOpen = false;
+    }
+
+    private async Task Save()
+    {
+        editingBlog.Content = await js.InvokeAsync<string>("getQuillHtml");
+
+        // Làm sạch HTML để không bị dòng trống / lặp <p>
+        editingBlog.Content = editingBlog.Content?
+            .Replace("<p><br></p>", "")
+            .Replace("<p></p>", "")
+            .Trim()!;
+
+        if (editingBlog.Id == 0)
+        {
+            var newBlog = await BlogService.CreateAsync(editingBlog);
+            blogs?.Add(newBlog);
+        }
+        else
+        {
+            await BlogService.UpdateAsync(editingBlog);
+        }
+
+        isModalOpen = false;
+        await LoadBlogsAsync();
+    }
+
+    //Load quill
+    private async Task ShowEditorAsync()
+    {
+        // đảm bảo modal đã render xong
+        await Task.Delay(150);
+        await js.InvokeVoidAsync("loadQuill");
+        await js.InvokeVoidAsync("setQuillHtml", editingBlog.Content ?? "");
+    }
+
+    private async Task LoadBlogsAsync()
+    {
+        blogs = await BlogService.GetAllAsync();
+    }
+    
+
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TaxiNT.Libraries.Models;
 using TaxiNT.Services.Interfaces;
 
@@ -54,6 +55,7 @@ namespace TaxiNT.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Create([FromBody] Blog blog)
         {
             var newBlog = await _blogService.CreateAsync(blog);
@@ -61,6 +63,7 @@ namespace TaxiNT.Controllers
         }
 
         [HttpPut("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> Update(int id, [FromBody] Blog blog)
         {
             if (id != blog.Id) return BadRequest();
@@ -70,6 +73,7 @@ namespace TaxiNT.Controllers
         }
 
         [HttpDelete("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
             var success = await _blogService.DeleteAsync(id);

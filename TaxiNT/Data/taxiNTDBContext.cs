@@ -54,6 +54,5 @@ dotnet publish -c Release --output ./Hosting TaxiNT.csproj
 
  * ///Tailwind project: 
 npx @tailwindcss/cli -i ./TaxiNT/TailwindImport/input.css -o ./TaxiNT/wwwroot/css/tailwindcss.css --watch 
-
 */
 
