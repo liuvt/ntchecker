@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,7 @@ builder.Services.AddSignalR(e =>
 {
     e.MaximumReceiveMessageSize = 102400000;
 });
+
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -55,6 +57,7 @@ builder.Services.AddScoped(
     {
         //BaseAddress = new Uri(builder.Configuration["API:Default"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"))
         //BaseAddress = new Uri(builder.Configuration["API:Monsterasp"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"))
+        
         BaseAddress = new Uri(builder.Configuration["API:Hosting"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"))
     });
 
@@ -140,6 +143,15 @@ builder.Services.AddScoped<IBlogService, BlogService>();
 builder.Services.AddScoped<IBillCheckService, BillCheckService>();
 #endregion
 
+
+builder.Services.AddAntiforgery(options =>
+{
+    options.Cookie.Name = "TaxiNT.AntiForgery.v2";  // tên mới, khác hẳn .AspNetCore.Antiforgery...
+    options.Cookie.SameSite = SameSiteMode.Lax;// tránh bị chặn bởi Facebook WebView
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -163,7 +175,38 @@ else // API: Add run Swagger UI: https://localhost:7154/swagger/index.html
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+
+app.Use(async (context, next) =>
+{
+    // Xóa cookie cũ
+    foreach (var cookie in context.Request.Cookies.Keys)
+    {
+        if (cookie.StartsWith(".AspNetCore.Antiforgery"))
+        {
+            context.Response.Cookies.Delete(cookie, new CookieOptions
+            {
+                Path = "/",
+                HttpOnly = true,
+                Secure = context.Request.IsHttps
+            });
+        }
+    }
+
+    // Tạo cookie + token mới
+    var antiforgery = context.RequestServices.GetRequiredService<IAntiforgery>();
+    antiforgery.GetAndStoreTokens(context);
+
+    await next();
+});
+
+
 app.UseRouting();
+// ⭐ MUST HAVE – SỬA LỖI CỦA BẠN ⭐
+app.UseAntiforgery();
+
+// API: Add Authoz and Authen
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 
@@ -180,12 +223,6 @@ app.Use(async (context, next) =>
 
     await next();
 });
-
-// API: Add Authoz and Authen
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.UseAntiforgery();
 
 app.MapStaticAssets();
 
