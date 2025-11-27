@@ -146,10 +146,36 @@ builder.Services.AddScoped<IBillCheckService, BillCheckService>();
 
 builder.Services.AddAntiforgery(options =>
 {
-    options.Cookie.Name = "TaxiNT.AntiForgery.v2";  // tên mới, khác hẳn .AspNetCore.Antiforgery...
-    options.Cookie.SameSite = SameSiteMode.Lax;// tránh bị chặn bởi Facebook WebView
+    options.Cookie.Name = "TaxiNT.AntiForgery.v2.1"; 
+    options.Cookie.SameSite = SameSiteMode.Lax; // tránh bị chặn bởi Facebook WebView
     options.Cookie.HttpOnly = true;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+
+    // Host free CHỈ HTTP → dùng SameAsRequest (HTTP thì không Secure, HTTPS thì có Secure)
+    // AUTO:
+    // - Nếu request là HTTP  → cookie không gắn Secure
+    // - Nếu request là HTTPS → cookie gắn Secure
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    /*
+        Thuần HTTPS chuẩn, chỉ cần đổi thành:
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    */
+});
+
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.MinimumSameSitePolicy = SameSiteMode.Unspecified;
+
+    options.OnAppendCookie = ctx =>
+    {
+        if (ctx.CookieOptions.SameSite == SameSiteMode.None)
+            ctx.CookieOptions.SameSite = SameSiteMode.Unspecified;
+    };
+
+    options.OnDeleteCookie = ctx =>
+    {
+        if (ctx.CookieOptions.SameSite == SameSiteMode.None)
+            ctx.CookieOptions.SameSite = SameSiteMode.Unspecified;
+    };
 });
 
 var app = builder.Build();
@@ -172,52 +198,30 @@ else // API: Add run Swagger UI: https://localhost:7154/swagger/index.html
     );
 }
 
-app.UseHttpsRedirection();
+app.UseHttpsRedirection();   // nếu host free không có HTTPS thì có thể tắt dòng này
 app.UseStaticFiles();
 
-
-app.Use(async (context, next) =>
-{
-    // Xóa cookie cũ
-    foreach (var cookie in context.Request.Cookies.Keys)
-    {
-        if (cookie.StartsWith(".AspNetCore.Antiforgery"))
-        {
-            context.Response.Cookies.Delete(cookie, new CookieOptions
-            {
-                Path = "/",
-                HttpOnly = true,
-                Secure = context.Request.IsHttps
-            });
-        }
-    }
-
-    // Tạo cookie + token mới
-    var antiforgery = context.RequestServices.GetRequiredService<IAntiforgery>();
-    antiforgery.GetAndStoreTokens(context);
-
-    await next();
-});
-
+app.UseCookiePolicy();           // ⭐ thêm dòng này
 
 app.UseRouting();
-// ⭐ MUST HAVE – SỬA LỖI CỦA BẠN ⭐
-app.UseAntiforgery();
 
 // API: Add Authoz and Authen
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Anti-forgery middleware – để SAU routing, TRƯỚC MapEndpoints
+app.UseAntiforgery();
+
 app.MapControllers();
 
-// Xữ lý Header: 
+// Xử lý header iframe, CSP
 app.Use(async (context, next) =>
 {
     context.Response.OnStarting(() =>
     {
         context.Response.Headers.Remove("X-Frame-Options");
         context.Response.Headers.Remove("Content-Security-Policy");
-        context.Response.Headers["Content-Security-Policy"] = "frame-ancestors *"; //Cho phép nhung iframe từ bất kỳ nguồn nào
+        context.Response.Headers["Content-Security-Policy"] = "frame-ancestors *";
         return Task.CompletedTask;
     });
 
