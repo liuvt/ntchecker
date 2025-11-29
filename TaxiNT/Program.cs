@@ -88,15 +88,6 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddSwaggerGen(
     opt =>
     {
-        /*
-        //Fix Identity, Refresh Token, Access Token, 
-        //CURD Product, Editor Text, Review, Blog, Image Upload, Login API Facebook, Google
-        //AugCenterLibrary
-        opt.SwaggerDoc("v3", new OpenApiInfo { Title = "AugCenter API", Version = "v3" });
-        //For Identity, Login, Register, Change Mudblazor, AugCenterLog, AugCenterDocs
-        opt.SwaggerDoc("v2", new OpenApiInfo { Title = "AugCenter API", Version = "v2" });
-        */
-        //Init project: CRUD category,order,orderdetail,..., AugCenterModel
         opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Blazor Server Core API", Version = "v1" });
         opt.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
         {
