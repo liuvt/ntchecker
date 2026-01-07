@@ -4,31 +4,28 @@ public class Salary
     public string userId { get; set; } = string.Empty; //Mã tài xế
     public string revenue { get; set; } = string.Empty;//Doanh thu
     public int tripsTotal { get; set; } //Số cuốc
-    //public int kilometer { get; set; } //Số km vận doanh
-    //public int kilometerWithCustomer { get; set; } //Số km có khách
+    public string salaryType { get; set; } = string.Empty; // Loại hình kinh doanh LƯƠNG NGÀY - LƯƠNG THÁNG
     public int businessDays { get; set; } //Số ngày KD
     public string salaryBase { get; set; } = string.Empty; //Sau mức ăn chia || Lương cơ bản
-    public string deductForDeposit { get; set; } = string.Empty;//Trừ ký quỹ 
-    public string deductForAccident { get; set; } = string.Empty;//Trừ tai nạn
-    public string deductForSalaryAdvance { get; set; } = string.Empty;//Trừ lương ứng
-    public string deductForViolationReport { get; set; } = string.Empty;//Trừ vi phạm biên bản  
-    public string deductForSocialInsurance { get; set; } = string.Empty;//Trừ BHXH
-    public string deductForPIT { get; set; } = string.Empty;//Trừ BHXH//Trừ TNCN - Personal Income Tax Deduction 
-    public string deductForVMV { get; set; } = string.Empty;//Lỗi bảo quản xe: Vehicle Maintenance Violation
-    public string deductForUV { get; set; } = string.Empty;//Lỗi đồng phục: Uniform Violation
-    public string deductForSHV { get; set; } = string.Empty; //Lỗi giao ca: Shift Handover Violation
-    public string deductForChargingPenalty { get; set; } = string.Empty; //phạt sạt: Charging Penalty
-    public string deductForCharging { get; set; } = string.Empty;//Sat pin
-    public string deductForTollPayment { get; set; } = string.Empty;//Trừ tiền qua trạm : Deduction for Toll Payment
-    public string deductForOrder { get; set; } = string.Empty; //Trừ khác
-    public string noteDeductOrder { get; set; } = string.Empty; //Ghi chú trừ khác
-    public string deductForOrderSalaryAdvance { get; set; } = string.Empty; //Trừ tạm ứng: nợ doanh thu, hoặc ứng tiền vì mục đích nào đó, kế toán cho phép
-    public string deductForNegativeSalary { get; set; } = string.Empty; //Trừ âm lương: Nợ tiền tháng trước, qua tháng này trừ lại vào lương
-    public string no_sua_chua { get; set; } = string.Empty; //Nợ sửa chữa
     public string deductTotal { get; set; } = string.Empty; //Tổng trừ
     public string salaryNet { get; set; } = string.Empty; //Lương thực nhận
+
+    public string deductForDeposit { get; set; } = string.Empty;//1. Trừ ký quỹ
+    public string deductForSalaryAdvance { get; set; } = string.Empty;//2. Trừ lương ứng
+    public string deductForNegativeSalary { get; set; } = string.Empty; //3. Trừ âm lương: Nợ tiền tháng trước, qua tháng này trừ lại vào lương (công ty)
+    public string deductForViolationReport { get; set; } = string.Empty;//4. Trừ vi phạm biên bản  
+    public string no_sua_chua { get; set; } = string.Empty; //5. Nợ sửa chữa
+    public string haomon_voxe { get; set; } = string.Empty; //6. Hao mòn vỏ xe
+    public string deductForCharging { get; set; } = string.Empty;//7. Sat pin
+    public string deductForChargingPenalty { get; set; } = string.Empty; //8. phạt sạt: Charging Penalty
+    public string deductForTollPayment { get; set; } = string.Empty;//9. Trừ tiền qua trạm : Deduction for Toll Payment
+    public string deductForSocialInsurance { get; set; } = string.Empty;//10. Trừ BHXH
+    public string deductForNegativeSalaryPartner { get; set; } = string.Empty; //11. Trừ âm lương: Nợ tiền tháng trước, qua tháng này trừ lại vào lương (Thương quyền)
+    public string deductForPIT { get; set; } = string.Empty;//12. Trừ TNCN - Personal Income Tax Deduction 
+    public string deductForOrder { get; set; } = string.Empty; //13. Trừ khác
+    public string noteDeductOrder { get; set; } = string.Empty; //14. Ghi chú trừ khác
+
     public string salaryDate { get; set; } = string.Empty; //Tháng/năm
-    public string salaryType { get; set; } = string.Empty; //Tháng/năm
 }
 
 

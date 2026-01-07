@@ -161,22 +161,19 @@
 
         Deductions.AddRange(new List<DeductionItem>
         {
-            new() { Name = "Ký quỹ",NameAlias="Tiền ký quỷ với công ty", Amount = _salary.deductForDeposit},
-            new() { Name = "Tai nạn",NameAlias="Chi phí tai nạn", Amount = _salary.deductForAccident},
-            new() { Name = "Lương ứng",NameAlias="Tạm ứng tiền công ty", Amount = _salary.deductForSalaryAdvance },
-            new() { Name = "Biên bản",NameAlias="Phạt sai phạm của tài xế", Amount = _salary.deductForViolationReport },
-            new() { Name = "BHXH",NameAlias="BHXH", Amount = _salary.deductForSocialInsurance },
-            new() { Name = "TNCN",NameAlias="TNCN", Amount = _salary.deductForPIT },
-            new() { Name = "Bảo quản xe",NameAlias="Phạt làm hỏng xe", Amount = _salary.deductForVMV },
-            new() { Name = "Đồng phục",NameAlias="Phạt vi phạm đồng phục", Amount = _salary.deductForUV },
-            new() { Name = "Giao ca",NameAlias="Phạt giao ca", Amount = _salary.deductForSHV },
-            new() { Name = "Phạt sạc",NameAlias="Sạc pin đầy nhưng không rút sạt", Amount = _salary.deductForChargingPenalty },
-            new() { Name = "Sạt pin",NameAlias="Trừ sạt pin đối với lương ngày", Amount = _salary.deductForCharging },
-            new() { Name = "VETC",NameAlias="Qua trạm thu phí", Amount = _salary.deductForTollPayment },
-            new() { Name = "Tạm ứng",NameAlias="Chi phí ứng tiền", Amount = _salary.deductForOrderSalaryAdvance },
-            new() { Name = "Âm lương",NameAlias="Trừ tiền âm lương tháng trước", Amount = _salary.deductForNegativeSalary },
-            new() { Name = "Sửa chữa",NameAlias="Trừ tiền nợ sửa chữa", Amount = _salary.no_sua_chua },
-            new() { Name = "Trừ khác",NameAlias=_salary.noteDeductOrder, Amount = _salary.deductForOrder }
+            new() { Name = "Ký quỹ",NameAlias= "Tiền ký quỹ với công ty", Amount = _salary.deductForDeposit}, //1. Trừ ký quỹ
+            new() { Name = "Lương ứng",NameAlias= "Tạm ứng tiền công ty", Amount = _salary.deductForSalaryAdvance }, //2. Trừ lương ứng
+            new() { Name = "Âm lương",NameAlias= "Trừ tiền âm lương tháng trước (xe công ty)", Amount = _salary.deductForNegativeSalary }, //3. Trừ âm lương: Nợ tiền tháng trước, qua tháng này trừ lại vào lương (công ty)
+            new() { Name = "Biên bản",NameAlias= "Trừ vi phạm biên bản của tài xế", Amount = _salary.deductForViolationReport }, //4. Trừ vi phạm biên bản
+            new() { Name = "Nợ sửa chữa",NameAlias= "Chi phí phát sinh liên quan đến việc bảo trì, sửa chữa", Amount = _salary.no_sua_chua }, //5. Nợ sửa chữa
+            new() { Name = "Hao mòn vỏ xe", NameAlias = "Hao mòn vỏ xe", Amount = _salary.haomon_voxe }, //6. Hao mòn vỏ xe
+            new() { Name = "Sạt pin",NameAlias="Trừ sạt pin đối với lương ngày", Amount = _salary.deductForCharging },//7. Sat pin
+            new() { Name = "Phạt sạc",NameAlias="Sạc pin đầy nhưng không rút sạt", Amount = _salary.deductForChargingPenalty },//8. phạt sạt: Charging Penalty
+            new() { Name = "VETC",NameAlias="Qua trạm thu phí", Amount = _salary.deductForTollPayment }, //9. Trừ tiền qua trạm : Deduction for Toll Payment
+            new() { Name = "BHXH",NameAlias="BHXH", Amount = _salary.deductForSocialInsurance }, //10. Trừ BHXH
+            new() { Name = "Âm lương",NameAlias="Trừ tiền âm lương tháng trước (xe thương quyền)", Amount = _salary.deductForNegativeSalaryPartner }, //11. Trừ âm lương: Nợ tiền tháng trước, qua tháng này trừ lại vào lương (Thương quyền)
+            new() { Name = "TNCN",NameAlias="TNCN", Amount = _salary.deductForPIT }, //12. Trừ TNCN - Personal Income Tax Deduction
+            new() { Name = "Trừ khác",NameAlias=_salary.noteDeductOrder, Amount = _salary.deductForOrder } //13. Trừ khác - 14. Ghi chú trừ khác
         });
 
         return _salary;
