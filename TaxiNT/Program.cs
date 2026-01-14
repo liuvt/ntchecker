@@ -120,6 +120,7 @@ builder.Services.AddScoped<ISalaryServer, SalaryServer>();
 
 //Zalo Customer Service: dùng để nhận thông tin khách đặt xe
 builder.Services.AddScoped<IZaloCustomerService, ZaloCustomerService>();
+builder.Services.AddScoped<IFcmSenderService, FcmSenderService>();
 
 #region Font-end Register services
 // Blazor (client-side or server-side UI): [Authorize], [AuthorizeView]
@@ -173,7 +174,7 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 
 FirebaseApp.Create(new AppOptions
 {
-    Credential = GoogleCredential.FromFile("firebase-service-account.json")
+    Credential = GoogleCredential.FromFile("checker-bill-799fe7e78614.json")
 });
 
 var app = builder.Build();
