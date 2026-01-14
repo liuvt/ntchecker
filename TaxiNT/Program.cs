@@ -57,7 +57,7 @@ builder.Services.AddScoped(
     {
         //BaseAddress = new Uri(builder.Configuration["API:Default"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"))
         //BaseAddress = new Uri(builder.Configuration["API:Monsterasp"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"))
-        
+
         BaseAddress = new Uri(builder.Configuration["API:Hosting"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"))
     });
 
@@ -137,7 +137,7 @@ builder.Services.AddScoped<IBillCheckService, BillCheckService>();
 
 builder.Services.AddAntiforgery(options =>
 {
-    options.Cookie.Name = "TaxiNT.AntiForgery.v2.1"; 
+    options.Cookie.Name = "TaxiNT.AntiForgery.v3.2"; 
     options.Cookie.SameSite = SameSiteMode.Lax; // tránh bị chặn bởi Facebook WebView
     options.Cookie.HttpOnly = true;
 

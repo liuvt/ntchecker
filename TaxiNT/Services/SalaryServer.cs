@@ -60,31 +60,28 @@ public class SalaryServer : ISalaryServer
                 userId = item.ltvGetValueString(0),
                 revenue = item.ltvGetValueString(1),
                 tripsTotal = Convert.ToInt32(item.ltvGetValueDecimal(2)),
-                //kilometer = Convert.ToInt32(item.ltvGetValueDecimal(3)),
-                //kilometerWithCustomer = Convert.ToInt32(item.ltvGetValueDecimal(4)),
-                businessDays = Convert.ToInt32(item.ltvGetValueDecimal(3)),
-                salaryBase = item.ltvGetValueString(4),
-                deductForDeposit = item.ltvGetValueString(5),//Trừ ký quỹ 
-                deductForAccident = item.ltvGetValueString(6),//Trừ tai nạn
-                deductForSalaryAdvance = item.ltvGetValueString(7),//Trừ lương ứng
-                deductForViolationReport = item.ltvGetValueString(8),//Trừ vi phạm biên bản
-                deductForSocialInsurance = item.ltvGetValueString(9),//Trừ BHXH
-                deductForPIT = item.ltvGetValueString(10),//Trừ TNCN - Personal Income Tax Deduction 
-                deductForVMV = item.ltvGetValueString(11),//Lỗi bảo quản xe: Vehicle Maintenance Violation
-                deductForUV = item.ltvGetValueString(12),//Lỗi đồng phục: Uniform Violation
-                deductForSHV = item.ltvGetValueString(13),//Lỗi giao ca: Shift Handover Violation
-                deductForChargingPenalty = item.ltvGetValueString(14),// Phạt sạt: Charging Penalty
-                deductForCharging = item.ltvGetValueString(15),//Sạt pin
-                deductForTollPayment = item.ltvGetValueString(16), //Trừ tiền qua trạm : Deduction for Toll Payment
-                deductForOrder = item.ltvGetValueString(17),//Trừ khác
-                noteDeductOrder = item.ltvGetValueString(18),//Ghi chú trừ khác
-                deductForOrderSalaryAdvance = item.ltvGetValueString(19),//Trừ tạm ứng: nợ doanh thu, hoặc ứng tiền vì mục đích nào đó, kế toán cho phép
-                deductForNegativeSalary = item.ltvGetValueString(20),//Trừ âm lương: Nợ tiền tháng trước, qua tháng này trừ lại vào lương
-                no_sua_chua = item.ltvGetValueString(21),//Nợ sửa chữa
-                deductTotal = item.ltvGetValueString(22), //Tổng trừ
-                salaryNet = item.ltvGetValueString(23),//Lương thực nhận
-                salaryDate = item.ltvGetValueString(24),//Tháng/năm
-                salaryType = item.ltvGetValueString(25),//Loại hình lương
+                salaryType = item.ltvGetValueString(3), // Loại hình kinh doanh LƯƠNG NGÀY - LƯƠNG THÁNG
+                businessDays = Convert.ToInt32(item.ltvGetValueDecimal(4)), // Số ngày KD
+                salaryBase = item.ltvGetValueString(5), // Sau mức ăn chia || Lương cơ bản
+                deductTotal = item.ltvGetValueString(6), //Tổng trừ
+                salaryNet = item.ltvGetValueString(7),//Lương thực nhận
+
+                deductForDeposit = item.ltvGetValueString(8), //1. Trừ ký quỹ 
+                deductForSalaryAdvance = item.ltvGetValueString(9), //2. Trừ lương ứng
+                deductForNegativeSalary = item.ltvGetValueString(10), //3. Trừ âm lương: Nợ tiền tháng trước, qua tháng này trừ lại vào lương (công ty)
+                deductForViolationReport = item.ltvGetValueString(11), //4. Trừ vi phạm biên bản  
+                no_sua_chua = item.ltvGetValueString(12), //5. Nợ sửa chữa
+                haomon_voxe = item.ltvGetValueString(13), //6. Hao mòn vỏ xe
+                deductForCharging = item.ltvGetValueString(14), //7. Sat pin
+                deductForChargingPenalty = item.ltvGetValueString(15), //8. phạt sạt: Charging Penalty
+                deductForTollPayment = item.ltvGetValueString(16), //9. Trừ tiền qua trạm : Deduction for Toll Payment
+                deductForSocialInsurance = item.ltvGetValueString(17), //10. Trừ BHXH
+                deductForNegativeSalaryPartner = item.ltvGetValueString(18), //11. Trừ âm lương: Nợ tiền tháng trước, qua tháng này trừ lại vào lương (Thương quyền)
+                deductForPIT = item.ltvGetValueString(19), //12. Trừ TNCN - Personal Income Tax Deduction  
+                deductForOrder = item.ltvGetValueString(20), //13. Trừ khác
+                noteDeductOrder = item.ltvGetValueString(21), //14. Ghi chú trừ khác
+
+                salaryDate = item.ltvGetValueString(22), // Tháng/năm
             });
         }
 

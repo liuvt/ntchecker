@@ -24,7 +24,6 @@ public class Salary
     public string deductForPIT { get; set; } = string.Empty;//12. Trừ TNCN - Personal Income Tax Deduction 
     public string deductForOrder { get; set; } = string.Empty; //13. Trừ khác
     public string noteDeductOrder { get; set; } = string.Empty; //14. Ghi chú trừ khác
-
     public string salaryDate { get; set; } = string.Empty; //Tháng/năm
 }
 
