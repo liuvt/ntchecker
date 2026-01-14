@@ -1,41 +1,23 @@
-﻿window.loadQuill = function () {
-    // Nếu đã có quill instance cũ thì hủy trước
-    if (window.quill) {
-        window.quill = null;
-    }
+﻿import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getMessaging, getToken, isSupported } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging.js";
 
-    const container = document.getElementById("editor-container");
-    if (!container) return;
+export async function getFcmToken(firebaseConfig, vapidKey) {
+    const supported = await isSupported();
+    if (!supported) return null;
 
-    window.quill = new Quill(container, {
-        theme: "snow",
-        placeholder: "Nhập nội dung bài viết...",
-        modules: {
-            toolbar: [
-                ["bold", "italic", "underline"],
-                [{ list: "ordered" }, { list: "bullet" }],
-                ["link", "image"],
-                [{ align: [] }],
-                ["clean"],
-            ],
-        },
+    // Đăng ký service worker đúng file firebase-messaging-sw.js
+    const reg = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+
+    const permission = await Notification.requestPermission();
+    if (permission !== "granted") return null;
+
+    const app = initializeApp(firebaseConfig);
+    const messaging = getMessaging(app);
+
+    const token = await getToken(messaging, {
+        vapidKey,
+        serviceWorkerRegistration: reg
     });
-};
 
-window.setQuillHtml = function (html) {
-    if (window.quill && html) {
-        const delta = window.quill.clipboard.convert(html);
-        window.quill.setContents(delta, "silent");
-    }
-};
-
-window.getQuillHtml = function () {
-    if (!window.quill) return "";
-    return window.quill.root.innerHTML;
-};
-
-window.destroyQuill = function () {
-    if (window.quill) {
-        window.quill = null;
-    }
-};
+    return token || null;
+}

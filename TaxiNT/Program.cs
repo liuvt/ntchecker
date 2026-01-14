@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Antiforgery;
+﻿using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -167,6 +169,11 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
         if (ctx.CookieOptions.SameSite == SameSiteMode.None)
             ctx.CookieOptions.SameSite = SameSiteMode.Unspecified;
     };
+});
+
+FirebaseApp.Create(new AppOptions
+{
+    Credential = GoogleCredential.FromFile("firebase-service-account.json")
 });
 
 var app = builder.Build();

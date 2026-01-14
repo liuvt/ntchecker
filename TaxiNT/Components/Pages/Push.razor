@@ -1,0 +1,28 @@
+﻿@inject IJSRuntime JS
+@inject HttpClient Http
+
+<button @onclick="EnableFcm">Bật thông báo (FCM)</button>
+
+@code {
+    private readonly object firebaseConfig = new
+    {
+        apiKey = "…",
+        authDomain = "…",
+        projectId = "…",
+        messagingSenderId = "…",
+        appId = "…"
+    };
+
+    private const string vapidKey = "YOUR_FIREBASE_VAPID_KEY";
+
+    private async Task EnableFcm()
+    {
+        var module = await JS.InvokeAsync<IJSObjectReference>("import", "/fcm.js");
+        var token = await module.InvokeAsync<string>("getFcmToken", firebaseConfig, vapidKey);
+
+        if (string.IsNullOrWhiteSpace(token))
+            return;
+
+        await Http.PostAsJsonAsync("/api/push/fcm/register", new { token });
+    }
+}
