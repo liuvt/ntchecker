@@ -2,8 +2,9 @@
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
-using TaxiNT.Libraries.Models.GGSheets;
+using Google.Apis.Sheets.v4.Data;
 using TaxiNT.Extensions;
+using TaxiNT.Libraries.Models.GGSheets;
 using TaxiNT.Services.Interfaces;
 
 namespace TaxiNT.Services;
@@ -21,6 +22,8 @@ public class SalaryServer : ISalaryServer
     // For Sheet
     private readonly string sheetSALARIES = "SALARIES";
     private readonly string sheetSALARYDETAILS = "SALARYDETAILS";
+
+    private readonly string sheetFeelback = "Feedback";
 
     public SalaryServer()
     {
@@ -139,6 +142,34 @@ public class SalaryServer : ISalaryServer
             throw new Exception("Không tìm thấy dữ liệu: {userId}");
         }
         return listSalaryDetails;
+    }
+    #endregion
+
+    #region Feedback
+    public async Task AddAsync(FeedbackModel model)
+    {
+        var values = new List<object?>
+    {
+        Guid.NewGuid().ToString(),
+        model.FullName?.Trim(),
+        model.Phone?.Trim(),
+        model.OccurredDate?.ToString("yyyy-MM-dd"), // ISO để không lỗi locale
+        model.LocationOrRoute?.Trim(),
+        model.Category?.Trim(),
+        model.Reference?.Trim(),
+        model.Content?.Trim(),
+        DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")
+    };
+
+        var valueRange = new ValueRange
+        {
+            Values = new List<IList<object?>> { values }
+        };
+
+        await sheetsService.ltvAppendSheetValuesAsync(
+            SpreadSheetId,
+            $"{sheetFeelback}!A:I", //Nếu dòng 1 có dữ liệu sẽ không bị ghi đè vì đã sử dụng ltvAppendSheetValuesAsync, nếu dòng 1 không có dữ liệu sẽ ghi vào đó
+            valueRange);
     }
     #endregion
 }

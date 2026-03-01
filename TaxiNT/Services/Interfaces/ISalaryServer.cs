@@ -5,4 +5,7 @@ public interface ISalaryServer
 {
     Task<Salary> GetSalary(string userId);
     Task<List<SalaryDetails>> GetSalaryDetails(string userId);
+
+    //Feelback  
+    Task AddAsync(FeedbackModel model);
 }

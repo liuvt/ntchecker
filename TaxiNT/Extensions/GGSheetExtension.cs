@@ -94,7 +94,13 @@ public static class GGSheetExtension
     public static async Task ltvAppendSheetValuesAsync(this SheetsService service, string spreadsheetId, string range, ValueRange valueRange)
     {
         var appendRequest = service.Spreadsheets.Values.Append(valueRange, spreadsheetId, range);
-        appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
+        //ValueInputOptionEnum.USERENTERED
+        //Nếu user nhập 00123 → Google có thể thành 123
+        //Nếu nhập số điện thoại dài → có thể thành dạng scientific 1.23E+9
+        //appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
+        
+        //Sử dụng RAW để giữ nguyên định dạng gốc của dữ liệu, tránh bị Google Sheets tự động chuyển đổi
+        appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.RAW;
         appendRequest.InsertDataOption = SpreadsheetsResource.ValuesResource.AppendRequest.InsertDataOptionEnum.INSERTROWS; //Tạo thêm hàng mới nếu không còn đủ hàng
         await appendRequest.ExecuteAsync();
     }

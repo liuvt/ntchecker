@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Antiforgery;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
+using System.Globalization;
 using System.Text;
 using TaxiNT.Client.Services;
 using TaxiNT.Client.Services.Interfaces;
@@ -23,6 +23,10 @@ builder.Services.AddSignalR(e =>
     e.MaximumReceiveMessageSize = 102400000;
 });
 
+//Format chuẩn datetime Việt Nam
+var culture = new CultureInfo("vi-VN");
+CultureInfo.DefaultThreadCurrentCulture = culture;
+CultureInfo.DefaultThreadCurrentUICulture = culture;
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -57,7 +61,6 @@ builder.Services.AddScoped(
     {
         //BaseAddress = new Uri(builder.Configuration["API:Default"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"))
         //BaseAddress = new Uri(builder.Configuration["API:Monsterasp"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"))
-
         BaseAddress = new Uri(builder.Configuration["API:Hosting"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"))
     });
 
@@ -116,8 +119,6 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ISalaryServer, SalaryServer>();
 #endregion
 
-//Zalo Customer Service: dùng để nhận thông tin khách đặt xe
-builder.Services.AddScoped<IZaloCustomerService, ZaloCustomerService>();
 
 #region Font-end Register services
 // Blazor (client-side or server-side UI): [Authorize], [AuthorizeView]
