@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using TaxiNT.Libraries.Entities;
 using TaxiNT.Libraries.MapperModels;
 using TaxiNT.Services.Interfaces;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TaxiNT.Controllers
 {
@@ -25,7 +26,7 @@ namespace TaxiNT.Controllers
             try
             {
                 var result = await context.UpsertShiftWorkDailyAsync(data);
-                return Ok(result);
+                return result as IActionResult ?? Ok(result);
             }
             catch (Exception ex)
             {
@@ -49,8 +50,6 @@ namespace TaxiNT.Controllers
                     ? vnNow.AddDays(-1).ToString("yyyy-MM-dd")
                     : date;
 
-                Console.WriteLine($"Target Date: {vnNow.AddDays(-1).ToString("yyyy-MM-dd")}");
-
                 var result = await context.Gets(userId, targetDate);
 
                 if (result == null)
@@ -61,6 +60,50 @@ namespace TaxiNT.Controllers
             catch (Exception ex)
             {
                 logger.LogError($"Error: {ex.Message}");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpPost("upsert-daily-by-id")]
+        public async Task<IActionResult> UpsertShiftWorkDailyById([FromBody] ShiftWorkUpsertByIdDto data)
+        {
+            try
+            {
+                var result = await context.UpsertShiftWorkDailyByIdAsync(data);
+                return result as IActionResult ?? Ok(result);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error upsert shiftwork daily by id");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpGet("by-area-createdAt")]
+        public async Task<IActionResult> GetByAreaAndCreatedAt(string area, string createdAt)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(area))
+                    return BadRequest("Area is required.");
+
+                ///Nếu như date null thì lấy ngày hiện tại -1 để thu tiền phiếu ngày hôm qua
+                //Bắt trạng thái Daily, nếu date rỗng → lấy ngày hôm qua
+                var vnNow = DateTime.UtcNow.AddHours(7); //Múi giờ Việt Nam cộng thêm 7 tiếng, tức là múi giờ Việt Nam (UTC+7).
+                var targetDate = string.IsNullOrWhiteSpace(createdAt)
+                    ? vnNow.AddDays(-1).ToString("yyyy-MM-dd")
+                    : createdAt;
+
+                var result = await context.GetShiftWorkDtosByAreaAndCreatedAtAsync(area, targetDate);
+
+                if (result == null || result.Count == 0)
+                    return NoContent();
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error get ShiftWorkDto by Area + createdAt");
                 return StatusCode(500, "Internal server error");
             }
         }
