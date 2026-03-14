@@ -78,7 +78,7 @@ namespace TaxiNT.Controllers
         }
 
         [HttpGet("by-area-createdAt")]
-        public async Task<IActionResult> GetByAreaAndCreatedAt(string area, string createdAt)
+        public async Task<IActionResult> GetByAreaAndCreatedAt(string area, string date)
         {
             try
             {
@@ -88,9 +88,9 @@ namespace TaxiNT.Controllers
                 ///Nếu như date null thì lấy ngày hiện tại -1 để thu tiền phiếu ngày hôm qua
                 //Bắt trạng thái Daily, nếu date rỗng → lấy ngày hôm qua
                 var vnNow = DateTime.UtcNow.AddHours(7); //Múi giờ Việt Nam cộng thêm 7 tiếng, tức là múi giờ Việt Nam (UTC+7).
-                var targetDate = string.IsNullOrWhiteSpace(createdAt)
+                var targetDate = string.IsNullOrWhiteSpace(date)
                     ? vnNow.AddDays(-1).ToString("yyyy-MM-dd")
-                    : createdAt;
+                    : date;
 
                 var result = await context.GetShiftWorkDtosByAreaAndCreatedAtAsync(area, targetDate);
 

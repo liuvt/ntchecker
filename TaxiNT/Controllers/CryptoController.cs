@@ -56,7 +56,7 @@ namespace TaxiNT.Controllers
         // /api/crypto/open-user?id=Nguyen%20Van%20A%20-%20NV001
         // Chuyển hướng sang /checkers/{encrypted} để AppSheet mở ra trang checkers với id đã được mã hóa trong URL
         [HttpGet("open-user")]
-        public IActionResult OpenUser([FromQuery] string id)
+        public IActionResult OpenUser([FromQuery] string id, string? date)
         {
             try
             {
@@ -65,7 +65,17 @@ namespace TaxiNT.Controllers
 
                 var encrypted = CryptographyAESExtension.Encrypt(id);
 
-                var finalUrl = $"/checkers/{encrypted}";
+                string finalUrl;
+
+                if (string.IsNullOrWhiteSpace(date))
+                {
+                    finalUrl = $"/checkers/{encrypted}";
+                }
+                else
+                {
+                    finalUrl = $"/checkers/{encrypted}/{Uri.EscapeDataString(date)}";
+                }
+
                 return Redirect(finalUrl);
             }
             catch (Exception ex)
