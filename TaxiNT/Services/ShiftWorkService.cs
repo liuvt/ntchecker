@@ -6,6 +6,7 @@ using TaxiNT.Libraries.Extensions;
 using TaxiNT.Libraries.MapperModels;
 using TaxiNT.Libraries.Models;
 using TaxiNT.Services.Interfaces;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TaxiNT.Services;
 //WithSQL
@@ -243,7 +244,349 @@ public class ShiftWorkService : IShiftWorkService
             _logger.LogError(ex, "Error during UpsertShiftWorkDailyAsync");
             return new ObjectResult("Internal server error") { StatusCode = 500 };
         }
-        /* Example input data upsert:
+    }
+
+    ///Upsert dữ liệu theo ShiftWorkId, nếu có Id thì cập nhật, không có Id thì thêm mới
+    public async Task<object> UpsertShiftWorkDailyByIdAsync(ShiftWorkUpsertByIdDto data)
+    {
+        // kiểm tra dữ liệu đầu vào
+        if (data?.ShiftWorks == null || data.ShiftWorks.Count == 0)
+            return new BadRequestObjectResult("No ShiftWork data found.");
+
+        // Chỉ check duplicate với các Id có giá trị
+        var duplicateShiftIds = data.ShiftWorks
+            .Select(x => x.ShiftWork.Id)
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .GroupBy(x => x)
+            .Where(g => g.Count() > 1)
+            .Select(g => g.Key)
+            .ToList();
+
+        if (duplicateShiftIds.Any())
+            return new BadRequestObjectResult(
+                $"Duplicate ShiftWork.Id found: {string.Join(", ", duplicateShiftIds)}");
+
+        // Tạo transaction để đảm bảo tính toàn vẹn dữ liệu. Tất cả sẽ Rollback nếu trong quá trình create/update/delete có lỗi xảy ra
+        using var transaction = await _context.Database.BeginTransactionAsync();
+
+        try
+        {
+            int totalTrips = 0;
+            int totalContracts = 0;
+
+            int totalInsertShiftWorks = 0;
+            int totalUpdateShiftWorks = 0;
+
+            int totalDeleteTrips = 0;
+            int totalInsertTrips = 0;
+
+            int totalDeleteContracts = 0;
+            int totalInsertContracts = 0;
+
+            // Lấy tất cả ShiftWorkId từ dữ liệu đầu vào để truy vấn dữ liệu hiện có trong database, giúp tối ưu số lần truy vấn
+            var incomingShiftIds = data.ShiftWorks
+                .Select(x => x.ShiftWork.Id)
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Distinct()
+                .ToList();
+
+            // Tạo một dictionary để map ShiftWorkId với entity hiện có, giúp truy cập nhanh khi cần cập nhật
+            var existingShiftMap = await _context.ShiftWorks
+                .Where(x => incomingShiftIds.Contains(x.Id))
+                .ToDictionaryAsync(x => x.Id);
+
+            // Xử lý từng nhóm ShiftWork
+            foreach (var group in data.ShiftWorks)
+            {
+                var swDto = group.ShiftWork;
+                var incomingTripDtos = swDto.Trips ?? new List<TripDto>();
+                var incomingContractDtos = swDto.Contracts ?? new List<ContractDto>();
+
+                // Biến để giữ ShiftWork mục tiêu (có thể là mới hoặc đã cập nhật)
+                ShiftWork targetShift;
+
+                #region Upsert ShiftWork theo Id
+                // Kiểm tra nếu có Id và tồn tại trong database thì cập nhật, ngược lại thì thêm mới
+                if (!string.IsNullOrWhiteSpace(swDto.Id) &&
+                    existingShiftMap.TryGetValue(swDto.Id, out var existingShift))
+                {
+
+                    targetShift = swDto.ToEntity(existingShift); //MapperModels để cập nhật dữ liệu vào entity cũ
+                    totalUpdateShiftWorks++;
+
+                    _logger.LogInformation(
+                        "🔁 Update ShiftWork: ShiftWorkId={ShiftWorkId}, UserId={UserId}, NumberCar={NumberCar}, Date={Date}, Area={Area}",
+                        existingShift.Id,
+                        existingShift.userId,
+                        existingShift.numberCar,
+                        existingShift.createdAt?.ToString("yyyy-MM-dd"),
+                        existingShift.area
+                    );
+                }
+                else
+                {
+                    var newShift = swDto.ToEntity();
+
+                    if (string.IsNullOrWhiteSpace(newShift.Id))
+                        newShift.Id = Guid.NewGuid().ToString();
+
+                    await _context.ShiftWorks.AddAsync(newShift);
+
+                    targetShift = newShift;
+                    totalInsertShiftWorks++;
+
+                    _logger.LogInformation(
+                        "🆕 Insert ShiftWork: ShiftWorkId={ShiftWorkId}, UserId={UserId}, NumberCar={NumberCar}, Date={Date}, Area={Area}",
+                        newShift.Id,
+                        newShift.userId,
+                        newShift.numberCar,
+                        newShift.createdAt?.ToString("yyyy-MM-dd"),
+                        newShift.area
+                    );
+                }
+                #endregion
+
+                // Ghi vào SQL để có Id của ShiftWork mới (nếu là mới) hoặc đảm bảo entity đã được attach vào context (nếu là cập nhật)
+                var shiftworkId = targetShift.Id;
+
+                #region Xóa Trips cũ theo shiftworkId
+                // Tìm Trips cũ theo ID của shiftwork
+                var oldTrips = await _context.Trips
+                    .Where(t => t.shiftworkId == shiftworkId)
+                    .ToListAsync();
+                // Xóa dữ liệu cũ
+                if (oldTrips.Any())
+                {
+                    _context.Trips.RemoveRange(oldTrips);
+                    totalDeleteTrips += oldTrips.Count;
+
+                    _logger.LogInformation(
+                        "🗑 Delete all Trips by ShiftWorkId={ShiftWorkId}, Count={Count}",
+                        shiftworkId,
+                        oldTrips.Count
+                    );
+                }
+                #endregion
+
+                #region Xóa Contracts cũ theo shiftworkId
+                // Tìm Contracts cũ theo ID của shiftwork
+                var oldContracts = await _context.Contracts
+                    .Where(c => c.shiftworkId == shiftworkId)
+                    .ToListAsync();
+                // Xóa dữ liệu cũ
+                if (oldContracts.Any())
+                {
+                    _context.Contracts.RemoveRange(oldContracts);
+                    totalDeleteContracts += oldContracts.Count;
+
+                    _logger.LogInformation(
+                        "🗑 Delete all Contracts by ShiftWorkId={ShiftWorkId}, Count={Count}",
+                        shiftworkId,
+                        oldContracts.Count
+                    );
+                }
+                #endregion
+
+                #region Insert Trips mới
+                // Gán shiftworkId cho dữ liệu Trips mới
+                var newTrips = incomingTripDtos
+                    .Select(x => x.TripDtoToEntity(shiftworkId))
+                    .ToList();
+                // Thêm dữ liệu mới
+                if (newTrips.Any())
+                {
+                    await _context.Trips.AddRangeAsync(newTrips);
+                    totalInsertTrips += newTrips.Count;
+
+                    _logger.LogInformation(
+                        "➕ Insert Trips by ShiftWorkId={ShiftWorkId}, Count={Count}",
+                        shiftworkId,
+                        newTrips.Count
+                    );
+                }
+                #endregion
+
+                #region Insert Contracts mới
+                // Gán shiftworkId cho dữ liệu Contracts mới
+                var newContracts = incomingContractDtos
+                    .Select(x => x.ContractDtoToEntity(shiftworkId))
+                    .ToList();
+                // Thêm dữ liệu mới
+                if (newContracts.Any())
+                {
+                    await _context.Contracts.AddRangeAsync(newContracts);
+                    totalInsertContracts += newContracts.Count;
+
+                    _logger.LogInformation(
+                        "➕ Insert Contracts by ShiftWorkId={ShiftWorkId}, Count={Count}",
+                        shiftworkId,
+                        newContracts.Count
+                    );
+                }
+                #endregion
+
+                totalTrips += newTrips.Count;
+                totalContracts += newContracts.Count;
+            }
+
+            await _context.SaveChangesAsync();
+            // Commit transaction nếu tất cả thành công sẽ được ghi vào database
+            await transaction.CommitAsync();
+
+            return new
+            {
+                message = "Upsert by ShiftWorkId completed successfully",
+                totalShiftWorks = data.ShiftWorks.Count,
+                totalTrips,
+                totalContracts,
+
+                totalInsertShiftWorks,
+                totalUpdateShiftWorks,
+
+                totalDeleteTrips,
+                totalInsertTrips,
+
+                totalDeleteContracts,
+                totalInsertContracts
+            };
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            _logger.LogError(ex, "Error during UpsertShiftWorkDailyByIdAsync");
+
+            return new ObjectResult("Internal server error")
+            {
+                StatusCode = 500
+            };
+        }
+    }
+
+    ///Gets data by Area + Date
+    public async Task<List<ShiftWorkDto>> GetShiftWorkDtosByAreaAndCreatedAtAsync(string area, string createdAt)
+    {
+        if (string.IsNullOrWhiteSpace(area))
+            return new List<ShiftWorkDto>();
+
+        if (!DateTime.TryParse(createdAt, out DateTime _workDate))
+            throw new ArgumentException("Invalid date format. Expected format: yyyy-MM-dd");
+
+        var workDate = _workDate.Date;
+
+        var data = await _context.ShiftWorks
+            .AsNoTracking()
+            .Where(sw =>
+                sw.area == area &&
+                sw.createdAt.HasValue &&
+                sw.createdAt.Value.Date == workDate)
+            .Include(sw => sw.Trips)
+            .Include(sw => sw.Contracts)
+            .OrderBy(sw => sw.numberCar)
+            .ToListAsync();
+
+        return data.Select(sw => new ShiftWorkDto
+        {
+            Id = sw.Id,
+            numberCar = sw.numberCar,
+            userId = sw.userId,
+            revenueByMonth = sw.revenueByMonth,
+            revenueByDate = sw.revenueByDate,
+            qrContext = sw.qrContext,
+            qrUrl = sw.qrUrl,
+            discountOther = sw.discountOther,
+            arrearsOther = sw.arrearsOther,
+            totalPrice = sw.totalPrice,
+            walletGSM = sw.walletGSM,
+            discountGSM = sw.discountGSM,
+            discountNT = sw.discountNT,
+            bank_Id = sw.bank_Id,
+            createdAt = sw.createdAt,
+            typeCar = sw.typeCar,
+            area = sw.area,
+            ranking = sw.ranking,
+            basicSalary = sw.basicSalary,
+
+            Trips = (sw.Trips ?? new List<Trip>())
+                .Select(t => new TripDto
+                {
+                    Id = t.Id,
+                    NumberCar = t.NumberCar,
+                    tpTimeStart = t.tpTimeStart,
+                    tpTimeEnd = t.tpTimeEnd,
+                    tpDistance = t.tpDistance,
+                    tpPrice = t.tpPrice,
+                    tpPickUp = t.tpPickUp,
+                    tpDropOut = t.tpDropOut,
+                    tpType = t.tpType,
+                    userId = t.userId,
+                    createdAt = t.createdAt
+                })
+                .ToList(),
+
+            Contracts = (sw.Contracts ?? new List<Contract>())
+                .Select(c => new ContractDto
+                {
+                    ctId = c.ctId,
+                    numberCar = c.numberCar,
+                    ctKey = c.ctKey,
+                    ctAmount = c.ctAmount,
+                    ctDefaultDistance = c.ctDefaultDistance,
+                    ctOverDistance = c.ctOverDistance,
+                    ctSurcharge = c.ctSurcharge,
+                    ctPromotion = c.ctPromotion,
+                    totalPrice = c.totalPrice,
+                    userId = c.userId,
+                    createdAt = c.createdAt
+                })
+                .ToList()
+        }).ToList();
+    }
+
+    ///Gets data by User + Date để hiển thị chi tiết ca làm việc của từng tài xế
+    public async Task<ShiftWorkDto?> Gets(string userId, string date)
+    {
+        // kiểm tra dữ liệu đầu vào
+        if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(date))
+            throw new ArgumentException("userId and date are required.");
+        if (!DateTime.TryParse(date, out DateTime workDate))
+            throw new ArgumentException("Invalid date format. Expected format: yyyy-MM-dd");
+
+        /// Lấy toàn bộ ShiftWork theo User và Date
+        var result = await _context.ShiftWorks
+            .Where(sw => sw.userId == userId
+                      && sw.createdAt.HasValue
+                      && sw.createdAt.Value.Date == workDate.Date)
+            .Include(sw => sw.Trips)
+            .Include(sw => sw.Contracts)
+            .ToListAsync();
+
+        // Chuyển đổi dữ liệu sang DTO
+        var dataMap = result.ToDto();
+
+        /// Lấy số tài khoản ngân hàng từ SQL để tạo QR
+        var banks = await _context.Banks.Where(b => b.bank_Id == dataMap.bank_Id).FirstOrDefaultAsync();
+
+        if (banks != null)
+        {
+            // Tạo chuỗi QR
+            var qrString = $"{dataMap.numberCar} {dataMap.userId.Replace("-", "").Replace(" ", "")} {workDate:ddMMyyyy}";
+            dataMap.qrContext = qrString;
+
+            // Tạo URL QR code sử dụng dịch vụ VietQR
+            var qrUrl = $"https://img.vietqr.io/image/{banks.bank_NumberId}-{banks.bank_NumberCard}-{banks.bank_Type}?amount={dataMap.totalPrice.ltvVNDCurrency().Replace(".", "")}&addInfo={Uri.EscapeDataString(qrString)}&accountName={Uri.EscapeDataString(banks.bank_AccountName)}";
+            dataMap.qrUrl = qrUrl;
+        }
+        else
+        {
+            dataMap.qrContext = "Bank information not found.";
+            dataMap.qrUrl = string.Empty;
+        }
+        return dataMap;
+    }
+    #endregion
+}
+
+/* Example input data upsert:
      {
       "shiftWorks": [
             {
@@ -382,51 +725,4 @@ public class ShiftWorkService : IShiftWorkService
             }
         ]
        }
-     
      */
-    }
-
-    ///Gets data
-    public async Task<ShiftWorkDto> Gets(string userId, string date)
-    {
-        // kiểm tra dữ liệu đầu vào
-        if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(date))
-            throw new ArgumentException("userId and date are required.");
-        if (!DateTime.TryParse(date, out DateTime workDate))
-            throw new ArgumentException("Invalid date format. Expected format: yyyy-MM-dd");
-
-        /// Lấy toàn bộ ShiftWork theo User và Date
-        var result = await _context.ShiftWorks
-            .Where(sw => sw.userId == userId
-                      && sw.createdAt.HasValue
-                      && sw.createdAt.Value.Date == workDate.Date)
-            .Include(sw => sw.Trips)
-            .Include(sw => sw.Contracts)
-            .ToListAsync();
-
-        // Chuyển đổi dữ liệu sang DTO
-        var dataMap = result.ToDto();
-
-        /// Lấy số tài khoản ngân hàng từ SQL để tạo QR
-        var banks = await _context.Banks.Where(b => b.bank_Id == dataMap.bank_Id).FirstOrDefaultAsync();
-
-        if (banks != null)
-        {
-            // Tạo chuỗi QR
-            var qrString = $"{dataMap.numberCar} {dataMap.userId.Replace("-", "").Replace(" ", "")} {workDate:ddMMyyyy}";
-            dataMap.qrContext = qrString;
-            
-            // Tạo URL QR code sử dụng dịch vụ VietQR
-            var qrUrl = $"https://img.vietqr.io/image/{banks.bank_NumberId}-{banks.bank_NumberCard}-{banks.bank_Type}?amount={dataMap.totalPrice.ltvVNDCurrency().Replace(".","")}&addInfo={Uri.EscapeDataString(qrString)}&accountName={Uri.EscapeDataString(banks.bank_AccountName)}";
-            dataMap.qrUrl = qrUrl;
-        }
-        else
-        {
-            dataMap.qrContext = "Bank information not found.";
-            dataMap.qrUrl = string.Empty;
-        }
-        return dataMap;
-    } 
-
-    #endregion
-}

@@ -2,6 +2,7 @@
 
 namespace TaxiNT.Libraries.Entities
 {
+    // Dùng cho đồng bộ ca làm việc hàng ngày, có thể dùng để tạo mới hoặc cập nhật
     public class ShiftWorkDailySyncDto
     {
         public List<ShiftWorkGroupDto> ShiftWorks { get; set; } = new();
@@ -12,6 +13,17 @@ namespace TaxiNT.Libraries.Entities
         public ShiftWork ShiftWork { get; set; } = new();
         public List<Trip> Trips { get; set; } = new();
         public List<Contract> Contracts { get; set; } = new();
+    }
+    
+    // Dùng cho cập nhật hoặc tạo mới ca làm việc theo ID
+    public class  ShiftWorkUpsertByIdDto
+    {
+        public List<ShiftWorkUpsertGroupDto> ShiftWorks { get; set; } = new();
+    }
+
+    public class ShiftWorkUpsertGroupDto
+    {
+        public ShiftWorkDto ShiftWork { get; set; } = new();
     }
 
     public class ShiftWorkDto

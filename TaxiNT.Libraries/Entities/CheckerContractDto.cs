@@ -11,6 +11,7 @@ public class ContractDto
     public decimal? ctSurcharge { get; set; }
     public decimal? ctPromotion { get; set; }
     public decimal? totalPrice { get; set; }
+    public string userId { get; set; } = string.Empty;
     public DateTime? createdAt { get; set; }
 }
 
