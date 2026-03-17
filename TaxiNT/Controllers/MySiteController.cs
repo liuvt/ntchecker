@@ -32,6 +32,7 @@ public class RobotsController : ControllerBase
         sb.AppendLine("Disallow: /admin/");
         sb.AppendLine("Disallow: /checkers/");
         sb.AppendLine("Disallow: /api/");
+        sb.AppendLine("Disallow: /login/");
         sb.AppendLine("Disallow: /_framework/");
         sb.AppendLine("");
 
