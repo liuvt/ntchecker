@@ -33,6 +33,13 @@
                         <img width="18" src="../icons/checkerdetail/revenue-month.png" alt="Đang tải..." />
                         <span class="ml-1 font-medium">Doanh thu tháng: @shiftWork.revenueByMonth.ltvVNDCurrency()</span>
                     </p>
+                    @if (shiftWork.gasmoney != null && shiftWork.gasmoney != 0)
+                    {
+                        <p class="flex items-center text-base text-green-600 md:text-lg">
+                            <img width="18" src="../icons/checkerdetail/revenue-month.png" alt="Đang tải..." />
+                            <span class="ml-1 font-medium">Xăng: @shiftWork.gasmoney.ltvVNDCurrency()</span>
+                        </p>
+                    }
                     <p class="flex items-center text-base text-green-600 md:text-lg">
                         <span class="ml-1 font-medium">@ranking </span>
                     </p>
@@ -213,9 +220,18 @@
                                 <li>
                                     <div class="flex gap-2">
                                         <img width="24" height="24" src="../icons/checkerdetail/star.png" alt="Đang tải..." />
-                                        <span class="text-base">Ví/Tip (-): @shiftWork.walletGSM.ltvVNDCurrency()</span>
+                                        <span class="text-base">Ví/Tip/VNPay (-): @shiftWork.walletGSM.ltvVNDCurrency()</span>
                                     </div>
                                 </li>
+                                @if (shiftWork.pre_postpaid != null && shiftWork.pre_postpaid != 0)
+                                {
+                                    <li>
+                                        <div class="flex gap-2">
+                                            <img width="24" height="24" src="../icons/checkerdetail/star.png" alt="Đang tải..." />
+                                            <span class="text-base">Trả trước/trả sau (-): @shiftWork.pre_postpaid.ltvVNDCurrency()</span>
+                                        </div>
+                                    </li>
+                                }
                                 <li>
                                     <div class="flex gap-2">
                                         <img width="24" height="24" src="../icons/checkerdetail/star.png" alt="Đang tải..." />
@@ -338,5 +354,6 @@
         await Js.InvokeVoidAsync("forceDesktopView");
         StateHasChanged(); // Cập nhật lại giao diện
     }
+
 }
 

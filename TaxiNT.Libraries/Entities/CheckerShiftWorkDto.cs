@@ -52,7 +52,8 @@ namespace TaxiNT.Libraries.Entities
 
         public string area { get; set; } = string.Empty;
         public int ranking { get; set; }
-        public decimal basicSalary { get; set; } //Không dùng
+        public decimal? gasmoney { get; set; } 
+        public decimal? pre_postpaid { get; set; } 
 
         // Dữ liệu chi tiết
         public List<TripDto> Trips { get; set; } = new();

@@ -85,6 +85,7 @@ namespace TaxiNT.Controllers
             }
         }
 
+        // 2) POST: gửi id trong body, trả về kết quả mã hóa, dễ test bằng Postman hoặc các công cụ tương tự
         [HttpPost("encrypt-query")]
         public IActionResult EncryptByQuery([FromQuery] string id)
         {
@@ -118,6 +119,7 @@ namespace TaxiNT.Controllers
             }
         }
 
+        // 2) POST: test bằng Postman hoặc AppSheet "webhook", gửi id trong query string, backend trả về JSON chứa kết quả đã mã hóa
         [HttpPost("decrypt-query")]
         public IActionResult DecryptByQuery([FromQuery] string id)
         {

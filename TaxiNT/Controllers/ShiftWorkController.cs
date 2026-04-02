@@ -18,6 +18,7 @@ namespace TaxiNT.Controllers
             this.logger = _logger;
         }
 
+        // Cập nhật hoặc tạo mới ca làm việc hàng ngày, nếu ID tồn
         [HttpPost("upsert-daily")]
         public async Task<IActionResult> UpsertShiftWorkDaily([FromBody] ShiftWorkDailySyncDto data)
         {
@@ -33,6 +34,7 @@ namespace TaxiNT.Controllers
             }
         }
 
+        // Lấy ca làm việc theo userId và ngày (định dạng "yyyy-MM-dd"), nếu date null thì lấy ngày hiện tại -1 để thu tiền phiếu ngày hôm qua
         [HttpGet]
         public async Task<IActionResult> Gets(string userId, string? date)
         {
@@ -62,6 +64,7 @@ namespace TaxiNT.Controllers
             }
         }
 
+        // Cập nhật hoặc tạo mới ca làm việc theo ID, nếu ID tồn tại thì cập nhật, nếu không tồn tại thì tạo mới
         [HttpPost("upsert-daily-by-id")]
         public async Task<IActionResult> UpsertShiftWorkDailyById([FromBody] ShiftWorkUpsertByIdDto data)
         {
@@ -77,6 +80,7 @@ namespace TaxiNT.Controllers
             }
         }
 
+        // Lấy danh sách ShiftWorkDto theo area và createdAt (ngày tạo)
         [HttpGet("by-area-createdAt")]
         public async Task<IActionResult> GetByAreaAndCreatedAt(string area, string date)
         {
@@ -106,6 +110,7 @@ namespace TaxiNT.Controllers
             }
         }
 
+        // Lấy ca làm việc theo userId và ngày (định dạng "yyyy-MM-dd"), nếu date null thì lấy ngày hiện tại -1 để thu tiền phiếu ngày hôm qua, với userId được mã hóa AES
         [HttpGet("get-crypto")]
         public async Task<IActionResult> GetsCrytoAES(string cryptoAES, string? date)
         {

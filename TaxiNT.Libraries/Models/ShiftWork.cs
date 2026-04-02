@@ -39,7 +39,9 @@ public class ShiftWork
     public string area { get; set; } = string.Empty;
     public int ranking { get; set; }
     [Column(TypeName = "decimal(18,2)")]
-    public decimal basicSalary { get; set; } //Không dùng
+    public decimal? gasmoney { get; set; } // Phú quốc giá xăng
+    [Column(TypeName = "decimal(18,2)")]
+    public decimal? pre_postpaid { get; set; } // Phú quốc trả trước hay trả sau
 
     // Liên kết
     public List<Trip>? Trips { get; set; } // 1-n

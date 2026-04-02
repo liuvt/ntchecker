@@ -151,7 +151,8 @@ public class ShiftWorkService : IShiftWorkService
                     existingShift.typeCar = sw.typeCar;
                     existingShift.area = sw.area;
                     existingShift.ranking = sw.ranking;
-                    existingShift.basicSalary = sw.basicSalary;
+                    existingShift.gasmoney = sw.gasmoney;
+                    existingShift.pre_postpaid = sw.pre_postpaid;
 
                     // Log cập nhật ShiftWork
                     _logger.LogInformation(
@@ -504,7 +505,8 @@ public class ShiftWorkService : IShiftWorkService
             typeCar = sw.typeCar,
             area = sw.area,
             ranking = sw.ranking,
-            basicSalary = sw.basicSalary,
+            gasmoney = sw.gasmoney,
+            pre_postpaid = sw.pre_postpaid,
 
             Trips = (sw.Trips ?? new List<Trip>())
                 .Select(t => new TripDto

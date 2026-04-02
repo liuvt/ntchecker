@@ -50,17 +50,15 @@ builder.Services.AddIdentity<AppUser, IdentityRole>()
 //Add connection string
 builder.Services.AddDbContext<taxiNTDBContext>(opt =>
 {
+    // Default Hosting Vps
     opt.UseSqlServer(builder.Configuration["ConnectionStrings:Vps"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"));
-    //opt.UseSqlServer(builder.Configuration["ConnectionStrings:Hosting"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"));
-    //opt.UseSqlServer(builder.Configuration["ConnectionStrings:Default"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"));
 });
 
 // UI: Get httpClient API default
 builder.Services.AddScoped(
     defaultClient => new HttpClient
     {
-        //BaseAddress = new Uri(builder.Configuration["API:Default"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"))
-        //BaseAddress = new Uri(builder.Configuration["API:Monsterasp"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"))
+        // Default Hosting Monsterasp
         BaseAddress = new Uri(builder.Configuration["API:Hosting"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"))
     });
 

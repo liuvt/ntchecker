@@ -39,7 +39,8 @@ public static class ShiftWorkMapper
             typeCar = first.typeCar,
             area = first.area,
             ranking = first.ranking,
-            basicSalary = entities.Sum(x => x.basicSalary), // Cộng dồn nhưng sai vì lương ngày phải tính lại lương
+            gasmoney = entities.Sum(x => x.gasmoney ?? 0), //Cộng dồn 
+            pre_postpaid = entities.Sum(x => x.pre_postpaid ?? 0), //Cộng dồn 
 
             Trips = entities
                 .SelectMany(x => x.Trips ?? new List<Trip>())
@@ -97,11 +98,13 @@ public static class ShiftWorkMapper
         dest.typeCar = src.typeCar;
         dest.area = src.area;
         dest.ranking = src.ranking;
-        dest.basicSalary = src.basicSalary;
+        dest.gasmoney = src.gasmoney;
+        dest.pre_postpaid = src.pre_postpaid;
 
         return dest;
     }
 
+    // Convert ShiftWorkDto thành ShiftWork mới, tạo đối tượng ShiftWork mới từ dữ liệu trong ShiftWorkDto
     public static ShiftWork ToEntity(this ShiftWorkDto src)
     {
         return new ShiftWork
@@ -124,7 +127,8 @@ public static class ShiftWorkMapper
             typeCar = src.typeCar,
             area = src.area,
             ranking = src.ranking,
-            basicSalary = src.basicSalary
+            gasmoney = src.gasmoney,
+            pre_postpaid = src.pre_postpaid
         };
     }
 }
