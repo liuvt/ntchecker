@@ -116,10 +116,12 @@ namespace TaxiNT.Controllers
         {
             try
             {
+				//Dịch ngược AES
                 var userId = CryptographyAESExtension.Decrypt(cryptoAES);
+				
                 // ví dụ: "Nguyễn   Văn A - NV001"
-                string keyword = SearchNormalizer.Normalize(userId);
                 // => "NGUYỄN VĂN A - NV001"
+                string keyword = SearchNormalizer.Normalize(userId);
 
 
                 if (string.IsNullOrWhiteSpace(keyword))
