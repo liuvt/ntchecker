@@ -59,7 +59,7 @@ builder.Services.AddScoped(
     defaultClient => new HttpClient
     {
         // Default Hosting Monsterasp
-        BaseAddress = new Uri(builder.Configuration["API:Hosting"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"))
+        BaseAddress = new Uri(builder.Configuration["API:Default"] ?? throw new InvalidOperationException("Can't found [Secret Key] in appsettings.json !"))
     });
 
 // API: Add Jwt, Gooogle Authentication
@@ -168,6 +168,17 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
     };
 });
 
+// Cấu hình CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()   // Cho phép tất cả các nguồn (hoặc thay bằng domain cụ thể)
+              .AllowAnyMethod()   // Cho phép GET, POST, PUT, DELETE...
+              .AllowAnyHeader();  // Cho phép tất cả các Header (chấp nhận cả JWT Bearer)
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -194,6 +205,9 @@ app.UseStaticFiles();
 app.UseCookiePolicy();           // ⭐ thêm dòng này
 
 app.UseRouting();
+
+//Kích hoạt CORS trong Middleware
+app.UseCors("AllowAll");
 
 // API: Add Authoz and Authen
 app.UseAuthentication();
