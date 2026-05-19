@@ -26,7 +26,7 @@ public static class ShiftWorkMapper
             userId = first.userId,
             revenueByMonth = first.revenueByMonth + entities.Sum(x => x.revenueByDate ?? 0) ?? 0, //Doanh thu có sẳn + với doanh thu cộng dồn của các ngày trong ca làm việc (1 Tài - n Xe) 
             revenueByDate = entities.Sum(x => x.revenueByDate ?? 0), // Cộng dồn
-            //qrContext = first.qrContext, // Không dùng trả về rỗng
+            qrContext = first.qrContext, // Không dùng trả về rỗng
             qrUrl = first.qrUrl,
             discountOther = entities.Sum(x => x.discountOther ?? 0), // Cộng dồn 
             arrearsOther = entities.Sum(x => x.arrearsOther ?? 0), // Cộng dồn

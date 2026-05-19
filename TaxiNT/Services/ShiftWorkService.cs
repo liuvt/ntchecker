@@ -571,8 +571,11 @@ public class ShiftWorkService : IShiftWorkService
         if (banks != null)
         {
             // Tạo chuỗi QR
-            var qrString = $"{dataMap.numberCar} {dataMap.userId.Replace("-", "").Replace(" ", "")} {workDate:ddMMyyyy}";
-            dataMap.qrContext = qrString;
+            //var qrString = $"{dataMap.numberCar} {dataMap.userId.Replace("-", "").Replace(" ", "")} {workDate:ddMMyyyy}";
+            //dataMap.qrContext = qrString;
+
+            //v2
+            var qrString = dataMap.qrContext; // Cập nhật chỉ lấy nội dung từ qrContext
 
             // Tạo URL QR code sử dụng dịch vụ VietQR
             var qrUrl = $"https://img.vietqr.io/image/{banks.bank_NumberId}-{banks.bank_NumberCard}-{banks.bank_Type}?amount={dataMap.totalPrice.ltvVNDCurrency().Replace(".", "")}&addInfo={Uri.EscapeDataString(qrString)}&accountName={Uri.EscapeDataString(banks.bank_AccountName)}";
