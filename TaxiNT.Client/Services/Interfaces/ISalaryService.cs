@@ -1,9 +1,11 @@
-﻿using TaxiNT.Libraries.Models.GGSheets;
+﻿using TaxiNT.Libraries.Entities;
+using TaxiNT.Libraries.Models;   // Salary & SalaryDetails đã chuyển về namespace này
 
 namespace TaxiNT.Client.Services.Interfaces;
 
 public interface ISalaryService
 {
-    Task<Salary> GetSalary(string userId);
-    Task<List<SalaryDetails>> GetSalaryDetails(string userId);
+    // 2. Lấy đầy đủ Salary + Details (1 API)
+    Task<SalaryFullResponse> GetSalaryFull(string userId, string? date = null);
+
 }

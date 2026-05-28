@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TaxiNT.Data;
 
@@ -11,9 +12,11 @@ using TaxiNT.Data;
 namespace TaxiNT.Data.Migrations
 {
     [DbContext(typeof(taxiNTDBContext))]
-    partial class taxiNTDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260528085205_addSalaryTable")]
+    partial class addSalaryTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -400,7 +403,7 @@ namespace TaxiNT.Data.Migrations
                     b.ToTable("Contracts");
                 });
 
-            modelBuilder.Entity("TaxiNT.Libraries.Models.Salary", b =>
+            modelBuilder.Entity("TaxiNT.Libraries.Models.GGSheets.Salary", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -411,64 +414,81 @@ namespace TaxiNT.Data.Migrations
                     b.Property<DateTime>("createdAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal?>("deductForCharging")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("deductForCharging")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("deductForChargingPenalty")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("deductForChargingPenalty")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("deductForDeposit")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("deductForDeposit")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("deductForNegativeSalary")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("deductForNegativeSalary")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("deductForNegativeSalaryPartner")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("deductForNegativeSalaryPartner")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("deductForOrder")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("deductForOrder")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("deductForPIT")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("deductForPIT")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("deductForSalaryAdvance")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("deductForSalaryAdvance")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("deductForSocialInsurance")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("deductForSocialInsurance")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("deductForTollPayment")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("deductForTollPayment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("deductForViolationReport")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("deductForViolationReport")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("deductTotal")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("deductTotal")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("haomon_voxe")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("haomon_voxe")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("no_sua_chua")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("no_sua_chua")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("noteDeductOrder")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("revenue")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("revenue")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("salaryBase")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("salaryBase")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("salaryDate")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("salaryNet")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("salaryNet")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("salaryType")
                         .IsRequired()
@@ -487,48 +507,6 @@ namespace TaxiNT.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Salaries");
-                });
-
-            modelBuilder.Entity("TaxiNT.Libraries.Models.SalaryDetails", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("createdAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("daterevenues")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("revenue")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("revenueAC")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("salaryBase")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("salaryId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("updatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("userId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("salaryId");
-
-                    b.ToTable("SalaryDetails");
                 });
 
             modelBuilder.Entity("TaxiNT.Libraries.Models.ShiftWork", b =>
@@ -715,15 +693,6 @@ namespace TaxiNT.Data.Migrations
                     b.Navigation("ShiftWork");
                 });
 
-            modelBuilder.Entity("TaxiNT.Libraries.Models.SalaryDetails", b =>
-                {
-                    b.HasOne("TaxiNT.Libraries.Models.Salary", "Salary")
-                        .WithMany("Details")
-                        .HasForeignKey("salaryId");
-
-                    b.Navigation("Salary");
-                });
-
             modelBuilder.Entity("TaxiNT.Libraries.Models.Trip", b =>
                 {
                     b.HasOne("TaxiNT.Libraries.Models.ShiftWork", "ShiftWork")
@@ -731,11 +700,6 @@ namespace TaxiNT.Data.Migrations
                         .HasForeignKey("shiftworkId");
 
                     b.Navigation("ShiftWork");
-                });
-
-            modelBuilder.Entity("TaxiNT.Libraries.Models.Salary", b =>
-                {
-                    b.Navigation("Details");
                 });
 
             modelBuilder.Entity("TaxiNT.Libraries.Models.ShiftWork", b =>

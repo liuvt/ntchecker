@@ -3,15 +3,19 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
+using Microsoft.EntityFrameworkCore;
+using TaxiNT.Data;
 using TaxiNT.Extensions;
-using TaxiNT.Libraries.Models.GGSheets;
+using TaxiNT.Libraries.Entities;
+using TaxiNT.Libraries.Models;
+using TaxiNT.Libraries.Models.GGSheets;   // Giữ cho GGSUser, FeedbackModel
 using TaxiNT.Services.Interfaces;
 
 namespace TaxiNT.Services;
 
 public class SalaryServer : ISalaryServer
 {
-    #region Constructor 
+    #region Constructor
     //For Connection to Spread
     private SheetsService sheetsService;
     private readonly string[] Scopes = { SheetsService.Scope.Spreadsheets };
@@ -20,13 +24,15 @@ public class SalaryServer : ISalaryServer
     private readonly string SpreadSheetId = "1adyPqtzm112pV1LbegUXYyzEzfM36KbNL-mamMpOX-8";
 
     // For Sheet
-    private readonly string sheetSALARIES = "SALARIES";
-    private readonly string sheetSALARYDETAILS = "SALARYDETAILS";
-
     private readonly string sheetFeelback = "Feedback";
 
-    public SalaryServer()
+    // SQL
+    private readonly taxiNTDBContext _context;
+
+    public SalaryServer(taxiNTDBContext context)
     {
+        this._context = context;
+
         //File xác thực google tài khoản
         GoogleCredential credential;
         using (var stream = new FileStream(CredentialGGSheetService, FileMode.Open, FileAccess.Read))
@@ -42,108 +48,228 @@ public class SalaryServer : ISalaryServer
             ApplicationName = AppName,
         });
     }
-    #endregion
+    #endregion Constructor
 
-    #region Salary
-    // Lấy toàn bộ danh sách
-    private async Task<List<Salary>> Gets()
+    /// <summary>
+    /// Lấy đầy đủ Salary + SalaryDetails trong một lần gọi (dùng cho Client hiển thị).
+    /// </summary>
+    public async Task<SalaryFullResponse> GetSalaryFull(string userId, string? date = null)
     {
-        var dts = new List<Salary>();
-        var range = $"{sheetSALARIES}!A2:Z";
-        var values = await sheetsService.ltvGetSheetValuesAsync(SpreadSheetId, range);
-        if (values == null || values.Count == 0)
-        {
-            throw new Exception("Không có dữ liệu sheet.");
-        }
+        if (string.IsNullOrWhiteSpace(userId))
+            throw new ArgumentException("userId không được để trống");
 
-        foreach (var item in values)
+        var query = _context.Salaries
+            .AsNoTracking()
+            .Where(s => s.userId.ToLower() == userId.ToLower());
+
+        if (!string.IsNullOrWhiteSpace(date))
         {
-            dts.Add(new Salary
+            var trimmedDate = date.Trim();
+            var specific = await query
+                .Where(s => s.salaryDate == trimmedDate)
+                .FirstOrDefaultAsync();
+
+            if (specific != null)
             {
-                userId = item.ltvGetValueString(0),
-                revenue = item.ltvGetValueString(1),
-                tripsTotal = Convert.ToInt32(item.ltvGetValueDecimal(2)),
-                salaryType = item.ltvGetValueString(3), // Loại hình kinh doanh LƯƠNG NGÀY - LƯƠNG THÁNG
-                businessDays = Convert.ToInt32(item.ltvGetValueDecimal(4)), // Số ngày KD
-                salaryBase = item.ltvGetValueString(5), // Sau mức ăn chia || Lương cơ bản
-                deductTotal = item.ltvGetValueString(6), //Tổng trừ
-                salaryNet = item.ltvGetValueString(7),//Lương thực nhận
+                var details = await _context.SalaryDetails
+                    .AsNoTracking()
+                    .Where(d => d.salaryId == specific.Id)
+                    .OrderBy(d => d.daterevenues)
+                    .ToListAsync();
 
-                deductForDeposit = item.ltvGetValueString(8), //1. Trừ ký quỹ 
-                deductForSalaryAdvance = item.ltvGetValueString(9), //2. Trừ lương ứng
-                deductForNegativeSalary = item.ltvGetValueString(10), //3. Trừ âm lương: Nợ tiền tháng trước, qua tháng này trừ lại vào lương (công ty)
-                deductForViolationReport = item.ltvGetValueString(11), //4. Trừ vi phạm biên bản  
-                no_sua_chua = item.ltvGetValueString(12), //5. Nợ sửa chữa
-                haomon_voxe = item.ltvGetValueString(13), //6. Hao mòn vỏ xe
-                deductForCharging = item.ltvGetValueString(14), //7. Sat pin
-                deductForChargingPenalty = item.ltvGetValueString(15), //8. phạt sạt: Charging Penalty
-                deductForTollPayment = item.ltvGetValueString(16), //9. Trừ tiền qua trạm : Deduction for Toll Payment
-                deductForSocialInsurance = item.ltvGetValueString(17), //10. Trừ BHXH
-                deductForNegativeSalaryPartner = item.ltvGetValueString(18), //11. Trừ âm lương: Nợ tiền tháng trước, qua tháng này trừ lại vào lương (Thương quyền)
-                deductForPIT = item.ltvGetValueString(19), //12. Trừ TNCN - Personal Income Tax Deduction  
-                deductForOrder = item.ltvGetValueString(20), //13. Trừ khác
-                noteDeductOrder = item.ltvGetValueString(21), //14. Ghi chú trừ khác
-
-                salaryDate = item.ltvGetValueString(22), // Tháng/năm
-            });
+                return new SalaryFullResponse
+                {
+                    Salary = specific,
+                    Details = details
+                };
+            }
         }
 
-        return dts;
+        // Lấy bản ghi mới nhất
+        var latestSalary = await query
+            .OrderByDescending(s => s.salaryDate)
+            .FirstOrDefaultAsync();
+
+        if (latestSalary == null)
+        {
+            throw new Exception($"Không tìm thấy dữ liệu lương cho userId: {userId}");
+        }
+
+        var detailsList = await _context.SalaryDetails
+            .AsNoTracking()
+            .Where(d => d.salaryId == latestSalary.Id)
+            .OrderBy(d => d.daterevenues)
+            .ToListAsync();
+
+        return new SalaryFullResponse
+        {
+            Salary = latestSalary,
+            Details = detailsList
+        };
     }
 
-    // Lọc lại danh sách theo mã userId của tài xế [Họ tên - Mã nhân viên]
-    // Gọi service Bank(_sheetBank) để add vào Revenue
-    public async Task<Salary> GetSalary(string userId)
+    /// <summary>
+    /// Upsert 1 list Salary + SalaryDetails trong 1 request duy nhất.
+    /// Mô hình xử lý giống UpsertShiftWorkDailyAsync:
+    /// - 1 transaction lớn cho toàn bộ batch
+    /// - Xóa các SalaryDetails cũ không còn trong batch
+    /// - Upsert Salary + thay thế toàn bộ Details
+    /// </summary>
+    public async Task<List<SalaryFullUpsertResult>> UpsertFullSalary(List<SalaryFullUpsertRequest> requests)
     {
-        var dts = await Gets();
-        var listSalary = dts.Where(e => e.userId.Equals(userId, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
-        if (listSalary == null)
-        {
-            throw new Exception("Không tìm thấy dữ liệu: {userId}");
-        }
-        return listSalary;
-    }
-    #endregion
+        var results = new List<SalaryFullUpsertResult>();
 
-    #region Salary details
-    private async Task<List<SalaryDetails>> GetsSalaryDetails()
-    {
-        var dts = new List<SalaryDetails>();
-        var range = $"{sheetSALARYDETAILS}!A2:F";
-        var values = await sheetsService.ltvGetSheetValuesAsync(SpreadSheetId, range);
-        if (values == null || values.Count == 0)
-        {
-            throw new Exception("Không có dữ liệu sheet.");
-        }
+        if (requests == null || requests.Count == 0)
+            return results;
 
-        foreach (var item in values)
+        var now = DateTime.Now;
+
+        using var transaction = await _context.Database.BeginTransactionAsync();
+
+        try
         {
-            dts.Add(new SalaryDetails
+            // === Bước 1: Thu thập key từ request ===
+            var incomingSalaryKeys = requests
+                .Where(r => r.Salary != null)
+                .Select(r => new
+                {
+                    r.Salary.userId,
+                    r.Salary.salaryDate,
+                    Request = r
+                })
+                .ToList();
+
+            var userIds = incomingSalaryKeys.Select(x => x.userId).Distinct().ToList();
+            var salaryDates = incomingSalaryKeys.Select(x => x.salaryDate).Distinct().ToList();
+
+            // === Bước 2: Lấy các Salary hiện có ===
+            var existingSalaries = await _context.Salaries
+                .Where(s => userIds.Contains(s.userId) && salaryDates.Contains(s.salaryDate))
+                .ToListAsync();
+
+            // === Bước 3: Xóa SalaryDetails cũ không còn trong batch (theo key) ===
+            // Lấy tất cả detail keys đang được gửi
+            var allIncomingDetailKeys = incomingSalaryKeys
+                .SelectMany(x => x.Request.Details ?? new List<SalaryDetails>())
+                .Select(d => $"{(d.userId ?? "").Trim().ToLower()}|{(d.daterevenues ?? "").Trim()}")
+                .Distinct()
+                .ToList();
+
+            // Xóa các details thuộc các Salary trong batch nhưng không nằm trong incoming keys
+            var salariesToClean = existingSalaries.Select(s => s.Id).ToList();
+
+            if (salariesToClean.Any())
             {
-                userId = item.ltvGetValueString(0),
-                revenue = item.ltvGetValueString(1),
-                revenueAC = item.ltvGetValueString(2),
-                type = item.ltvGetValueString(3),
-                salaryBase = item.ltvGetValueString(4),
-                daterevenues = item.ltvGetValueString(5),
-                createdAt = item.ltvGetValueString(6),
-            });
+                var obsoleteDetails = await _context.SalaryDetails
+                    .Where(d => salariesToClean.Contains(d.salaryId) &&
+                               !allIncomingDetailKeys.Contains(
+                                   $"{(d.userId ?? "").Trim().ToLower()}|{(d.daterevenues ?? "").Trim()}"))
+                    .ToListAsync();
+
+                if (obsoleteDetails.Any())
+                {
+                    _context.SalaryDetails.RemoveRange(obsoleteDetails);
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            // === Bước 4: Xử lý từng Salary ===
+            foreach (var item in incomingSalaryKeys)
+            {
+                var salaryInput = item.Request.Salary;
+                var detailsInput = item.Request.Details ?? new List<SalaryDetails>();
+
+                var existing = existingSalaries
+                    .FirstOrDefault(s => s.userId == salaryInput.userId && s.salaryDate == salaryInput.salaryDate);
+
+                Salary targetSalary;
+
+                if (existing != null)
+                {
+                    // Update Salary
+                    existing.revenue = salaryInput.revenue;
+                    existing.tripsTotal = salaryInput.tripsTotal;
+                    existing.salaryType = salaryInput.salaryType;
+                    existing.businessDays = salaryInput.businessDays;
+                    existing.salaryBase = salaryInput.salaryBase;
+                    existing.deductTotal = salaryInput.deductTotal;
+                    existing.salaryNet = salaryInput.salaryNet;
+
+                    // Cập nhật các khoản trừ
+                    existing.deductForDeposit = salaryInput.deductForDeposit;
+                    existing.deductForSalaryAdvance = salaryInput.deductForSalaryAdvance;
+                    existing.deductForNegativeSalary = salaryInput.deductForNegativeSalary;
+                    existing.deductForViolationReport = salaryInput.deductForViolationReport;
+                    existing.no_sua_chua = salaryInput.no_sua_chua;
+                    existing.haomon_voxe = salaryInput.haomon_voxe;
+                    existing.deductForCharging = salaryInput.deductForCharging;
+                    existing.deductForChargingPenalty = salaryInput.deductForChargingPenalty;
+                    existing.deductForTollPayment = salaryInput.deductForTollPayment;
+                    existing.deductForSocialInsurance = salaryInput.deductForSocialInsurance;
+                    existing.deductForNegativeSalaryPartner = salaryInput.deductForNegativeSalaryPartner;
+                    existing.deductForPIT = salaryInput.deductForPIT;
+                    existing.deductForOrder = salaryInput.deductForOrder;
+                    existing.noteDeductOrder = salaryInput.noteDeductOrder;
+
+                    existing.updatedAt = now;
+
+                    targetSalary = existing;
+                }
+                else
+                {
+                    // Insert Salary mới
+                    salaryInput.Id = Guid.NewGuid().ToString();
+                    salaryInput.createdAt = now;
+                    salaryInput.updatedAt = null;
+
+                    await _context.Salaries.AddAsync(salaryInput);
+                    targetSalary = salaryInput;
+                }
+
+                await _context.SaveChangesAsync();
+
+                // Xóa toàn bộ details cũ của Salary này (đã xóa một phần ở trên, xóa nốt cho chắc)
+                var oldDetails = _context.SalaryDetails.Where(d => d.salaryId == targetSalary.Id);
+                _context.SalaryDetails.RemoveRange(oldDetails);
+
+                // Gán salaryId và thêm details mới
+                foreach (var d in detailsInput)
+                {
+                    d.Id = Guid.NewGuid().ToString();
+                    d.salaryId = targetSalary.Id;
+                    d.userId = targetSalary.userId;
+                    d.createdAt = now;
+                    d.updatedAt = null;
+                }
+
+                await _context.SalaryDetails.AddRangeAsync(detailsInput);
+
+                results.Add(new SalaryFullUpsertResult
+                {
+                    Success = true,
+                    SalaryId = targetSalary.Id,
+                    Message = "Success",
+                    DetailsCount = detailsInput.Count
+                });
+            }
+
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return results;
         }
-
-        return dts;
-    }
-
-    public async Task<List<SalaryDetails>> GetSalaryDetails(string userId)
-    {
-        var dts = await GetsSalaryDetails();
-        var listSalaryDetails = dts.Where(e => e.userId.Equals(userId, StringComparison.OrdinalIgnoreCase)).ToList();
-        if (listSalaryDetails == null)
+        catch (Exception ex)
         {
-            throw new Exception("Không tìm thấy dữ liệu: {userId}");
+            await transaction.RollbackAsync();
+            // Trả về lỗi cho toàn bộ batch
+            return requests.Select(r => new SalaryFullUpsertResult
+            {
+                Success = false,
+                Message = "Lỗi transaction",
+                Errors = { ex.Message }
+            }).ToList();
         }
-        return listSalaryDetails;
     }
-    #endregion
 
     #region Feedback
     public async Task AddAsync(FeedbackModel model)
@@ -171,5 +297,5 @@ public class SalaryServer : ISalaryServer
             $"{sheetFeelback}!A:I", //Nếu dòng 1 có dữ liệu sẽ không bị ghi đè vì đã sử dụng ltvAppendSheetValuesAsync, nếu dòng 1 không có dữ liệu sẽ ghi vào đó
             valueRange);
     }
-    #endregion
+    #endregion Feedback
 }

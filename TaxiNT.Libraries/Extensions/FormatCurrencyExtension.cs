@@ -8,43 +8,37 @@ public static class FormatCurrencyExtension
     // Culture info for Vietnamese currency formatting
     private static readonly CultureInfo viCulture = new CultureInfo("vi-VN");
 
-    // Phương thức trả về giá trị string
-    public static string ltvVNDCurrency(this object input)
+    // Phương thức trả về giá trị string (hỗ trợ decimal? và object)
+    public static string ltvVNDCurrency(this object? input)
     {
         try
         {
-            // Nếu đầu vào là null, trả về chuỗi "0"
             if (input == null) return zero;
 
-            // Nếu đầu vào là số nguyên, định dạng nó
             if (input is decimal dec)
-            {
                 return dec.ToString("N0", viCulture);
-            }
 
-            // Nếu đầu vào là số nguyên 64-bit, định dạng nó
+            if (input is decimal dec2)
+                return dec2.ToString("N0", viCulture);
+
             if (input is string str)
             {
-                // Định dạng lại chuỗi vào
                 var clean = str.Replace(",", "").Replace(".", "").Trim();
-
-                // Nếu chuỗi là số nguyên, định dạng nó
                 if (decimal.TryParse(clean, out decimal parsed))
-                {
-                    // Nếu chuỗi là số nguyên, định dạng nó
                     return parsed.ToString("N0", viCulture);
-                }
             }
 
-            // Nếu đầu vào là số nguyên 32-bit, định dạng nó
             return zero;
         }
         catch
         {
-            // Nếu có lỗi xảy ra, trả về chuỗi "0"
             return zero;
         }
     }
+
+    // Overload tiện lợi cho decimal?
+    public static string ltvVNDCurrency(this decimal? input)
+        => input.HasValue ? input.Value.ToString("N0", viCulture) : zero;
 
     // Phương thức trả về giá trị decimal
     public static decimal ltvVNDCurrencyToDecimal(this object input)

@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using TaxiNT.Client.Services.Interfaces;
-using TaxiNT.Libraries.Models.GGSheets;
+using TaxiNT.Libraries.Entities;
+using TaxiNT.Libraries.Models;   // Salary & SalaryDetails đã chuyển về namespace này
 
 namespace TaxiNT.Client.Services;
 public class SalaryService : ISalaryService
@@ -15,63 +17,43 @@ public class SalaryService : ISalaryService
         this.httpClient = _httpClient;
     }
 
-    public async Task<Salary> GetSalary(string userId)
+    public async Task<SalaryFullResponse> GetSalaryFull(string userId, string? date = null)
     {
-        try
+        Console.WriteLine($"[SalaryService] GetSalaryFull được gọi");
+        Console.WriteLine($"[SalaryService] userId nhận được: '{userId}'");
+        Console.WriteLine($"[SalaryService] date nhận được: '{date ?? "null"}'");
+
+        // Encode userId để tránh lỗi URL khi có khoảng trắng hoặc ký tự đặc biệt (ví dụ: "LÊ QUỐC MINH - AG0249")
+        string encodedUserId = Uri.EscapeDataString(userId);
+        string url = $"api/Salary/{encodedUserId}/full";
+
+        if (!string.IsNullOrWhiteSpace(date))
         {
-            if (string.IsNullOrWhiteSpace(userId))
-                return new Salary();
-            var response = await httpClient.GetAsync($"api/Salary/{userId}");
-
-            if (response.StatusCode == HttpStatusCode.NoContent)
-                return new Salary();
-
-            if (response.IsSuccessStatusCode)
-            {
-                var result = await response.Content.ReadFromJsonAsync<Salary>();
-                return result ?? new Salary();
-            }
-
-            var error = await response.Content.ReadAsStringAsync();
-            throw new HttpRequestException($"API Error: {response.StatusCode} - {error}");
+            url += $"?date={Uri.EscapeDataString(date.Trim())}";
         }
-        catch (Exception ex)
+
+        Console.WriteLine($"[SalaryService] URL gọi: {url}");
+
+        var response = await httpClient.GetAsync(url);
+        Console.WriteLine($"[SalaryService] HTTP Status: {response.StatusCode}");
+
+        if (!response.IsSuccessStatusCode)
         {
-            // TODO: Log exception nếu cần
-            throw new ApplicationException("Lỗi khi gọi API lấy lương", ex);
-        }
-    }
+            var errorContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"[SalaryService] Lỗi từ API: {errorContent}");
 
-    public async Task<List<SalaryDetails>> GetSalaryDetails(string userId)
-    {
-        try
+            throw new HttpRequestException(
+                $"Gọi API thất bại ({response.StatusCode}). Chi tiết: {errorContent}");
+        }
+
+        var options = new JsonSerializerOptions
         {
-            if (string.IsNullOrWhiteSpace(userId))
-                return new List<SalaryDetails>();
+            PropertyNameCaseInsensitive = true
+        };
 
-            Console.WriteLine($"Encoded UserId: {userId}");
-            var response = await httpClient.GetAsync($"api/Salary/{userId}/Details");
-            Console.WriteLine($"Encoded UserId: {httpClient.BaseAddress}");
+        var result = await response.Content.ReadFromJsonAsync<SalaryFullResponse>(options);
+        Console.WriteLine($"[SalaryService] Deserialize thành công. Có Salary: {result?.Salary != null}, Số Details: {result?.Details?.Count ?? 0}");
 
-
-            if (response.StatusCode == HttpStatusCode.NoContent)
-                return new List<SalaryDetails>();
-
-
-            if (response.IsSuccessStatusCode)
-            {
-                var result = await response.Content.ReadFromJsonAsync<List<SalaryDetails>>();
-                return result ?? new List<SalaryDetails>();
-
-            }
-
-            var error = await response.Content.ReadAsStringAsync();
-            throw new HttpRequestException($"API Error: {response.StatusCode} - {error}");
-        }
-        catch (Exception ex)
-        {
-            // TODO: Log exception nếu cần
-            throw new ApplicationException("Lỗi khi gọi API lấy lương", ex);
-        }
+        return result ?? new SalaryFullResponse();
     }
 }

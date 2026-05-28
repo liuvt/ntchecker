@@ -23,6 +23,12 @@ public partial class taxiNTDBContext : IdentityDbContext<AppUser>
     public virtual DbSet<ShiftWork> ShiftWorks { get; set; } = null!;
     public virtual DbSet<Blog> Blogs { get; set; } = null!;
 
+    // Salary from GGSheets model (also used as SQL entity)
+    public virtual DbSet<Salary> Salaries { get; set; } = null!;
+
+    // Salary daily details (breakdown)
+    public virtual DbSet<SalaryDetails> SalaryDetails { get; set; } = null!;
+
 
     //Config to connection sql server
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
