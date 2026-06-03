@@ -53,7 +53,7 @@ public class SalaryServer : ISalaryServer
     /// <summary>
     /// Lấy đầy đủ Salary + SalaryDetails trong một lần gọi (dùng cho Client hiển thị).
     /// </summary>
-    public async Task<SalaryFullResponse> GetSalaryFull(string userId, string? date = null)
+    public async Task<SalaryFullResponse?> GetSalaryFull(string userId, string? date = null)
     {
         if (string.IsNullOrWhiteSpace(userId))
             throw new ArgumentException("userId không được để trống");
@@ -62,48 +62,46 @@ public class SalaryServer : ISalaryServer
             .AsNoTracking()
             .Where(s => s.userId.ToLower() == userId.ToLower());
 
+        // Khai báo biến lưu trữ bản ghi lương tìm được
+        Salary targetSalary = null;
+
         if (!string.IsNullOrWhiteSpace(date))
         {
+            // TRƯỜNG HỢP 1: CÓ TRUYỀN DATE -> Phải tìm chính xác
             var trimmedDate = date.Trim();
-            var specific = await query
+            targetSalary = await query
                 .Where(s => s.salaryDate == trimmedDate)
                 .FirstOrDefaultAsync();
 
-            if (specific != null)
+            // Nếu truyền sai date hoặc không có dữ liệu -> TRẢ VỀ NULL (Không trả kết quả)
+            if (targetSalary == null)
             {
-                var details = await _context.SalaryDetails
-                    .AsNoTracking()
-                    .Where(d => d.salaryId == specific.Id)
-                    .OrderBy(d => d.daterevenues)
-                    .ToListAsync();
-
-                return new SalaryFullResponse
-                {
-                    Salary = specific,
-                    Details = details
-                };
+                throw new Exception($"Không tìm thấy dữ liệu cho tháng này userId: {userId}");
             }
         }
-
-        // Lấy bản ghi mới nhất
-        var latestSalary = await query
-            .OrderByDescending(s => s.salaryDate)
-            .FirstOrDefaultAsync();
-
-        if (latestSalary == null)
+        else
         {
-            throw new Exception($"Không tìm thấy dữ liệu lương cho userId: {userId}");
+            // TRƯỜNG HỢP 2: KHÔNG TRUYỀN DATE -> Lấy bản ghi mới nhất
+            targetSalary = await query
+                .OrderByDescending(s => s.salaryDate)
+                .FirstOrDefaultAsync();
+
+            // Nếu người dùng chưa từng có bảng lương nào
+            if (targetSalary == null)
+            {
+                throw new Exception($"Không tìm thấy dữ liệu lương cho userId: {userId}");
+            }
         }
 
         var detailsList = await _context.SalaryDetails
             .AsNoTracking()
-            .Where(d => d.salaryId == latestSalary.Id)
+            .Where(d => d.salaryId == targetSalary.Id)
             .OrderBy(d => d.daterevenues)
             .ToListAsync();
 
         return new SalaryFullResponse
         {
-            Salary = latestSalary,
+            Salary = targetSalary,
             Details = detailsList
         };
     }
@@ -211,7 +209,8 @@ public class SalaryServer : ISalaryServer
                     existing.deductForOrder = salaryInput.deductForOrder;
                     existing.noteDeductOrder = salaryInput.noteDeductOrder;
 
-                    existing.updatedAt = now;
+                    existing.createdAt = now;
+                    existing.area = salaryInput.area;
 
                     targetSalary = existing;
                 }
@@ -220,7 +219,6 @@ public class SalaryServer : ISalaryServer
                     // Insert Salary mới
                     salaryInput.Id = Guid.NewGuid().ToString();
                     salaryInput.createdAt = now;
-                    salaryInput.updatedAt = null;
 
                     await _context.Salaries.AddAsync(salaryInput);
                     targetSalary = salaryInput;
@@ -239,7 +237,7 @@ public class SalaryServer : ISalaryServer
                     d.salaryId = targetSalary.Id;
                     d.userId = targetSalary.userId;
                     d.createdAt = now;
-                    d.updatedAt = null;
+                    d.area = salaryInput.area;
                 }
 
                 await _context.SalaryDetails.AddRangeAsync(detailsInput);

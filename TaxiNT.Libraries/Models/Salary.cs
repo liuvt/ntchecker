@@ -64,12 +64,12 @@ public class Salary
     [Column(TypeName = "decimal(18,2)")]
     public decimal? deductForOrder { get; set; } //13. Trừ khác
 
-    public string noteDeductOrder { get; set; } = string.Empty; //14. Ghi chú trừ khác
+    public string? noteDeductOrder { get; set; } = string.Empty; //14. Ghi chú trừ khác
 
-    public string salaryDate { get; set; } = string.Empty; //Tháng/năm
+    public string? salaryDate { get; set; } = string.Empty; //Tháng/năm
+    public string? area { get; set; } = string.Empty; // Khu vực
 
     public DateTime createdAt { get; set; }
-    public DateTime? updatedAt { get; set; }
 
     // Liên kết 1-n với chi tiết lương
     public List<SalaryDetails>? Details { get; set; }
@@ -109,9 +109,10 @@ public class SalaryDetails
 
     [ForeignKey(nameof(salaryId))]
     public Salary? Salary { get; set; }
+    public string? salaryDate { get; set; } = string.Empty; //Tháng/năm
+    public string? area { get; set; } = string.Empty; // Khu vực
 
     public DateTime createdAt { get; set; }
-    public DateTime? updatedAt { get; set; }
 }
 
 public class UpsertSalariesResult

@@ -65,7 +65,6 @@ namespace TaxiNT.Controllers
 
                 var encrypted = CryptographyAESExtension.Encrypt(id);
 
-				
 				string finalUrl = string.IsNullOrWhiteSpace(date) 
 					? $"https://tienichtaixe.io.vn/checkers/{encrypted}" 
 					: $"https://tienichtaixe.io.vn/checkers/{encrypted}/{Uri.EscapeDataString(date)}";
@@ -84,7 +83,7 @@ namespace TaxiNT.Controllers
         // /api/crypto/open-user?id=Nguyen%20Van%20A%20-%20NV001
         // Chuyển hướng sang /checkers/{encrypted} để AppSheet mở ra trang checkers với id đã được mã hóa trong URL
         [HttpGet("open-user-salary")]
-        public IActionResult OpenUserSalary([FromQuery] string id)
+        public IActionResult OpenUserSalary([FromQuery] string id, string? date)
         {
             try
             {
@@ -93,8 +92,9 @@ namespace TaxiNT.Controllers
 
                 var encrypted = CryptographyAESExtension.Encrypt(id);
 
-
-                string finalUrl = $"https://tienichtaixe.io.vn/salary/{encrypted}";
+                string finalUrl = string.IsNullOrWhiteSpace(date)
+                    ? $"https://tienichtaixe.io.vn/salary/{encrypted}"
+                    : $"https://tienichtaixe.io.vn/salary/{encrypted}/{Uri.EscapeDataString(date)}";
 
                 return Redirect(finalUrl);
             }
@@ -104,8 +104,6 @@ namespace TaxiNT.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
-
-
 
         // 2) POST: gửi id trong body, trả về kết quả mã hóa, dễ test bằng Postman hoặc các công cụ tương tự
         [HttpPost("encrypt-query")]
