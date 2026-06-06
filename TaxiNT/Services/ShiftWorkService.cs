@@ -6,7 +6,6 @@ using TaxiNT.Libraries.Extensions;
 using TaxiNT.Libraries.MapperModels;
 using TaxiNT.Libraries.Models;
 using TaxiNT.Services.Interfaces;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TaxiNT.Services;
 //WithSQL
