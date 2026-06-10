@@ -10,7 +10,7 @@ public interface ISalaryServer
 
     // 3. Upsert toàn bộ (Salary + Details) - Hỗ trợ 1 list (dùng cho bulk từ Google Apps Script)
     // Mỗi record được xử lý trong transaction riêng, rollback riêng nếu lỗi
-    Task<List<SalaryFullUpsertResult>> UpsertFullSalary(List<SalaryFullUpsertRequest> requests);
+    Task<List<SalaryUpsertResult>> UpsertSalary(List<SalaryUpsertRequest> requests);
 
     // Feedback (giữ lại nếu vẫn dùng)
     Task AddAsync(FeedbackModel model);

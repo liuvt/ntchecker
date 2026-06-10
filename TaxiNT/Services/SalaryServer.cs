@@ -113,9 +113,9 @@ public class SalaryServer : ISalaryServer
     /// - Xóa các SalaryDetails cũ không còn trong batch
     /// - Upsert Salary + thay thế toàn bộ Details
     /// </summary>
-    public async Task<List<SalaryFullUpsertResult>> UpsertFullSalary(List<SalaryFullUpsertRequest> requests)
+    public async Task<List<SalaryUpsertResult>> UpsertSalary(List<SalaryUpsertRequest> requests)
     {
-        var results = new List<SalaryFullUpsertResult>();
+        var results = new List<SalaryUpsertResult>();
 
         if (requests == null || requests.Count == 0)
             return results;
@@ -126,128 +126,139 @@ public class SalaryServer : ISalaryServer
 
         try
         {
-            // === Bước 1: Thu thập key từ request ===
-            var incomingSalaryKeys = requests
-                .Where(r => r.Salary != null)
-                .Select(r => new
-                {
-                    r.Salary.userId,
-                    r.Salary.salaryDate,
-                    Request = r
-                })
+            // Chuẩn hóa request hợp lệ
+            var validRequests = requests
+                .Where(r => r.Salary != null
+                         && !string.IsNullOrWhiteSpace(r.Salary.userId)
+                         && !string.IsNullOrWhiteSpace(r.Salary.salaryDate))
                 .ToList();
 
-            var userIds = incomingSalaryKeys.Select(x => x.userId).Distinct().ToList();
-            var salaryDates = incomingSalaryKeys.Select(x => x.salaryDate).Distinct().ToList();
+            if (validRequests.Count == 0)
+                return results;
 
-            // === Bước 2: Lấy các Salary hiện có ===
+            var userIds = validRequests
+                .Select(r => r.Salary.userId.Trim())
+                .Distinct()
+                .ToList();
+
+            var salaryDates = validRequests
+                .Select(r => r.Salary.salaryDate!.Trim())
+                .Distinct()
+                .ToList();
+
+            // Lấy các Salary hiện có theo userId + salaryDate
             var existingSalaries = await _context.Salaries
                 .Where(s => userIds.Contains(s.userId) && salaryDates.Contains(s.salaryDate))
                 .ToListAsync();
 
-            // === Bước 3: Xóa SalaryDetails cũ không còn trong batch (theo key) ===
-            // Lấy tất cả detail keys đang được gửi
-            var allIncomingDetailKeys = incomingSalaryKeys
-                .SelectMany(x => x.Request.Details ?? new List<SalaryDetails>())
-                .Select(d => $"{(d.userId ?? "").Trim().ToLower()}|{(d.daterevenues ?? "").Trim()}")
-                .Distinct()
-                .ToList();
-
-            // Xóa các details thuộc các Salary trong batch nhưng không nằm trong incoming keys
-            var salariesToClean = existingSalaries.Select(s => s.Id).ToList();
-
-            if (salariesToClean.Any())
+            foreach (var request in validRequests)
             {
-                var obsoleteDetails = await _context.SalaryDetails
-                    .Where(d => salariesToClean.Contains(d.salaryId) &&
-                               !allIncomingDetailKeys.Contains(
-                                   $"{(d.userId ?? "").Trim().ToLower()}|{(d.daterevenues ?? "").Trim()}"))
-                    .ToListAsync();
+                var salaryInput = request.Salary;
+                var detailsInput = request.Details ?? new List<SalaryDetails>();
+                var deductDetailsInput = request.DeductDetails ?? new List<SalaryDeductDetail>();
 
-                if (obsoleteDetails.Any())
-                {
-                    _context.SalaryDetails.RemoveRange(obsoleteDetails);
-                    await _context.SaveChangesAsync();
-                }
-            }
+                var userId = salaryInput.userId.Trim();
+                var salaryDate = salaryInput.salaryDate!.Trim();
 
-            // === Bước 4: Xử lý từng Salary ===
-            foreach (var item in incomingSalaryKeys)
-            {
-                var salaryInput = item.Request.Salary;
-                var detailsInput = item.Request.Details ?? new List<SalaryDetails>();
-
-                var existing = existingSalaries
-                    .FirstOrDefault(s => s.userId == salaryInput.userId && s.salaryDate == salaryInput.salaryDate);
+                var existing = existingSalaries.FirstOrDefault(s =>
+                    s.userId.Trim().ToLower() == userId.ToLower()
+                    && (s.salaryDate ?? "").Trim() == salaryDate);
 
                 Salary targetSalary;
 
                 if (existing != null)
                 {
-                    // Update Salary
+                    // ===== Update Salary =====
                     existing.revenue = salaryInput.revenue;
                     existing.tripsTotal = salaryInput.tripsTotal;
                     existing.salaryType = salaryInput.salaryType;
                     existing.businessDays = salaryInput.businessDays;
                     existing.salaryBase = salaryInput.salaryBase;
-                    existing.deductTotal = salaryInput.deductTotal;
-                    existing.salaryNet = salaryInput.salaryNet;
-
-                    // Cập nhật các khoản trừ
-                    existing.deductForDeposit = salaryInput.deductForDeposit;
-                    existing.deductForSalaryAdvance = salaryInput.deductForSalaryAdvance;
-                    existing.deductForNegativeSalary = salaryInput.deductForNegativeSalary;
-                    existing.deductForViolationReport = salaryInput.deductForViolationReport;
-                    existing.no_sua_chua = salaryInput.no_sua_chua;
-                    existing.haomon_voxe = salaryInput.haomon_voxe;
-                    existing.deductForCharging = salaryInput.deductForCharging;
-                    existing.deductForChargingPenalty = salaryInput.deductForChargingPenalty;
-                    existing.deductForTollPayment = salaryInput.deductForTollPayment;
-                    existing.deductForSocialInsurance = salaryInput.deductForSocialInsurance;
-                    existing.deductForNegativeSalaryPartner = salaryInput.deductForNegativeSalaryPartner;
-                    existing.deductForPIT = salaryInput.deductForPIT;
-                    existing.deductForOrder = salaryInput.deductForOrder;
                     existing.noteDeductOrder = salaryInput.noteDeductOrder;
-
-                    existing.createdAt = now;
+                    existing.salaryDate = salaryDate;
                     existing.area = salaryInput.area;
 
                     targetSalary = existing;
                 }
                 else
                 {
-                    // Insert Salary mới
+                    // ===== Insert Salary mới =====
                     salaryInput.Id = Guid.NewGuid().ToString();
+                    salaryInput.userId = userId;
+                    salaryInput.salaryDate = salaryDate;
                     salaryInput.createdAt = now;
 
                     await _context.Salaries.AddAsync(salaryInput);
+
                     targetSalary = salaryInput;
                 }
 
-                await _context.SaveChangesAsync();
+                // ===== Xóa SalaryDetails cũ =====
+                var oldDetails = await _context.SalaryDetails
+                    .Where(d => d.salaryId == targetSalary.Id)
+                    .ToListAsync();
 
-                // Xóa toàn bộ details cũ của Salary này (đã xóa một phần ở trên, xóa nốt cho chắc)
-                var oldDetails = _context.SalaryDetails.Where(d => d.salaryId == targetSalary.Id);
-                _context.SalaryDetails.RemoveRange(oldDetails);
-
-                // Gán salaryId và thêm details mới
-                foreach (var d in detailsInput)
+                if (oldDetails.Any())
                 {
-                    d.Id = Guid.NewGuid().ToString();
-                    d.salaryId = targetSalary.Id;
-                    d.userId = targetSalary.userId;
-                    d.createdAt = now;
-                    d.area = salaryInput.area;
+                    _context.SalaryDetails.RemoveRange(oldDetails);
                 }
 
-                await _context.SalaryDetails.AddRangeAsync(detailsInput);
+                // ===== Xóa SalaryDeductDetails cũ =====
+                var oldDeductDetails = await _context.SalaryDeductDetails
+                    .Where(d => d.SalaryId == targetSalary.Id)
+                    .ToListAsync();
 
-                results.Add(new SalaryFullUpsertResult
+                if (oldDeductDetails.Any())
+                {
+                    _context.SalaryDeductDetails.RemoveRange(oldDeductDetails);
+                }
+
+                // ===== Thêm SalaryDetails mới =====
+                foreach (var detail in detailsInput)
+                {
+                    detail.Id = Guid.NewGuid().ToString();
+                    detail.salaryId = targetSalary.Id;
+                    detail.userId = targetSalary.userId;
+                    detail.salaryDate = targetSalary.salaryDate;
+                    detail.area = targetSalary.area;
+                    detail.createdAt = now;
+                }
+
+                if (detailsInput.Any())
+                {
+                    await _context.SalaryDetails.AddRangeAsync(detailsInput);
+                }
+
+                // ===== Thêm SalaryDeductDetails mới =====
+                foreach (var deduct in deductDetailsInput)
+                {
+                    deduct.Id = Guid.NewGuid().ToString();
+                    deduct.SalaryId = targetSalary.Id;
+                    deduct.CreatedAt = now;
+
+                    // Không gán navigation để tránh EF hiểu nhầm insert lại Salary / DeductCategory
+                    deduct.Salary = null;
+                    deduct.DeductCategory = null;
+                }
+
+                if (deductDetailsInput.Any())
+                {
+                    await _context.SalaryDeductDetails.AddRangeAsync(deductDetailsInput);
+                }
+
+                // ===== Tính tổng trừ và thực nhận =====
+                var deductTotal = deductDetailsInput.Sum(x => x.Amount);
+
+                targetSalary.deductTotal = deductTotal;
+                targetSalary.salaryNet = (targetSalary.salaryBase ?? 0) - deductTotal;
+
+                results.Add(new SalaryUpsertResult
                 {
                     Success = true,
                     SalaryId = targetSalary.Id,
                     Message = "Success",
-                    DetailsCount = detailsInput.Count
+                    DetailsCount = detailsInput.Count,
+                    DeductDetailsCount = deductDetailsInput.Count
                 });
             }
 
@@ -259,12 +270,12 @@ public class SalaryServer : ISalaryServer
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            // Trả về lỗi cho toàn bộ batch
-            return requests.Select(r => new SalaryFullUpsertResult
+
+            return requests.Select(r => new SalaryUpsertResult
             {
                 Success = false,
                 Message = "Lỗi transaction",
-                Errors = { ex.Message }
+                Errors = { ex.InnerException?.Message ?? ex.Message }
             }).ToList();
         }
     }

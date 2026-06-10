@@ -24,6 +24,8 @@ public partial class taxiNTDBContext : IdentityDbContext<AppUser>
     public virtual DbSet<Blog> Blogs { get; set; } = null!;
 
     public virtual DbSet<Salary> Salaries { get; set; } = null!;
+    public virtual DbSet<DeductCategory> DeductCategories { get; set; } = null!;
+    public virtual DbSet<SalaryDeductDetail> SalaryDeductDetails { get; set; } = null!;
     public virtual DbSet<SalaryDetails> SalaryDetails { get; set; } = null!;
 
 

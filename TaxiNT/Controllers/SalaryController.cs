@@ -37,7 +37,7 @@ public class SalaryController : ControllerBase
 
     // 3. Upsert toàn bộ (list Salary + Details) - Hỗ trợ bulk từ Google Apps Script
     [HttpPost("full-upsert")]
-    public async Task<IActionResult> UpsertFullSalary([FromBody] List<SalaryFullUpsertRequest> requests)
+    public async Task<IActionResult> UpsertFullSalary([FromBody] List<SalaryUpsertRequest> requests)
     {
         try
         {
@@ -46,7 +46,7 @@ public class SalaryController : ControllerBase
                 return BadRequest(new { message = "Danh sách rỗng" });
             }
 
-            var results = await context.UpsertFullSalary(requests);
+            var results = await context.UpsertSalary(requests);
             return Ok(results);
         }
         catch (Exception ex)
