@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TaxiNT.Libraries.Models;
@@ -8,7 +9,6 @@ public class Salary
 {
     [Key]
     public string Id { get; set; } = Guid.NewGuid().ToString();
-
     public string userId { get; set; } = string.Empty; //Mã tài xế
     [Column(TypeName = "decimal(18,2)")]
     public decimal? revenue { get; set; } //Doanh thu
@@ -66,13 +66,62 @@ public class Salary
 
     public string? noteDeductOrder { get; set; } = string.Empty; //14. Ghi chú trừ khác
 
-    public string? salaryDate { get; set; } = string.Empty; //Tháng/năm
+    public string? salaryDate { get; set; } = string.Empty; // Ví dụ: 05/2026
     public string? area { get; set; } = string.Empty; // Khu vực
 
-    public DateTime createdAt { get; set; }
+    public DateTime createdAt { get; set; } = DateTime.Now;
 
     // Liên kết 1-n với chi tiết lương
     public List<SalaryDetails>? Details { get; set; }
+    public List<SalaryDeductDetail>? DeductDetails { get; set; } = new();
+}
+
+[Table("DeductCategories")]
+[Index(nameof(Code), IsUnique = true)]
+public class DeductCategory
+{
+    [Key]
+    public int Id { get; set; }
+
+    public int SortOrder { get; set; } // STT
+    // Ví dụ: phiThuongHieu, kyQuyLaiXe, tienSacPin
+    [Required]
+    [MaxLength(100)]
+    public string Code { get; set; } = string.Empty;
+    [Required]
+    [MaxLength(255)]
+    public string Name { get; set; } = string.Empty;
+    // Ví dụ: phí thương hiệu, ký quỹ lái xe
+
+    public bool IsActive { get; set; } = true;
+
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+    public List<SalaryDeductDetail> SalaryDeductDetails { get; set; } = new();
+}
+
+[Table("SalaryDeductDetails")]
+public class SalaryDeductDetail
+{
+    [Key]
+    public string Id { get; set; } = Guid.NewGuid().ToString();
+
+    public string SalaryId { get; set; } = string.Empty;
+
+    public int DeductCategoryId { get; set; }
+
+    [Column(TypeName = "decimal(18,2)")]
+    public decimal Amount { get; set; } = 0;
+
+    public string? Note { get; set; } = string.Empty;
+
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+    [ForeignKey(nameof(SalaryId))]
+    public Salary? Salary { get; set; }
+
+    [ForeignKey(nameof(DeductCategoryId))]
+    public DeductCategory? DeductCategory { get; set; }
 }
 
 
@@ -115,15 +164,4 @@ public class SalaryDetails
     public DateTime createdAt { get; set; }
 }
 
-public class UpsertSalariesResult
-{
-    public List<Salary> InsertResults { get; set; } = new();
-    public List<Salary> UpdateResults { get; set; } = new();
-    public List<string> Errors { get; set; } = new();
-    public int InsertedCounts => InsertResults.Count;
-    public int UpdatedCounts => UpdateResults.Count;
-    public int ErrorCounts => Errors.Count;
-}
 
-// Lớp SalaryFullUpsertRequest đã được chuyển sang TaxiNT.Libraries.Entities.SalaryFullUpsertRequest
-// (xóa class cũ để tránh ambiguous reference)

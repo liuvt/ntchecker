@@ -12,6 +12,7 @@ using TaxiNT.Client.Services.Interfaces;
 using TaxiNT.Components;
 using TaxiNT.Data;
 using TaxiNT.Data.Models;
+using TaxiNT.Data.Seeds;
 using TaxiNT.Services;
 using TaxiNT.Services.Interfaces;
 
@@ -180,6 +181,15 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+/*Data seeding
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<taxiNTDBContext>();
+    await db.Database.MigrateAsync();
+}
+await SeedIdentitys.SeedIdentityAsync(app.Services);
+await SeedDeductCategory.SeedDeductCategoryAsync(app.Services);*/
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
