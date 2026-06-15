@@ -36,7 +36,7 @@ namespace TaxiNT.Controllers
 
         // Lấy ca làm việc theo userId và ngày (định dạng "yyyy-MM-dd"), nếu date null thì lấy ngày hiện tại -1 để thu tiền phiếu ngày hôm qua
         [HttpGet]
-        public async Task<IActionResult> Gets(string userId, string? date)
+        public async Task<IActionResult> Get(string userId, string? date)
         {
             try
             {
@@ -50,7 +50,7 @@ namespace TaxiNT.Controllers
                     ? vnNow.AddDays(-1).ToString("yyyy-MM-dd")
                     : date;
 
-                var result = await context.Gets(userId, targetDate);
+                var result = await context.Get(userId, targetDate);
 
                 if (result == null)
                     return NoContent(); // 204: Không có dữ liệu
@@ -134,7 +134,7 @@ namespace TaxiNT.Controllers
                     ? vnNow.AddDays(-1).ToString("yyyy-MM-dd")
                     : date;
 
-                var result = await context.Gets(keyword, targetDate);
+                var result = await context.Get(keyword, targetDate);
 
                 if (result == null)
                     return NoContent(); // 204: Không có dữ liệu

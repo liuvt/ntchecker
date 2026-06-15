@@ -122,6 +122,8 @@ public class SalaryServer : ISalaryServer
 
         var normalizedUserId = userId.Trim().ToLower();
 
+        Console.WriteLine($"[GetSalaryByUserId] Normalized UserId: {normalizedUserId}, Date: {date}");
+
         var query = _context.Salaries
             .AsNoTracking()
             .Where(s => s.userId.Trim().ToLower() == normalizedUserId);

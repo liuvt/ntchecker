@@ -1,0 +1,458 @@
+﻿<div class="mx-auto min-h-screen max-w-4xl bg-gray-50 px-3 py-6 sm:px-6 lg:px-8">
+    @if (isLoaded)
+    {
+        @if (StateMessage != string.Empty)
+        {
+            <div class="mb-4 rounded-lg bg-red-100 px-4 py-3 text-sm text-red-700">
+                @StateMessage
+            </div>
+        }
+        else
+        {
+            <div class="space-y-6">
+                <!-- Thông tin user -->
+                <div class="grid grid-cols-1 gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm md:grid-cols-2">
+
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-3">
+                            <svg class="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.129-1.125V11.25a9 9 0 0 0-1.5-4.5L16.5 3.75h-9L4.5 6.75a9 9 0 0 0-1.5 4.5v2.25" />
+                            </svg>
+                            <span class="text-sm text-gray-600">Số hiệu: <b class="text-gray-900">@(shiftWork.numberCar)</b></span>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <svg class="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                            </svg>
+                            <span class="text-sm text-gray-600 uppercase">Tên: <b class="text-gray-900">@shiftWork.userId</b></span>
+                        </div>
+
+                        @if (shiftWork.gasmoney != null && shiftWork.gasmoney != 0)
+                        {
+                            <div class="flex items-center gap-3">
+                                <svg class="h-4 w-4 text-orange-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-4.525 2.423 3.75 3.75 0 0 0 4.03 5.045Z" />
+                                </svg>
+                                <span class="text-sm text-gray-600">Tiền xăng: <b class="text-orange-600">@shiftWork.gasmoney.ltvVNDCurrency()</b></span>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="space-y-2 border-gray-100 text-sm md:border-l md:pl-6">
+                        <div class="flex items-center gap-3">
+                            <svg class="h-4 w-4 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
+                            </svg>
+                            <span class="text-gray-600">Doanh thu tháng: <b class="text-blue-600">@shiftWork.revenueByMonth.ltvVNDCurrency()</b></span>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <div class="flex h-5 w-5 items-center justify-center rounded-full bg-green-100">
+                                <svg class="h-3 w-3 text-green-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <span class="inline-flex items-center rounded-md bg-green-100 px-2 py-0.5 text-xs font-bold text-green-700 uppercase ring-1 ring-green-600/20 ring-inset">@ranking</span>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-gray-50 pt-2 md:col-span-2">
+                        <CheckerViewToggleButton />
+                    </div>
+                </div>
+
+                <!-- Hợp đồng -->
+                @if (shiftWork.TotalContracts > 0)
+                {
+                    <div class="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+                        <div class="flex items-center justify-between bg-blue-700 px-4 py-3 text-white">
+                            <div class="flex items-center gap-2">
+                                <img width="22" class="brightness-0 invert" src="../icons/checkerdetail/contract.png" />
+                                <h2 class="text-sm font-bold tracking-wider uppercase">Hợp đồng (@shiftWork.TotalContracts)</h2>
+                            </div>
+                        </div>
+
+                        <!-- Desktop -->
+                        <div class="hidden overflow-x-auto sm:block">
+                            <table class="w-full text-left text-xs text-gray-500">
+                                <thead class="border-b bg-gray-50 font-bold text-gray-700">
+                                    <tr>
+                                        <th class="px-4 py-3">STT</th>
+                                        <th class="px-4 py-3">Tên HĐ</th>
+                                        <th class="px-4 py-3 text-right">Giá HĐ</th>
+                                        <th class="px-4 py-3 text-center">KM Định mức</th>
+                                        <th class="px-4 py-3 text-center text-red-500">KM Vượt/Truy thu</th>
+                                        <th class="px-4 py-3 text-right">Thực thu</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    @foreach (var item in shiftWork.Contracts)
+                                    {
+                                        <tr class="font-medium text-gray-700 transition-colors hover:bg-blue-50/50">
+                                            <td class="px-4 py-3 text-center">@(shiftWork.Contracts.IndexOf(item) + 1)</td>
+                                            <td class="px-4 py-3 font-bold text-blue-800 uppercase">@item.ctKey</td>
+                                            <td class="px-4 py-3 text-right">@item.ctAmount.ltvVNDCurrency()</td>
+                                            <td class="px-4 py-3 text-center text-gray-400">@item.ctDefaultDistance</td>
+                                            <td class="px-4 py-3 text-center">
+                                                <div class="text-red-500">@item.ctOverDistance</div>
+                                                <div class="text-[10px]">(@item.ctSurcharge.ltvVNDCurrency())</div>
+                                            </td>
+                                            <td class="px-4 py-3 text-right font-bold text-gray-900">@item.totalPrice.ltvVNDCurrency()</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Mobile -->
+                        <div class="divide-y divide-gray-100 sm:hidden">
+                            @foreach (var (item, index) in shiftWork.Contracts.Select((value, i) => (value, i)))
+                            {
+                                <div class="space-y-2 p-4">
+                                    <div class="flex justify-between font-bold">
+                                        <span class="text-sm text-blue-700">HĐ #@(index + 1): @item.ctKey</span>
+                                        <span class="text-sm text-gray-900">@item.totalPrice.ltvVNDCurrency()</span>
+                                    </div>
+                                    <div class="grid grid-cols-2 text-[11px] text-gray-500">
+                                        <p>Giá gốc: @item.ctAmount.ltvVNDCurrency()</p>
+                                        <p>KM định mức: @item.ctDefaultDistance km</p>
+                                        @if (item.ctSurcharge > 0)
+                                        {
+                                            <p class="text-red-500">KM vượt: @item.ctOverDistance</p>
+                                            <p class="text-red-500">Truy thu: @item.ctSurcharge.ltvVNDCurrency()</p>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="border-t border-blue-100 bg-blue-50 p-3 text-center text-sm font-bold text-blue-800">
+                            TỔNG TIỀN HĐ: @shiftWork.TotalContractPrice.ltvVNDCurrency()
+                        </div>
+                    </div>
+                }
+
+                <!-- Cuốc lẻ -->
+                @if (shiftWork.TotalTrips > 0)
+                {
+                    <div class="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+
+                        <div class="flex items-center justify-between bg-green-700 px-4 py-3 text-white">
+                            <div class="flex items-center gap-2">
+                                <img width="22" class="brightness-0 invert" src="../icons/checkerdetail/log.png" />
+                                <h2 class="text-sm font-bold tracking-wider uppercase">Cuốc lẻ (@shiftWork.TotalTrips)</h2>
+                            </div>
+                        </div>
+
+                        <!-- Desktop -->
+                        <div class="hidden overflow-x-auto sm:block">
+                            <table class="w-full text-left text-xs text-gray-500">
+                                <thead class="border-b bg-gray-50 font-bold text-gray-700">
+                                    <tr>
+                                        <th class="px-4 py-3 text-center">STT</th> 
+                                        <th class="px-4 py-3">Thời gian (Đón -> Trả)</th>
+                                        <th class="px-4 py-3">Lộ trình</th>
+                                        <th class="px-4 py-3 text-center">KM</th>
+                                        <th class="px-4 py-3 text-right">Thực thu</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    @* Dùng vòng lặp có Index để tính toán đếm ngược *@
+                                    @foreach (var (item, index) in shiftWork.Trips.Select((value, i) => (value, i)))
+                                    {
+                                        @* Logic: Tổng số cuốc - chỉ số hiện tại *@
+                                        var reverseIndex = shiftWork.TotalTrips - index;
+
+                                        <tr class="transition-colors hover:bg-green-50">
+                                            @* Hiển thị số thứ tự đếm ngược *@
+                                            <td class="px-4 py-3 text-center font-medium">@reverseIndex</td>
+
+                                            <td class="px-4 py-3 leading-relaxed whitespace-nowrap">
+                                                <div class="font-bold text-green-600">↑ @item.tpTimeStart?.ToString("dd/MM/yyyy HH:mm:ss")</div>
+                                                <div class="font-bold text-red-500">↓ @item.tpTimeEnd?.ToString("dd/MM/yyyy HH:mm:ss")</div>
+                                            </td>
+                                            <td class="max-w-[200px] px-4 py-3">
+                                                <p class="truncate text-gray-800" title="@item.tpPickUp"><b>Đón:</b> @item.tpPickUp</p>
+                                                <p class="truncate text-gray-500" title="@item.tpDropOut"><b>Trả:</b> @item.tpDropOut</p>
+                                            </td>
+                                            <td class="px-4 py-3 text-center font-bold">
+                                                @(item.tpDistance?.ToString("0.##", new System.Globalization.CultureInfo("vi-VN")))
+                                            </td>
+                                            <td class="px-4 py-3 text-right font-black text-gray-900">
+                                                @item.tpPrice.ltvVNDCurrency()
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Mobile -->
+                        <div class="divide-y divide-gray-100 sm:hidden">
+                            @foreach (var (item, index) in shiftWork.Trips.Select((value, i) => (value, i)))
+                            {
+                                @* Tính toán số thứ tự đếm ngược *@
+                                var reverseIndex = shiftWork.TotalTrips - index;
+
+                                <div class="p-4">
+                                    <div class="mb-3 flex items-center justify-between">
+                                        @* Thay (index + 1) bằng reverseIndex *@
+                                        <span class="rounded bg-gray-100 px-2 py-0.5 font-bold text-[10px] text-gray-500 uppercase">
+                                            Cuốc lẻ #@reverseIndex
+                                        </span>
+                                        @if(item.tpType.Contains("Xanh SM"))
+                                        {
+                                            <p class="mb-1 leading-none font-bold text-[10px] text-green-600 uppercase">G</p>
+                                        }
+                                        else
+                                        {
+                                            <p class="mb-1 leading-none font-bold text-[10px] text-red-600 uppercase">N</p>
+                                        }
+                                    </div>
+
+                                    <div class="relative ml-1 space-y-2 border-l-2 border-gray-100 pl-4">
+                                        <div class="relative">
+                                            <div class="absolute top-1 -left-[21px] h-2 w-2 rounded-full bg-green-500"></div>
+                                            <p class="mb-1 leading-none font-bold text-[10px] text-green-600 uppercase">Bắt đầu đón</p>
+                                            <p class="text-sm font-bold text-gray-800">@item.tpTimeStart?.ToString("dd/MM/yyyy HH:mm:ss")</p>
+                                            <p class="mt-0.5 text-xs text-gray-500 italic">@item.tpPickUp</p>
+                                        </div>
+                                        <div class="relative pt-2">
+                                            <div class="absolute top-3 -left-[21px] h-2 w-2 rounded-full bg-red-500"></div>
+                                            <p class="mb-1 leading-none font-bold text-[10px] text-red-500 uppercase">Kết thúc trả khách</p>
+                                            <p class="text-sm font-bold text-gray-800">@item.tpTimeEnd?.ToString("dd/MM/yyyy HH:mm:ss")</p>
+                                            <p class="mt-0.5 text-xs text-gray-500 italic">@item.tpDropOut</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-4 flex items-end justify-between rounded-lg bg-gray-50 p-2">
+                                        <span class="font-bold tracking-tighter text-[10px] text-gray-400 uppercase">
+                                            @(item.tpDistance?.ToString("0.##", new System.Globalization.CultureInfo("vi-VN"))) km | @(string.IsNullOrWhiteSpace(item.tpType) ? "Thu đồng hồ" : item.tpType)
+                                        </span>
+                                        <span class="text-lg font-black text-red-600">@item.tpPrice.ltvVNDCurrency()</span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="border-t border-green-100 bg-green-50 p-3 text-center text-sm font-bold text-green-800">
+                            TỔNG TIỀN CUỐC LẺ: @shiftWork.TotalTripPrice.ltvVNDCurrency()
+                        </div>
+                    </div>
+                }
+
+                <!-- Tổng -->
+                <div class="overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-xl">
+                    <div class="flex flex-col md:flex-row">
+                        <div class="flex-1 space-y-4 p-6">
+                            <h3 class="text-lg font-black text-gray-800 uppercase italic">Tổng kết ca làm</h3>
+
+                            <!-- Các khoản truy thu - Các khoản trừ -->
+                            <div class="space-y-2 text-sm">
+                                @* 1. Kiểm tra Doanh thu HĐ *@
+                                @if (shiftWork.TotalContractPrice != 0)
+                                {
+                                    <div class="flex justify-between">
+                                        <span>Tổng doanh thu HĐ:</span>
+                                        <b class="text-gray-900">@shiftWork.TotalContractPrice.ltvVNDCurrency()</b>
+                                    </div>
+                                }
+
+                                @* 2. Kiểm tra Doanh thu Cuốc lẻ *@
+                                @if (shiftWork.TotalTripPrice != 0)
+                                {
+                                    <div class="flex justify-between">
+                                        <span>Tổng doanh thu Cuốc lẻ:</span>
+                                        <b class="text-gray-900">@shiftWork.TotalTripPrice.ltvVNDCurrency()</b>
+                                    </div>
+                                }
+
+                                <hr class="border-dashed" />
+
+                                @* 3. Kiểm tra Tổng Giảm giá/Khuyến mãi *@
+                                @{
+                                    var totalDiscount = (shiftWork.discountNT ?? 0) + (shiftWork.discountGSM ?? 0);
+                                }
+                                @if (totalDiscount != 0)
+                                {
+                                    <div class="flex justify-between text-red-500">
+                                        <span>Giảm giá/Khuyến mãi GSM/NT (-):</span>
+                                        <b>@totalDiscount.ltvVNDCurrency()</b>
+                                    </div>
+                                }
+
+                                @* 4. Kiểm tra Ví/VNPay/Tip *@
+                                @if (shiftWork.walletGSM != 0 && shiftWork.walletGSM != null)
+                                {
+                                    <div class="flex justify-between text-red-500">
+                                        <span>Ví Tip/GSM/VNPay (-):</span>
+                                        <b>@shiftWork.walletGSM.ltvVNDCurrency()</b>
+                                    </div>
+                                }
+
+                                @* 5. Kiểm tra Trả trước/sau (Đã có logic của bạn) *@
+                                @if (shiftWork.pre_postpaid != 0 && shiftWork.pre_postpaid != null)
+                                {
+                                    <div class="flex justify-between text-red-500">
+                                        <span>Trả trước/sau (-):</span>
+                                        <b>@shiftWork.pre_postpaid.ltvVNDCurrency()</b>
+                                    </div>
+                                }
+
+                                @* 6. Kiểm tra Truy thu khác *@
+                                @if (shiftWork.arrearsOther != 0 && shiftWork.arrearsOther != null)
+                                {
+                                    <div class="flex justify-between font-bold text-blue-600">
+                                        <span>Truy thu khác (+):</span>
+                                        <b>@shiftWork.arrearsOther.ltvVNDCurrency()</b>
+                                    </div>
+                                }
+                                @* 7. Kiểm tra Trừ khác *@
+                                @if(shiftWork.discountOther != 0 && shiftWork.discountOther != null)
+                                {
+                                    <div class="flex justify-between font-bold text-red-500">
+                                        <span>Trừ khác (+):</span>
+                                        <b>@shiftWork.discountOther.ltvVNDCurrency()</b>
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Tổng nợp - Doanh thu -->
+                            <div class="mt-4 rounded-2xl border border-blue-200/50 bg-[#9FD7F9]/50 p-5 text-slate-900 shadow-lg backdrop-blur-sm">
+                                <div class="flex items-center justify-between">
+                                    <div class="space-y-1">
+                                        <p class="font-bold tracking-widest text-[10px] text-blue-800/70 uppercase">Số tiền thực nộp</p>
+                                        @* Đổi màu tiền từ vàng sang xanh đậm hoặc đen để nổi bật trên nền sáng *@
+                                        <p class="text-3xl font-black text-blue-900">@shiftWork.totalPrice.ltvVNDCurrency()</p>
+                                    </div>
+                                    @* Loại bỏ opacity-80 hoặc dùng grayscale nếu muốn icon tiệp màu *@
+                                    <img width="40" src="../icons/checkerdetail/cash.png" class="brightness-90" />
+                                </div>
+
+                                @* Đổi border-t sang màu đậm hơn nền một chút *@
+                                <div class="mt-3 flex items-center gap-2 border-t border-blue-300 pt-3">
+                                    @* Màu hồng cũ (pink-400) có thể hơi chói trên nền xanh, tôi gợi ý dùng blue-800 hoặc giữ nguyên tùy ý bạn *@
+                                    <span class="font-bold text-[10px] text-red-800 uppercase">
+                                        Doanh thu ngày: @shiftWork.revenueByDate.ltvVNDCurrency()
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- QR -->
+                        <div class="flex flex-col items-center justify-center border-t border-gray-100 bg-gray-50 p-6 md:w-80 md:shrink-0 md:border-t-0 md:border-l">
+                            <p class="mb-3 font-black tracking-widest text-[10px] text-gray-400 uppercase">Quét mã nộp tiền</p>
+
+                            <div class="relative rounded-2xl border border-gray-200 bg-white p-3 shadow-inner">
+                                <!-- Ảnh QR -->
+                                <img class="h-84 w-84 touch-auto object-contain md:h-84 md:w-84 @(IsOldBill() ? "grayscale opacity-20 blur-[1px]" : "")"
+                                     src="@shiftWork.qrUrl"
+                                     alt="QR Pay"
+                                     style="-webkit-touch-callout: default !important; -webkit-user-select: none;" />
+
+                                <!-- Kiểm tra ngày: tạo lớp phủ lên QR -->
+                                @if (IsOldBill())
+                                {
+                                    <!-- pointer-events-none không cho phép thao tác lên ảnh -->
+                                    <div class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
+                                        <svg class="h-12 w-12 text-red-400/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                                        </svg>
+                                        <span class="mt-2 block font-black text-green-800 text-[11px] uppercase">Phiếu đã chốt</span>
+                                    </div>
+                                }
+                            </div>
+
+                            <p class="mt-4 rounded border border-gray-100 bg-white px-3 py-1 font-mono text-[9px] text-gray-400 shadow-sm">
+                                ID: @shiftWork.userId - XE: @shiftWork.numberCar
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="fixed inset-0 flex items-center justify-center bg-white/90 backdrop-blur-md">
+            <div class="flex flex-col items-center">
+                <div class="h-10 w-10 animate-spin rounded-full border-4 border-green-600 border-t-transparent"></div>
+                <p class="mt-4 text-xs font-black tracking-[0.2em] text-gray-500 uppercase">Đang tải dữ liệu...</p>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public string userId { get; set; } = string.Empty;
+    [Parameter] public string date { get; set; } = string.Empty;
+
+    [Inject] public IBillCheckService billCheckService { get; set; } = default!;
+
+    public ShiftWorkDto shiftWork { get; set; } = new();
+    public bool isLoaded { get; set; } = false;
+    public string ranking { get; set; } = string.Empty;
+    public string StateMessage { get; set; } = string.Empty;
+    protected string totalAmount { get; set; } = string.Empty;
+
+    protected string keyword { get; set; } = string.Empty;
+
+
+    // Nhận tham số thay đổi sẽ cập nhật lại dữ liệu
+    protected override async Task OnInitializedAsync()
+    {
+        //Dicrypt userId trước khi so sánh, vì trong sheet đã được mã hóa để bảo mật thông tin tài xế
+        var _userId = CryptographyAESExtension.Decrypt(userId);
+        keyword = SearchNormalizer.Normalize(_userId);
+
+        // Trong Static SSR, hàm này chạy 1 lần trên Server mỗi khi URL thay đổi
+        if (!string.IsNullOrEmpty(userId) && !string.IsNullOrEmpty(date))
+        {
+            await LoadBillData();
+        }
+    }
+
+    private async Task LoadBillData()
+    {
+        try
+        {
+            isLoaded = false;
+            StateMessage = string.Empty;
+            StateHasChanged(); // Hiện Loading ngay lập tức
+
+            shiftWork = await billCheckService.Get(userId, date);
+
+            if (shiftWork != null)
+            {
+                ranking = (shiftWork.ranking != 0) ? $"Xếp hạng: {shiftWork.ranking}" : string.Empty;
+                totalAmount = (shiftWork.TotalTripPrice + shiftWork.TotalContractPrice).ltvVNDCurrency();
+            }
+            else
+            {
+                StateMessage = $"KHÔNG TÌM THẤY PHIẾU {keyword}, NGÀY {date}";
+            }
+        }
+        catch (Exception)
+        {
+            StateMessage = $"KHÔNG TÌM THẤY PHIẾU CỦA {keyword}, NGÀY {date}";
+        }
+        finally
+        {
+            isLoaded = true; // Dừng loading để hiện thông báo
+            StateHasChanged();
+        }
+    }
+
+    // Hàm kiểm tra xem đây có phải là phiếu cũ không (Trước ngày n-1)
+    private bool IsOldBill()
+    {
+        if (DateTime.TryParse(date, out DateTime billDate))
+        {
+            var yesterday = DateTime.Now.Date.AddDays(-1);
+            // Nếu ngày phiếu nhỏ hơn ngày hôm qua -> Phiếu cũ
+            return billDate.Date < yesterday;
+        }
+        return false;
+    }
+}
+

@@ -19,10 +19,6 @@ public class SalaryService : ISalaryService
 
     public async Task<SalaryFullResponseDto> GetSalaryFull(string userId, string? date = null)
     {
-        Console.WriteLine($"[SalaryService] GetSalaryFull được gọi");
-        Console.WriteLine($"[SalaryService] userId nhận được: '{userId}'");
-        Console.WriteLine($"[SalaryService] date nhận được: '{date ?? "null"}'");
-
         // Encode userId để tránh lỗi URL khi có khoảng trắng hoặc ký tự đặc biệt (ví dụ: "LÊ QUỐC MINH - AG0249")
         string encodedUserId = Uri.EscapeDataString(userId);
         string url = $"api/Salary/{encodedUserId}/full";
@@ -56,4 +52,37 @@ public class SalaryService : ISalaryService
 
         return result ?? new SalaryFullResponseDto();
     }
+
+
+    public async Task<SalaryResponseDto> GetSalaryByUser(string userId, string? date = null)
+    {
+        // Encode userId để tránh lỗi URL khi có khoảng trắng hoặc ký tự đặc biệt (ví dụ: "LÊ QUỐC MINH - AG0249")
+        //string encodedUserId = Uri.EscapeDataString(userId);
+        string url = $"api/Salary/get-salary-crypto?cryptoAES={userId}";
+
+        if (!string.IsNullOrWhiteSpace(date))
+        {
+            url += $"&date={Uri.EscapeDataString(date.Trim())}";
+        }
+
+        var response = await httpClient.GetAsync(url);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorContent = await response.Content.ReadAsStringAsync();
+
+            throw new HttpRequestException(
+                $"Gọi API thất bại ({response.StatusCode}). Chi tiết: {errorContent}");
+        }
+
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        var result = await response.Content.ReadFromJsonAsync<SalaryResponseDto>(options);
+
+        return result ?? new SalaryResponseDto();
+    }
+
 }

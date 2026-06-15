@@ -66,8 +66,8 @@ namespace TaxiNT.Controllers
                 var encrypted = CryptographyAESExtension.Encrypt(id);
 
 				string finalUrl = string.IsNullOrWhiteSpace(date) 
-					? $"https://tienichtaixe.io.vn/checkers/{encrypted}" 
-					: $"https://tienichtaixe.io.vn/checkers/{encrypted}/{Uri.EscapeDataString(date)}";
+					? $"https://taxinamthang.com/checker/{encrypted}" 
+					: $"https://taxinamthang.com/checker/{encrypted}/{Uri.EscapeDataString(date)}";
 
 				//return Redirect(finalUrl);
                 return Content($$"""
@@ -129,8 +129,8 @@ namespace TaxiNT.Controllers
                 var encrypted = CryptographyAESExtension.Encrypt(id);
 
                 string finalUrl = string.IsNullOrWhiteSpace(date)
-                    ? $"https://tienichtaixe.io.vn/salary/{encrypted}"
-                    : $"https://tienichtaixe.io.vn/salary/{encrypted}/{Uri.EscapeDataString(date)}";
+                    ? $"https://taxinamthang.com/salary/{encrypted}"
+                    : $"https://taxinamthang.com/salary/{encrypted}/{Uri.EscapeDataString(date)}";
 
                 return Content($$"""
                                 <!DOCTYPE html>
