@@ -71,10 +71,9 @@ public class Salary
 
     public DateTime createdAt { get; set; } = DateTime.Now;
 
-    public List<SalaryDeductDetail>? DeductDetails { get; set; } = new();
-
     // Liên kết 1-n với chi tiết lương
     public List<SalaryDetails>? Details { get; set; }
+    public List<SalaryDeductDetail>? DeductDetails { get; set; } = new();
 }
 
 [Table("DeductCategories")]
@@ -85,10 +84,10 @@ public class DeductCategory
     public int Id { get; set; }
 
     public int SortOrder { get; set; } // STT
+    // Ví dụ: phiThuongHieu, kyQuyLaiXe, tienSacPin
     [Required]
     [MaxLength(100)]
     public string Code { get; set; } = string.Empty;
-    // Ví dụ: phiThuongHieu, kyQuyLaiXe, tienSacPin
     [Required]
     [MaxLength(255)]
     public string Name { get; set; } = string.Empty;

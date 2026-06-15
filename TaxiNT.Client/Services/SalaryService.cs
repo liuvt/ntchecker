@@ -17,7 +17,7 @@ public class SalaryService : ISalaryService
         this.httpClient = _httpClient;
     }
 
-    public async Task<SalaryFullResponse> GetSalaryFull(string userId, string? date = null)
+    public async Task<SalaryFullResponseDto> GetSalaryFull(string userId, string? date = null)
     {
         Console.WriteLine($"[SalaryService] GetSalaryFull được gọi");
         Console.WriteLine($"[SalaryService] userId nhận được: '{userId}'");
@@ -51,9 +51,9 @@ public class SalaryService : ISalaryService
             PropertyNameCaseInsensitive = true
         };
 
-        var result = await response.Content.ReadFromJsonAsync<SalaryFullResponse>(options);
+        var result = await response.Content.ReadFromJsonAsync<SalaryFullResponseDto>(options);
         Console.WriteLine($"[SalaryService] Deserialize thành công. Có Salary: {result?.Salary != null}, Số Details: {result?.Details?.Count ?? 0}");
 
-        return result ?? new SalaryFullResponse();
+        return result ?? new SalaryFullResponseDto();
     }
 }
