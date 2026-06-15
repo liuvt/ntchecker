@@ -2,7 +2,9 @@
 using System.Text.RegularExpressions;
 using TaxiNT.Extensions;
 using TaxiNT.Libraries.Entities;
+using TaxiNT.Libraries.Extensions;
 using TaxiNT.Services.Interfaces;
+using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 
 namespace TaxiNT.Controllers;
 
@@ -43,7 +45,6 @@ public class SalaryController : ControllerBase
         {
             //Dịch ngược AES
             var userId = CryptographyAESExtension.Decrypt(cryptoAES);
-
             // ví dụ: "Nguyễn   Văn A - NV001"
             // => "NGUYỄN VĂN A - NV001"
             string keyword = SearchNormalizer.Normalize(userId);
@@ -54,28 +55,15 @@ public class SalaryController : ControllerBase
 
             //Khi truyền date 05-2026 hoặc 2026-05 thì vẫn có thể xử lý được, chỉ cần lấy 7 ký tự cuối là "2026-05", và format lại thành 05/2026 để query theo tháng
             string? formattedDate = null;
-
             if (!string.IsNullOrWhiteSpace(date))
             {
-                //Regex này sẽ kiểm tra xem date có định dạng "MM-yyyy" hoặc "yyyy-MM" hay không. Chỉ lấy phần tháng và năm, bất kể người dùng nhập theo định dạng nào.
-                var match = Regex.Match(date.Trim(), @"(\d{4}-(0[1-9]|1[0-2])|(0[1-9]|1[0-2])-\d{4})$");
+                formattedDate = FormatMonth.FormatSalaryMonth(date);
 
-                if (!match.Success)
-                    return BadRequest("Invalid date format. Expected format: MM-yyyy or yyyy-MM.");
-
-                var value = match.Value;
-
-                // Nếu định dạng là "yyyy-MM", chuyển thành "MM/yyyy"
-                if (Regex.IsMatch(value, @"^\d{4}-\d{2}$"))
+                if (formattedDate == null)
                 {
-                    var parts = value.Split('-');
-                    formattedDate = $"{parts[1]}/{parts[0]}";
-                }
-                else
-                {
-                    // Nếu định dạng là "MM-yyyy", chuyển thành "MM/yyyy"
-                    var parts = value.Split('-');
-                    formattedDate = $"{parts[0]}/{parts[1]}";
+                    return BadRequest(
+                        "Invalid date format. Expected: yyyy-MM, MM-yyyy hoặc MM/yyyy."
+                    );
                 }
             }
 
@@ -101,7 +89,26 @@ public class SalaryController : ControllerBase
     {
         try
         {
-            var result = await context.GetSalaryByUserId(userId, date);
+            if (string.IsNullOrWhiteSpace(userId))
+                return BadRequest("UserId is required.");
+
+            //Khi truyền date 05-2026 hoặc 2026-05 thì vẫn có thể xử lý được, chỉ cần lấy 7 ký tự cuối là "2026-05", và format lại thành 05/2026 để query theo tháng
+            string? formattedDate = null;
+            if (!string.IsNullOrWhiteSpace(date))
+            {
+                formattedDate = FormatMonth.FormatSalaryMonth(date);
+
+                if (formattedDate == null)
+                {
+                    return BadRequest(
+                        "Invalid date format. Expected: yyyy-MM, MM-yyyy hoặc MM/yyyy."
+                    );
+                }
+            }
+
+            Console.WriteLine($"Keyword: {userId}, Formatted Date: {formattedDate}");
+
+            var result = await context.GetSalaryByUserId(userId, formattedDate);
             return Ok(result);
         }
         catch (Exception ex)

@@ -1,0 +1,95 @@
+﻿@page "/checker/{userId}"
+@page "/checker/{userId}/{date}"
+@layout EmptyMainLayout
+
+<SeoHeaderComponent Title="Phiếu CheckBill v4.1"
+                    Description="@($"Tài xế {keyword} - {date}")" Ads="false" />
+
+<div class="mx-auto max-w-4xl bg-gray-50 px-3 py-6">
+    <div class="mb-6 text-center">
+        <div class="flex items-center justify-center gap-3">
+            @if (!IsOldBill())
+            {
+                <svg class="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <h1 class="text-2xl font-extrabold text-green-700 uppercase">Phiếu Checker</h1>
+            }
+            else
+            {
+                <svg class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <h1 class="text-2xl font-extrabold text-gray-500 uppercase">Phiếu Checker (ĐÃ CHỐT)</h1>
+            }
+        </div>
+
+        <!--Blazor static vs Js chuyển hướng url-->
+        <div class="relative mt-2 inline-flex items-center gap-2 rounded-full border border-red-100 bg-red-50 px-4 py-1 shadow-sm">
+            <span class="pointer-events-none text-sm font-bold text-red-500">
+                @ParseDate(date).ToString("dd/MM/yyyy")
+            </span>
+
+            <input type="date"
+                   class="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                   value="@currentDateValue"
+                   max="@maxDateAllowed"
+                   onchange="if(this.value){window.location.href='/checkers/@userId/'+this.value;}" />
+            <span class="pointer-events-none">📅</span>
+        </div>
+    </div>
+
+    <CheckerBillComponent userId="@userId" date="@date"/>
+</div>
+
+@code {
+    [Parameter] public string userId { get; set; } = string.Empty;
+    [Parameter] public string? date { get; set; }
+    private static DateTime VnNow => DateTime.UtcNow.AddHours(7);
+    private string maxDateAllowed => VnNow.AddDays(-1).ToString("yyyy-MM-dd");
+    private string currentDateValue => ParseDate(date).ToString("yyyy-MM-dd");
+
+    private string keyword { get; set; } = string.Empty;
+    
+
+    protected override void OnInitialized()
+    {
+        if (string.IsNullOrEmpty(date))
+        {
+            date = VnNow.AddDays(-1).ToString("yyyy-MM-dd");
+        }
+
+        //Dicrypt userId trước khi so sánh, vì trong sheet đã được mã hóa để bảo mật thông tin tài xế
+        var _userId = CryptographyAESExtension.Decrypt(userId);
+        keyword = SearchNormalizer.Normalize(_userId);
+    }
+
+    private void HandleDateChange(ChangeEventArgs e)
+    {
+        if (DateTime.TryParse(e.Value?.ToString(), out var newDate))
+        {
+            // Cập nhật Parameter 'date' của Cha
+            date = newDate.ToString("yyyy-MM-dd");
+            // Khi 'date' thay đổi, Blazor tự động báo cho Component Con biết để cập nhật
+        }
+    }
+
+    private DateTime ParseDate(string dateStr)
+    {
+        if (DateTime.TryParseExact(dateStr, "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out var d))
+            return d;
+        return VnNow.AddDays(-1);
+    }
+
+    // Hàm kiểm tra xem đây có phải là phiếu cũ không (Trước ngày n-1)
+    private bool IsOldBill()
+    {
+        if (DateTime.TryParse(date, out DateTime billDate))
+        {
+            var yesterday = VnNow.Date.AddDays(-1);
+            // Nếu ngày phiếu nhỏ hơn ngày hôm qua -> Phiếu cũ
+            return billDate.Date < yesterday;
+        }
+        return false;
+    }
+}

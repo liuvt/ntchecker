@@ -544,7 +544,7 @@ public class ShiftWorkService : IShiftWorkService
     }
 
     ///Gets data by User + Date để hiển thị chi tiết ca làm việc của từng tài xế
-    public async Task<ShiftWorkDto?> Gets(string userId, string date)
+    public async Task<ShiftWorkDto?> Get(string userId, string date)
     {
         // kiểm tra dữ liệu đầu vào
         if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(date))
