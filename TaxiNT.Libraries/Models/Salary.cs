@@ -25,45 +25,6 @@ public class Salary
     [Column(TypeName = "decimal(18,2)")]
     public decimal? salaryNet { get; set; } //Lương thực nhận
 
-    [Column(TypeName = "decimal(18,2)")]
-    public decimal? deductForDeposit { get; set; } //1. Trừ ký quỹ
-
-    [Column(TypeName = "decimal(18,2)")]
-    public decimal? deductForSalaryAdvance { get; set; } //2. Trừ lương ứng
-
-    [Column(TypeName = "decimal(18,2)")]
-    public decimal? deductForNegativeSalary { get; set; } //3. Trừ âm lương: Nợ tiền tháng trước, qua tháng này trừ lại vào lương (công ty)
-
-    [Column(TypeName = "decimal(18,2)")]
-    public decimal? deductForViolationReport { get; set; } //4. Trừ vi phạm biên bản  
-
-    [Column(TypeName = "decimal(18,2)")]
-    public decimal? no_sua_chua { get; set; } //5. Nợ sửa chữa
-
-    [Column(TypeName = "decimal(18,2)")]
-    public decimal? haomon_voxe { get; set; } //6. Hao mòn vỏ xe
-
-    [Column(TypeName = "decimal(18,2)")]
-    public decimal? deductForCharging { get; set; } //7. Sat pin
-
-    [Column(TypeName = "decimal(18,2)")]
-    public decimal? deductForChargingPenalty { get; set; } //8. phạt sạt: Charging Penalty
-
-    [Column(TypeName = "decimal(18,2)")]
-    public decimal? deductForTollPayment { get; set; } //9. Trừ tiền qua trạm : Deduction for Toll Payment
-
-    [Column(TypeName = "decimal(18,2)")]
-    public decimal? deductForSocialInsurance { get; set; } //10. Trừ BHXH
-
-    [Column(TypeName = "decimal(18,2)")]
-    public decimal? deductForNegativeSalaryPartner { get; set; } //11. Trừ âm lương: Nợ tiền tháng trước, qua tháng này trừ lại vào lương (Thương quyền)
-
-    [Column(TypeName = "decimal(18,2)")]
-    public decimal? deductForPIT { get; set; } //12. Trừ TNCN - Personal Income Tax Deduction 
-
-    [Column(TypeName = "decimal(18,2)")]
-    public decimal? deductForOrder { get; set; } //13. Trừ khác
-
     public string? noteDeductOrder { get; set; } = string.Empty; //14. Ghi chú trừ khác
 
     public string? salaryDate { get; set; } = string.Empty; // Ví dụ: 05/2026
