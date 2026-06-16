@@ -203,7 +203,14 @@
                                 @foreach (var item in salaryDetails)
                                 {
                                     <tr class="hover:bg-gray-50">
-                                        <td class="px-4 py-3 text-sm whitespace-nowrap text-gray-700">@item.daterevenues</td>
+                                        <td class="px-4 py-3 text-sm whitespace-nowrap">
+                                            <a href="@($"/checker/{userId}/{FormatCheckerDateUrl(item.daterevenues)}")"
+                                               target="_blank"
+                                               rel="noopener noreferrer"
+                                               class="font-medium text-blue-600 hover:text-blue-800 hover:underline">
+                                                @item.daterevenues
+                                            </a>
+                                        </td>
                                         <td class="px-4 py-3 text-right text-sm font-medium whitespace-nowrap text-green-700">@item.revenue.ltvVNDCurrency()</td>
 
                                         @if (!IsMonthlySalary())
@@ -371,5 +378,28 @@
 
             return "Tháng/Năm";
         }
+    }
+
+    private static string FormatCheckerDateUrl(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return string.Empty;
+
+        var formats = new[]
+        {
+        "dd/MM/yyyy",
+        "d/M/yyyy",
+        "yyyy-MM-dd",
+        "MM/dd/yyyy"
+    };
+
+        return DateTime.TryParseExact(
+            value,
+            formats,
+            System.Globalization.CultureInfo.InvariantCulture,
+            System.Globalization.DateTimeStyles.None,
+            out var parsedDate)
+                ? parsedDate.ToString("yyyy-MM-dd")
+                : string.Empty;
     }
 }
