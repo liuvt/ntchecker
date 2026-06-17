@@ -117,6 +117,7 @@ public class SalaryServer : ISalaryServer
     /// </summary>
     public async Task<SalaryResponseDto?> GetSalaryByUserId(string userId, string? date = null)
     {
+        Console.WriteLine($"[GetSalaryByUserId] Received userId: '{userId}', date: '{date}'");
         if (string.IsNullOrWhiteSpace(userId))
             throw new ArgumentException("userId không được để trống");
 
@@ -134,6 +135,7 @@ public class SalaryServer : ISalaryServer
         {
             var trimmedDate = date.Trim();
 
+            // TRƯỜNG HỢP 1: Nếu truyền date thì phải tìm chính xác bản ghi có salaryDate khớp với date đã format, nếu không tìm thấy thì trả về lỗi để client fix lại date
             targetSalary = await query
                 .Where(s => s.salaryDate == trimmedDate)
                 .FirstOrDefaultAsync();
@@ -145,6 +147,7 @@ public class SalaryServer : ISalaryServer
         }
         else
         {
+            // Nếu không truyền date thì lấy bản ghi mới nhất theo salaryDate, nếu có nhiều bản ghi cùng salaryDate thì lấy bản ghi mới nhất theo createdAt
             targetSalary = await query
                 .OrderByDescending(s => s.createdAt)
                 .FirstOrDefaultAsync();

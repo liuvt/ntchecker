@@ -45,6 +45,8 @@ public class SalaryUpsertDto
     public int businessDays { get; set; }
 
     public decimal? salaryBase { get; set; }
+    public decimal? deductTotal { get; set; } 
+    public decimal? salaryNet { get; set; } 
 
     public string? noteDeductOrder { get; set; } = string.Empty;
 

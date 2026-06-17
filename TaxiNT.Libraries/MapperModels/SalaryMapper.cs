@@ -57,6 +57,8 @@ public static class SalaryMapperUpsert
         target.salaryType = source.salaryType;
         target.businessDays = source.businessDays;
         target.salaryBase = source.salaryBase;
+        target.deductTotal = source.deductTotal;
+        target.salaryNet = source.salaryNet;
         target.noteDeductOrder = source.noteDeductOrder;
         target.salaryDate = salaryDate;
         target.area = source.area;
@@ -77,6 +79,8 @@ public static class SalaryMapperUpsert
             salaryType = source.salaryType,
             businessDays = source.businessDays,
             salaryBase = source.salaryBase,
+            deductTotal = source.deductTotal,
+            salaryNet = source.salaryNet,
             noteDeductOrder = source.noteDeductOrder,
             salaryDate = salaryDate,
             area = source.area,

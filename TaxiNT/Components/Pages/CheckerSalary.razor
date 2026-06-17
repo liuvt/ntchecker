@@ -70,16 +70,28 @@
         <div class="space-y-4">
             <!-- Thông tin tổng quan -->
             <section class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-                <div class="border-b border-green-100 bg-green-50 px-4 py-3">
-                    <div class="flex flex-wrap items-center justify-between gap-3">
-                        <div>
-                            <p class="text-xs font-semibold tracking-wide text-gray-500 uppercase">Mã tài xế</p>
-                            <p class="text-lg font-extrabold text-green-700">@salary.userId</p>
+                <div class="border-b border-green-100 bg-green-50 px-4 py-4">
+                    <div class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+                        <!-- Thông tin tài xế -->
+                        <div class="min-w-0">
+                            <p class="font-semibold tracking-wide text-[11px] text-gray-500 uppercase">
+                                Mã tài xế
+                            </p>
+
+                            <p class="mt-1 text-base leading-snug font-extrabold break-words text-green-700 sm:text-lg">
+                                @salary.userId
+                            </p>
                         </div>
 
-                        <div class="rounded-lg border border-green-200 bg-white px-3 py-2 text-right">
-                            <p class="text-xs text-gray-500">Khu vực</p>
-                            <p class="font-semibold text-gray-800">@(string.IsNullOrWhiteSpace(salary.area) ? "—" : salary.area)</p>
+                        <!-- Khu vực -->
+                        <div class="w-full rounded-lg border border-green-200 bg-white px-3 py-2 sm:w-auto sm:min-w-[120px] sm:text-right">
+                            <p class="text-[11px] text-gray-500">
+                                Khu vực
+                            </p>
+
+                            <p class="mt-0.5 font-semibold text-gray-800">
+                                @(string.IsNullOrWhiteSpace(salary.area) ? "—" : salary.area)
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -168,57 +180,206 @@
 
             <!-- Chi tiết doanh thu -->
             <section class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-gray-200 px-4 py-3">
-                    <div>
-                        <h2 class="font-bold text-gray-800 uppercase">Chi tiết doanh thu ngày</h2>
-                        <p class="text-xs text-gray-500">@FormatSalaryType(salary.salaryType)</p>
+                <div class="flex items-center justify-between gap-3 border-b border-gray-200 px-4 py-3">
+                    <div class="min-w-0">
+                        <h2 class="font-bold text-gray-800 uppercase">
+                            Chi tiết doanh thu ngày
+                        </h2>
+
+                        <p class="mt-0.5 text-xs text-gray-500">
+                            Chi tiết từng ngày hoạt động
+                        </p>
                     </div>
-                    <span class="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600">
-                        @salaryDetails.Count dòng
+
+                    <span class="shrink-0 rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
+                        @salaryDetails.Count ca
                     </span>
                 </div>
 
                 @if (salaryDetails.Count == 0)
                 {
-                    <div class="p-6 text-center text-sm text-gray-500">
-                        Không có dữ liệu chi tiết doanh thu.
+                    <div class="p-8 text-center">
+                        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
+                            <svg class="h-6 w-6 text-gray-400"
+                                 fill="none"
+                                 viewBox="0 0 24 24"
+                                 stroke="currentColor">
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M9 17v-2a4 4 0 014-4h4m0 0-3-3m3 3-3 3M5 5h7a2 2 0 012 2v1" />
+                            </svg>
+                        </div>
+
+                        <p class="mt-3 text-sm font-medium text-gray-600">
+                            Không có dữ liệu doanh thu
+                        </p>
                     </div>
                 }
                 else
                 {
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-4 py-3 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase">Ngày</th>
-                                    <th class="px-4 py-3 text-right text-xs font-semibold tracking-wide text-gray-600 uppercase">Doanh thu</th>
+                    <!-- Mobile -->
+                    <div class="space-y-3 bg-gray-100 p-3 md:hidden">
+                        @foreach (var item in salaryDetails)
+                        {
+                            <article class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+                                <!-- Header từng ngày -->
+                                <div class="flex items-center justify-between gap-3 border-b border-gray-100 bg-gray-50 px-4 py-3">
+                                    <div class="min-w-0">
+                                        <p class="font-semibold tracking-wide text-[10px] text-gray-400 uppercase">
+                                            Ngày hoạt động
+                                        </p>
 
-                                    @if (!IsMonthlySalary())
+                                        <a href="@($"/checker/{userId}/{FormatCheckerDateUrl(item.daterevenues)}")"
+                                           target="_blank"
+                                           rel="noopener noreferrer"
+                                           class="mt-0.5 inline-flex items-center gap-1 text-base font-extrabold text-blue-600 hover:text-blue-800 hover:underline">
+                                            @item.daterevenues
+
+                                            <svg class="h-3.5 w-3.5 shrink-0"
+                                                 fill="none"
+                                                 viewBox="0 0 24 24"
+                                                 stroke="currentColor">
+                                                <path stroke-linecap="round"
+                                                      stroke-linejoin="round"
+                                                      stroke-width="2"
+                                                      d="M14 3h7v7m0-7L10 14M5 7v12h12v-5" />
+                                            </svg>
+                                        </a>
+                                    </div>
+
+                                    <span class="shrink-0 rounded-full border border-gray-200 bg-white px-2.5 py-1 font-semibold text-[10px] text-gray-600">
+                                        @(string.IsNullOrWhiteSpace(item.type)
+                                                                    ? "Chưa xác định"
+                                                                    : FormatSalaryType(item.type))
+                        </span>
+                    </div>
+
+                                <!-- Nội dung từng ngày -->
+                                <div class="p-3">
+                                    <div class="grid gap-2 @(showSalaryBase ? "grid-cols-2" : "grid-cols-1")">
+                                        <div class="min-w-0 rounded-lg border border-green-100 bg-green-50 px-3 py-3">
+                                            <p class="font-semibold text-[10px] text-green-600 uppercase">
+                                                Doanh thu
+                                            </p>
+
+                                            <p class="mt-1 text-base leading-tight font-extrabold text-green-700">
+                                                @item.revenue.ltvVNDCurrency()
+                                            </p>
+                                        </div>
+
+                            @if (showSalaryBase)
+                                        {
+                                            <div class="min-w-0 rounded-lg border border-blue-100 bg-blue-50 px-3 py-3">
+                                                <p class="font-semibold text-[10px] text-blue-600 uppercase">
+                                                    Sau mức ăn chia
+                                                </p>
+
+                                                <p class="mt-1 text-base leading-tight font-extrabold text-blue-700">
+                                                    @item.salaryBase.ltvVNDCurrency()
+                                                </p>
+                                            </div>
+                                        }
+                                    </div>
+
+                                    @if (showDriver)
                                     {
-                                        <th class="px-4 py-3 text-right text-xs font-semibold tracking-wide text-gray-600 uppercase">Sau ăn chia</th>
+                                        <div class="mt-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
+                                            <p class="font-semibold text-[10px] text-gray-400 uppercase">
+                                                Người lái
+                                            </p>
+
+                                            <p class="mt-0.5 truncate text-sm font-semibold text-gray-800"
+                                               title="@item.userId">
+                                                @(string.IsNullOrWhiteSpace(item.userId)
+                                                                                ? "Chưa xác định"
+                                                                                : item.userId)
+                            </p>
+                        </div>
+                                                }
+                                </div>
+                            </article>
+                        }
+                    </div>
+
+                    <!-- Tablet và Desktop -->
+                    <div class="hidden overflow-x-auto md:block">
+                        <table class="w-full table-auto border-collapse">
+                            <thead class="border-y border-gray-200 bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold tracking-wide whitespace-nowrap text-gray-600 uppercase">
+                                        Ngày
+                                    </th>
+
+                                    <th class="px-4 py-3 text-right text-xs font-semibold tracking-wide whitespace-nowrap text-gray-600 uppercase">
+                                        Doanh thu
+                                    </th>
+
+                                    @if (showSalaryBase)
+                                    {
+                                        <th class="px-4 py-3 text-right text-xs font-semibold tracking-wide whitespace-nowrap text-gray-600 uppercase">
+                                            Sau mức ăn chia
+                                        </th>
                                     }
+
+                                    @if (showDriver)
+                                    {
+                                        <th class="px-4 py-3 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase">
+                                            Người lái
+                                        </th>
+                                    }
+
+                                    <th class="px-4 py-3 text-center text-xs font-semibold tracking-wide whitespace-nowrap text-gray-600 uppercase">
+                                        Loại lương
+                                    </th>
                                 </tr>
                             </thead>
+
                             <tbody class="divide-y divide-gray-100 bg-white">
                                 @foreach (var item in salaryDetails)
                                 {
-                                    <tr class="hover:bg-gray-50">
+                                    <tr class="transition-colors hover:bg-gray-50">
                                         <td class="px-4 py-3 text-sm whitespace-nowrap">
                                             <a href="@($"/checker/{userId}/{FormatCheckerDateUrl(item.daterevenues)}")"
                                                target="_blank"
                                                rel="noopener noreferrer"
-                                               class="font-medium text-blue-600 hover:text-blue-800 hover:underline">
+                                               class="font-semibold text-blue-600 hover:text-blue-800 hover:underline">
                                                 @item.daterevenues
                                             </a>
                                         </td>
-                                        <td class="px-4 py-3 text-right text-sm font-medium whitespace-nowrap text-green-700">@item.revenue.ltvVNDCurrency()</td>
 
-                                        @if (!IsMonthlySalary())
+                                        <td class="px-4 py-3 text-right text-sm font-bold whitespace-nowrap text-green-700">
+                                            @item.revenue.ltvVNDCurrency()
+                                        </td>
+
+                                        @if (showSalaryBase)
                                         {
-                                            <td class="px-4 py-3 text-right text-sm font-medium whitespace-nowrap text-green-700">@item.salaryBase.ltvVNDCurrency()</td>
+                                            <td class="px-4 py-3 text-right text-sm font-bold whitespace-nowrap text-blue-700">
+                                                @item.salaryBase.ltvVNDCurrency()
+                                            </td>
                                         }
-                                    </tr>
-                                }
+
+                                        @if (showDriver)
+                                        {
+                                            <td class="max-w-[260px] px-4 py-3 text-sm text-gray-700">
+                                                <span class="block truncate"
+                                                      title="@item.userId">
+                                                    @(string.IsNullOrWhiteSpace(item.userId)
+                                                                                        ? "—"
+                                                                                        : item.userId)
+                                </span>
+                            </td>
+                                                        }
+
+                                    <td class="px-4 py-3 text-center text-sm whitespace-nowrap">
+                                        <span class="inline-flex items-center justify-center rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600">
+                                            @(string.IsNullOrWhiteSpace(item.type)
+                                                                                ? "—"
+                                                                                : FormatSalaryType(item.type))
+                                </span>
+                            </td>
+                        </tr>
+                                                }
                             </tbody>
                         </table>
                     </div>
@@ -284,6 +445,9 @@
                 .ThenBy(x => x.Name)
                 .ToList() ?? new List<SalaryDeductDetailResponse>();
 
+            showSalaryBase = ShouldShowSalaryBase();
+            showDriver = ShouldShowDriver();
+
             isLoaded = true;
         }
         catch (Exception ex)
@@ -294,27 +458,110 @@
         }
     }
 
+    #region salaryType: Lương tháng, Lương ngày, TQ Góp Ngày, TQ Góp Tháng
+    private bool showSalaryBase;
+    private bool showDriver;
+
+    private string CurrentSalaryType =>
+        salary.salaryType?.Trim() ?? string.Empty;
+
+    /// <summary>
+    /// Hiển thị cột "Sau mức ăn chia":
+    /// - Lương ngày
+    /// - Thương quyền Góp Ngày
+    /// </summary>
+    private bool ShouldShowSalaryBase()
+    {
+        return string.Equals(
+                   CurrentSalaryType,
+                   "Lương ngày",
+                   StringComparison.OrdinalIgnoreCase)
+               ||
+               string.Equals(
+                   CurrentSalaryType,
+                   "Thương quyền Góp Ngày",
+                   StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Hiển thị cột "Người lái":
+    /// - Thương quyền Góp Ngày
+    /// - Thương quyền Góp Tháng
+    /// </summary>
+    private bool ShouldShowDriver()
+    {
+        return string.Equals(
+                   CurrentSalaryType,
+                   "Thương quyền Góp Ngày",
+                   StringComparison.OrdinalIgnoreCase)
+               ||
+               string.Equals(
+                   CurrentSalaryType,
+                   "Thương quyền Góp Tháng",
+                   StringComparison.OrdinalIgnoreCase);
+    }
+
     private bool IsMonthlySalary()
     {
         return string.Equals(
-            salary.salaryType?.Trim(),
+            CurrentSalaryType,
             "Lương tháng",
             StringComparison.OrdinalIgnoreCase);
     }
 
+    private bool IsDailySalary()
+    {
+        return string.Equals(
+            CurrentSalaryType,
+            "Lương ngày",
+            StringComparison.OrdinalIgnoreCase);
+    }
+
+    private bool IsTQGOPSalary()
+    {
+        return ShouldShowDriver();
+    }
+
+
     private static string FormatSalaryType(string? salaryType)
     {
-        if (string.IsNullOrWhiteSpace(salaryType))
+        var value = salaryType?.Trim();
+
+        if (string.IsNullOrWhiteSpace(value))
             return "Chưa xác định";
 
-        if (salaryType.Equals("Lương tháng", StringComparison.OrdinalIgnoreCase))
+        if (value.Equals(
+            "Lương tháng",
+            StringComparison.OrdinalIgnoreCase))
+        {
             return "Ăn chia tháng";
+        }
 
-        if (salaryType.Equals("Lương ngày", StringComparison.OrdinalIgnoreCase))
+        if (value.Equals(
+            "Lương ngày",
+            StringComparison.OrdinalIgnoreCase))
+        {
             return "Ăn chia ngày";
+        }
 
-        return salaryType;
+        if (value.Equals(
+            "Thương quyền góp ngày",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return "Góp ngày";
+        }
+
+        if (value.Equals(
+            "Thương quyền góp tháng",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return "Góp tháng";
+        }
+
+        return value;
     }
+
+    #endregion
 
     private DateTime ParseMonth(string? value)
     {
